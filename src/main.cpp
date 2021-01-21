@@ -25,10 +25,8 @@
 int main(int argc, char* argv[]){
 
     // functions ============================================================================================== //
-    // params::intitialiseConfig("/Users/Hirst/Documents/PhD/LLG_code/Mn2Au/config_files/af_gga.cfg");
     params::intitialiseConfig(argv[1]); 
     params::readparams();
-    // spinwaves::initialiseFFT();
     geom::CreateLattice();
     neigh::ReadFile();
     neigh::InteractionMatrixJerome();
@@ -59,25 +57,26 @@ int main(int argc, char* argv[]){
             for (int z = 0; z < params::Lz; z++){
 
                 Sz4(x,y,z,0) = 1;
-                // Sz4(x,y,z,1) = -1;
-                // Sz4(x,y,z,2) = 1;
-                // Sz4(x,y,z,3) = -1;
+                Sz4(x,y,z,1) = -1;
+                Sz4(x,y,z,2) = 1;
+                Sz4(x,y,z,3) = -1;
 
                 neigh::Sz1d(count1d + 0) = Sz4(x,y,z,0);
-                // neigh::Sz1d(count1d + 1) = Sz4(x,y,z,1);
-                // neigh::Sz1d(count1d + 2) = Sz4(x,y,z,2);
-                // neigh::Sz1d(count1d + 3) = Sz4(x,y,z,3);
+                neigh::Sz1d(count1d + 1) = Sz4(x,y,z,1);
+                neigh::Sz1d(count1d + 2) = Sz4(x,y,z,2);
+                neigh::Sz1d(count1d + 3) = Sz4(x,y,z,3);
 
                 count1d += params::Nq; 
             }
         }
     }
-        std::cout << __LINE__ << std::endl;
-
 
     double M[params::Nsublat][3];
     double Mmag[params::Nsublat];
     double MdivMs[params::Nsublat];
+    double MdivMsSum[params::Nsublat];
+    double Msum[params::Nsublat][3];
+    int isum = 0;
     int c;
     c = params::dt_spinwaves / params::dt;
     // ================================================================================================== //
@@ -98,7 +97,6 @@ int main(int argc, char* argv[]){
     begin = clock();
     // ================================================================================================== //
 
-    std::cout << c << std::endl;
 
     // ========== LOOP THROUGH TIMESTEPS ================================================================ //
     for (int i = 0; i < params::Nt; i++){
@@ -162,9 +160,6 @@ int main(int argc, char* argv[]){
         }
         
         // Output to file
-        // myfile << i << " ";
-        // myfile << M[0] / params::Nmoments << " " << M[1] / params::Nmoments << " " << M[2] / params::Nmoments << " " << MdivMs << "\n"; 
-
         std::cout << i << " ";
 
         for (int l = 0; l < params::Nsublat; l++){
@@ -175,11 +170,32 @@ int main(int argc, char* argv[]){
         }
         std::cout << "\n";
 
+        // Sum magnetisation and average over temperature
+        if (i > (params::Nt / 10) - 1) {
+            for (int l = 0; l < params::Nsublat; l++){
+                for (int m = 0; m < 3; m++){
+                    Msum[l][m] += M[l][m] / params::NmomentsSubLat;
+                }
+                MdivMsSum[l] += MdivMs[l];
+            }
+            isum++;
+        }
+
     }
     // ==================================================================================================== //
-    
+
+    std::cout << "For averaging: " << std::endl;
+
+    for (int l = 0; l < params::Nsublat; l++){
+        for (int m = 0; m < 3; m++){
+            std::cout << Msum[l][m] << "\t"; 
+        }
+        std::cout << MdivMs[l] << "\t";
+    }
+    std::cout << "Number of steps = " << isum << std::endl;
+    std::cout << "\n";    
     // Carry out time FFT once simulation is complete
-        // spinwaves::FFTtime();
+    // spinwaves::FFTtime();
 
     end = clock();
     std::cout << std::setprecision(10) << "Time in seconds = " << (double)(end - begin) / CLOCKS_PER_SEC << std::endl; 

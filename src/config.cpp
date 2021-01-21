@@ -30,7 +30,11 @@ namespace params {
     double Jij_min;
     int ibtoq;
 
-    double H_app[3] = {0,0,0};
+    // Applied field settings
+    bool Hfield;
+    double H_app[3];
+
+    // Lattive Vectors
     double Plat[3][3];
     double PlatINV[3][3];
 
@@ -128,6 +132,14 @@ namespace params {
             std::cout << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2] << std::endl;
         }
 
+        //Read external field
+        std::cout << "External Field = " << std::endl;
+        libconfig::Setting& setting1 = cfg.lookup("ExternalField");
+        H_app[0] =  setting1["ConstantField"][0];
+        H_app[1] =  setting1["ConstantField"][1];
+        H_app[2] =  setting1["ConstantField"][2];  
+
+        std::cout << H_app[0] << " " << H_app[1] << " " << H_app[2] << std::endl;
 
         Nspins = Nq*Lx*Ly*Lz;
         Nmoments = (Nq*Lx*Ly*Lz); 
