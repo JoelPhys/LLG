@@ -56,15 +56,15 @@ int main(int argc, char* argv[]){
         for (int y = 0; y < params::Ly; y++){
             for (int z = 0; z < params::Lz; z++){
 
-                Sz4(x,y,z,0) = 1;
-                Sz4(x,y,z,1) = -1;
-                Sz4(x,y,z,2) = 1;
-                Sz4(x,y,z,3) = -1;
+                Sx4(x,y,z,0) = 1;
+                Sx4(x,y,z,1) = -1;
+                Sx4(x,y,z,2) = 1;
+                Sx4(x,y,z,3) = -1;
 
-                neigh::Sz1d(count1d + 0) = Sz4(x,y,z,0);
-                neigh::Sz1d(count1d + 1) = Sz4(x,y,z,1);
-                neigh::Sz1d(count1d + 2) = Sz4(x,y,z,2);
-                neigh::Sz1d(count1d + 3) = Sz4(x,y,z,3);
+                neigh::Sx1d(count1d + 0) = Sx4(x,y,z,0);
+                neigh::Sx1d(count1d + 1) = Sx4(x,y,z,1);
+                neigh::Sx1d(count1d + 2) = Sx4(x,y,z,2);
+                neigh::Sx1d(count1d + 3) = Sx4(x,y,z,3);
 
                 count1d += params::Nq; 
             }
@@ -76,6 +76,7 @@ int main(int argc, char* argv[]){
     double MdivMs[params::Nsublat];
     double MdivMsSum[params::Nsublat];
     double Msum[params::Nsublat][3];
+    double MsumSQR[params::Nsublat][3];
     int isum = 0;
     int c;
     c = params::dt_spinwaves / params::dt;
@@ -175,6 +176,7 @@ int main(int argc, char* argv[]){
             for (int l = 0; l < params::Nsublat; l++){
                 for (int m = 0; m < 3; m++){
                     Msum[l][m] += M[l][m] / params::NmomentsSubLat;
+                    MsumSQR[l][m] += (M[l][m] / params::NmomentsSubLat) * (M[l][m] / params::NmomentsSubLat);
                 }
                 MdivMsSum[l] += MdivMs[l];
             }
@@ -187,13 +189,22 @@ int main(int argc, char* argv[]){
     std::cout << "For averaging: " << std::endl;
 
     for (int l = 0; l < params::Nsublat; l++){
-        for (int m = 0; m < 3; m++){
-            std::cout << Msum[l][m] << "\t"; 
-        }
-        std::cout << MdivMs[l] << "\t";
+            for (int m = 0; m < 3; m++){
+                    std::cout << Msum[l][m] <<  "\t";
+            }
     }
-    std::cout << "Number of steps = " << isum << std::endl;
-    std::cout << "\n";    
+
+    std::cout << MdivMsSum[0] << "\t" << MdivMsSum[1];
+    std::cout << "\n";
+
+    for (int l = 0; l < params::Nsublat; l++){
+            for (int m = 0; m < 3; m++){
+                    std::cout << MsumSQR[l][m] <<  "\t";
+            }
+    }
+    std::cout << "\n";
+    std::cout << isum << std::endl;
+ 
     // Carry out time FFT once simulation is complete
     // spinwaves::FFTtime();
 

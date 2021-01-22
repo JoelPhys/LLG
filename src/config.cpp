@@ -85,9 +85,9 @@ namespace params {
         d_z = cfg.lookup("MaterialConsts.d_z");
         mu_s *= mu_b;
         INVmu_s = 1 / mu_s;
-        d_z = 0;
         thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
         d_z_prime = 2 * ( d_z / mu_s );
+        std::cout << "d_z_prime = " << d_z_prime << std::endl;
         lambdaPrime = 1 / (1+(lambda*lambda));
 
         // system dimensions
