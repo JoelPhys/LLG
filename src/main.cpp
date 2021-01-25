@@ -7,7 +7,7 @@
 #include <random>
 #include <algorithm>
 #include <time.h>
-#include <fftw3.h>
+#include "../inc/fftw3.h"
 #include "../inc/array.h"
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
