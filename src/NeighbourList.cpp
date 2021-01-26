@@ -312,9 +312,9 @@ namespace neigh {
                 counting++;
             }
 
-            H_new[0] = H_thermal(a,0) + params::H_app[0] + H_ani[0] + H_exch[0];
-            H_new[1] = H_thermal(a,1) + params::H_app[1] + H_ani[1] + H_exch[1];
-            H_new[2] = H_thermal(a,2) + params::H_app[2] + H_ani[2] + H_exch[2];
+            H_new[0] = H_thermal(a,0) + params::H_app(a,0) + H_ani[0] + H_exch[0];
+            H_new[1] = H_thermal(a,1) + params::H_app(a,1) + H_ani[1] + H_exch[1];
+            H_new[2] = H_thermal(a,2) + params::H_app(a,2) + H_ani[2] + H_exch[2];
 
             ScrossP[0] = Sx1d(a);
             ScrossP[1] = Sy1d(a);
@@ -356,9 +356,9 @@ namespace neigh {
                 counting++;
             }
 
-            H_new_dash[0] = H_thermal(a,0) + params::H_app[0] + H_ani_dash[0] + H_exch_dash[0];
-            H_new_dash[1] = H_thermal(a,1) + params::H_app[1] + H_ani_dash[1] + H_exch_dash[1];
-            H_new_dash[2] = H_thermal(a,2) + params::H_app[2] + H_ani_dash[2] + H_exch_dash[2];
+            H_new_dash[0] = H_thermal(a,0) + params::H_app(a,0) + H_ani_dash[0] + H_exch_dash[0];
+            H_new_dash[1] = H_thermal(a,1) + params::H_app(a,1) + H_ani_dash[1] + H_exch_dash[1];
+            H_new_dash[2] = H_thermal(a,2) + params::H_app(a,2) + H_ani_dash[2] + H_exch_dash[2];
 
             // Calculate Corrector and Normalise
 

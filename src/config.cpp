@@ -8,6 +8,8 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include "../inc/mathfuncs.h"
+#include "../inc/array2d.h"
 #include "../inc/params1.h"
 #include "../inc/error.h"
 
@@ -31,8 +33,9 @@ namespace params {
     int ibtoq;
 
     // Applied field settings
+    std::string Type;
     bool Hfield;
-    double H_app[3];
+    Array2D<double> H_app;
 
     // Lattive Vectors
     double Plat[3][3];
@@ -87,7 +90,6 @@ namespace params {
         INVmu_s = 1 / mu_s;
         thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
         d_z_prime = 2 * ( d_z / mu_s );
-        std::cout << "d_z_prime = " << d_z_prime << std::endl;
         lambdaPrime = 1 / (1+(lambda*lambda));
 
         // system dimensions
@@ -99,6 +101,16 @@ namespace params {
         ax = 2;
         ay = 2;
         az = 2;
+
+        Nspins = Nq*Lx*Ly*Lz;
+        Nmoments = (Nq*Lx*Ly*Lz); 
+        NmomentsSubLat = (Nsublat*Lx*Ly*Lz);
+        NsitesINV_S = 1/(Lx*Ly*Lz);
+        xdim = ax*Lx;
+        ydim = ay*Ly;
+        zdim = az*Lz;
+        NsitesINV = 1/(xdim*ydim*zdim);
+        zdimC = zdim/2+1;
 
         //Read Sites
         sites.resize(Nq);
@@ -132,24 +144,35 @@ namespace params {
             std::cout << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2] << std::endl;
         }
 
+       
         //Read external field
-        std::cout << "External Field = " << std::endl;
+        H_app.resize(Nmoments,3);
+        H_app.IFill(0);
+        Type = cfg.lookup("ExternalField.Type").c_str(); 
         libconfig::Setting& setting1 = cfg.lookup("ExternalField");
-        H_app[0] =  setting1["ConstantField"][0];
-        H_app[1] =  setting1["ConstantField"][1];
-        H_app[2] =  setting1["ConstantField"][2];  
 
-        std::cout << H_app[0] << " " << H_app[1] << " " << H_app[2] << std::endl;
-
-        Nspins = Nq*Lx*Ly*Lz;
-        Nmoments = (Nq*Lx*Ly*Lz); 
-        NmomentsSubLat = (Nsublat*Lx*Ly*Lz);
-        NsitesINV_S = 1/(Lx*Ly*Lz);
-        xdim = ax*Lx;
-        ydim = ay*Ly;
-        zdim = az*Lz;
-        NsitesINV = 1/(xdim*ydim*zdim);
-        zdimC = zdim/2+1;
+        if (Type == "Uniform") {     
+            for (int a = 0; a < Nmoments; a++){     
+                H_app(a,0) = setting1["Field"][0]; 
+                H_app(a,1) = setting1["Field"][1]; 
+                H_app(a,2) = setting1["Field"][2];
+            }    
+        }
+        else if (Type == "Split") {   
+            for (int a = 0; a < Nmoments; a++){     
+                if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 2)) {
+                    H_app(a,0) = setting1["Field"][0]; 
+                    H_app(a,1) = setting1["Field"][1]; 
+                    H_app(a,2) = setting1["Field"][2];
+                }
+                else if ((modfunc(params::Nq,a) == 1) || (modfunc(params::Nq,a) == 3)) {
+                    H_app(a,0) = -1.0 * static_cast<double>(setting1["Field"][0]); 
+                    H_app(a,1) = -1.0 * static_cast<double>(setting1["Field"][1]); 
+                    H_app(a,2) = -1.0 * static_cast<double>(setting1["Field"][2]);
+                }
+                else std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+            }
+        }
 
         start = cfg.lookup("Spinwaves.StartTime");
         dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");

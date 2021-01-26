@@ -10,8 +10,8 @@ k_B = 1.3807e-23
 
 # Values for Loop
 min = 0
-max = 1800
-Nsteps = 360
+max = 795
+Nsteps = 159
 steps = 5
 count = 0
 
@@ -23,15 +23,15 @@ Temp = np.zeros(Nsteps)
 Mmag = np.zeros(Nsteps)
 
 for i in range(min, max, steps):
-    string = "/Users/Hirst/Documents/PhD/LLG_code/Mn2Au/results/AFM/run4-(30x30x30)-4-nearest-neighbours-with-ani/txtfiles/mag_tsteps_lda_1e+06_T_" + str(i) + ".txt"
+    string = "/Users/Hirst/Documents/PhD/LLG_code/Mn2Au/results/AFM/run5/txtfiles/mag_tsteps_lda_1e+06_T_" + str(i) + ".txt"
     # data = np.loadtxt(string, usecols =(0,1))
     f = open(string,"r")
     lines  = f.readlines()
     Nt = float(lines[2])
     Mmag1 = float(lines[0].split()[6])
 
-    x = float(lines[0].split()[3])
-    x_sqr = float(lines[1].split()[3])
+    x = float(lines[0].split()[0])
+    x_sqr = float(lines[1].split()[0])
     y = float(lines[0].split()[1])
     y_sqr = float(lines[1].split()[1])
     z = float(lines[0].split()[2])
@@ -49,7 +49,7 @@ for i in range(min, max, steps):
 
     Temp[count] = float(i)
 
-    print(y, y_sqr)
+    print(Temp[count], y, y_sqr, Nt)
 
     if Temp[count] == 0:
         SusX[count] = 0
@@ -64,7 +64,12 @@ for i in range(min, max, steps):
 
 
 # plt.plot(Temp,Mmag)
-plt.plot(Temp,SusX)
-plt.plot(Temp,SusY)
-plt.plot(Temp,SusZ)
+# plt.plot(Temp[40:],SusX[40:])
+plt.plot(Temp[1:],SusY[1:])
+# plt.plot(Temp[1:],SusZ[1:])
+plt.ylabel('Reduced Susceptibility (1 / T)')
+plt.xlabel('Temperature (K)')
+plt.title('$M_z$')
+
+
 plt.show()

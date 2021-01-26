@@ -6,6 +6,7 @@
     #include <string>
     #include <cmath>
     #include <string>
+    #include "array2d.h"
     #include "libconfig.h++"
 
 
@@ -17,7 +18,7 @@
 
         extern double lambda, lambdaPrime, mu_s, INVmu_s, d_z, thermal_const, d_z_prime;
 
-        extern double H_app[3];
+        extern Array2D<double> H_app;
 
         extern int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
         extern double a1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
