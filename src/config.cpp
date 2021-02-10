@@ -21,9 +21,12 @@ namespace params {
     double dt, Nt, dtau, half_dtau;   
     double lambda, lambdaPrime, mu_s, INVmu_s, d_z, thermal_const, d_z_prime;
     int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
+    int Idx, Idy, Idz; // For integer lattice
     double a1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
     int xdimS, ydimS, zdimS, start;
     double dt_spinwaves;
+
+    int relaxtime;
 
     // Jij SETTINGS
     std::string Jij_filename;
@@ -42,6 +45,7 @@ namespace params {
     double PlatINV[3][3];
 
     std::vector< std::vector<double> > sites;
+    std::vector< std::vector<double> > Isites;
 
     //Intialise Config File ====================================================================================================================================//
     void intitialiseConfig(const char* cfg_filename){
@@ -80,12 +84,14 @@ namespace params {
         dt = cfg.lookup("Time.SizeOfStep");
 
         Nt = cfg.lookup("Time.NumberOfSteps");
+        relaxtime = cfg.lookup("Time.RelaxationTime");
         dtau = gamma * dt;
         half_dtau = 0.5 * dtau;   
 
         lambda = cfg.lookup("MaterialConsts.lambda");
         mu_s = cfg.lookup("MaterialConsts.mu_s");
         d_z = cfg.lookup("MaterialConsts.d_z");
+        a1 = cfg.lookup("MaterialConsts.a");
         mu_s *= mu_b;
         INVmu_s = 1 / mu_s;
         thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
@@ -112,9 +118,8 @@ namespace params {
         NsitesINV = 1/(xdim*ydim*zdim);
         zdimC = zdim/2+1;
 
-        //Read Sites
+        //Read Site positions ==============================================================================
         sites.resize(Nq);
-        std::cout << "sites = " << std::endl;
         for (int s = 0; s < Nq; s++){
             sites[s].resize(3);
 
@@ -126,8 +131,30 @@ namespace params {
             sites[s][0] = setting[str.c_str()][0];
             sites[s][1] = setting[str.c_str()][1];
             sites[s][2] = setting[str.c_str()][2];
-            std::cout << sites[s][0] << " " << sites[s][1] << " " << sites[s][2] << std::endl;
         }
+        //=======================================================================================================
+        
+        // Read integer site position ===========================================================================
+        Isites.resize(Nq);
+        std::cout << "Isites = " << std::endl;
+        for (int s = 0; s < Nq; s++){
+            Isites[s].resize(3);
+
+            std::stringstream sstr;
+            sstr << "ISite" << s;
+            std::string str = sstr.str();
+
+            libconfig::Setting& setting = cfg.lookup("IntegerSites");  
+            Isites[s][0] = setting[str.c_str()][0];
+            Isites[s][1] = setting[str.c_str()][1];
+            Isites[s][2] = setting[str.c_str()][2];
+        }
+        //Read integer lattice spacing
+        Idx = cfg.lookup("IntegerSites.Idx");
+        Idy = cfg.lookup("IntegerSites.Idy");
+        Idz = cfg.lookup("IntegerSites.Idz");
+
+        //=======================================================================================================
 
         //Read Lattice Vectors
         std::cout << "Lattice Vectors = " << std::endl;
@@ -143,6 +170,7 @@ namespace params {
             Plat[v][2] = setting[str1.c_str()][2];
             std::cout << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2] << std::endl;
         }
+
 
        
         //Read external field
@@ -173,6 +201,7 @@ namespace params {
                 else std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
             }
         }
+        else std::cout << "WARNING: Unknown Field Type." << std::endl;
 
         start = cfg.lookup("Spinwaves.StartTime");
         dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");

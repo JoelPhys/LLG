@@ -1,6 +1,9 @@
 #include "../inc/params1.h"
 #include "../inc/array4d.h"
 #include "../inc/geom.h"
+#include <vector>
+#include <iostream>
+#include <unordered_set>
 
 namespace geom {
 
@@ -9,6 +12,14 @@ namespace geom {
     Array4D<double> latticeY;
     Array4D<double> latticeZ;
     Array4D<int> LatCount;
+    Array3D<double> Sx;
+    Array3D<double> Sy; 
+    Array3D<double> Sz;
+    Array3D<int> Scount;
+
+    int Ix, Iy, Iz, IzC;
+
+    int latXsize, latYsize, latZsize, latZsizeS;
 
     void CreateLattice(){
         int counter = 0;
@@ -47,5 +58,73 @@ namespace geom {
 
     }   
 
+    void CountDistinct(){
+        int size = params::sites.size();
+        
+        for (int c = 0; c < 3; c++){
+            int res[3] = {0,0,0};
+
+            std::unordered_set<double> s;
+
+
+
+            for (int cc = 0; cc < size; cc++){
+                if (s.find(params::sites[cc][c]) == s.end()){
+                    s.insert(params::sites[cc][c]);
+                    res[c]++;
+                }
+            }
+        }
+    }
+
+    void CreateIntLattice(){
+
+        Ix = params::Idx * params::Lx;
+        Iy = params::Idy * params::Ly;
+        Iz = params::Idz * params::Lz;
+        IzC = Iz/2 + 1;
+
+        latXsize = Ix + params::Idx;
+        latYsize = Iy + params::Idy;
+        latZsize = Iz + params::Idz;
+        latZsizeS = latZsize/2 + 1;
+
+
+        Sx.resize(Ix, Iy, Iz);
+        Sy.resize(Ix, Iy, Iz);
+        Sz.resize(Ix, Iy, Iz);
+        Scount.resize(Ix, Iy, Iz);
+        Sx.IFill(0);
+        Sy.IFill(0);
+        Sz.IFill(0);
+        Scount.IFill(0);
+        int counter = 0;
+
+        for (int l = 0; l < Ix; l += params::Idx){
+            for (int m = 0; m < Iy; m += params::Idy){
+                for (int n = 0; n < Iz; n += params::Idz){
+                    for (int q = 0; q < params::Nq; q++){
+
+                        // std::cout << l + params::Isites[q][0] << " " << m + params::Isites[q][1] << " " << n + params::Isites[q][2] << std::endl;
+                
+                        Sx(l + params::Isites[q][0], m + params::Isites[q][1], n + params::Isites[q][2]) = 1;
+                        Sy(l + params::Isites[q][0], m + params::Isites[q][1], n + params::Isites[q][2]) = 1;
+                        Sz(l + params::Isites[q][0], m + params::Isites[q][1], n + params::Isites[q][2]) = 1;
+                        Scount(l + params::Isites[q][0], m + params::Isites[q][1], n + params::Isites[q][2]) = counter;
+                        counter++;                    
+                    }
+                }
+            }
+        }
+
+        // for (int l = 0; l < 10; l++){
+        //     for (int m = 0; m < 10; m++){
+
+        //         std::cout << Sx(0,l,m) <<  " ";
+        //     }
+        //     std::cout << std::endl;
+        // }
+
+    }
 
 }

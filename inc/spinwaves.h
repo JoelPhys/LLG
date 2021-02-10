@@ -14,6 +14,8 @@
     namespace spinwaves {
 
         extern int icount;
+        extern std::ofstream file_spnwvs;
+        
        
 
         //intiialise arrays

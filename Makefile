@@ -9,7 +9,8 @@ obj/mathfuncs.o \
 obj/config.o \
 obj/geom.o \
 obj/error.o \
-obj/spinwaves.o
+obj/spinwaves.o \
+obj/util.o
 
 
 obj/%.o: src/%.cpp

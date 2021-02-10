@@ -47,27 +47,28 @@ namespace spinwaves {
 
     double norm;
 
-    void initialiseFFT(){
+    int lval, mval, nval;
 
+    void initialiseFFT(){
         Npoints  = ceil((params::Nt - params::start) / (params::dt_spinwaves / params::dt));
-        norm = 1 / (params::Lx*params::Ly*params::Lz*Npoints);
+        norm = 1 / (geom::Ix * geom::Iy * geom::Iz * Npoints);
 
         std::cout << "Npoints = " << Npoints << std::endl;
-
         icount = 0;
 
-        stcf.resize(params::Lx,params::Ly,params::Lz);
-        FFTstcf.resize(params::xdimS,params::ydimS,params::zdimS);
+
+        std::cout << "testing ===== " << geom::IzC << std::endl;
+        stcf.resize(geom::Ix,geom::Iy,geom::Iz);
+        FFTstcf.resize(geom::Ix,geom::Iy,geom::IzC);
         stcfT.resize(Npoints);
         FFTstcfT.resize(Npoints);
-
-        FFTstcfarray.resize(params::Nt,params::zdimS);
+        FFTstcfarray.resize(params::Nt,geom::IzC);
 
         // FFT plans
         fftw_set_timelimit(60);
-        Slat = fftw_plan_dft_r2c_3d(params::Lx, params::Ly, params::Lz, stcf.ptr(), FFTstcf.ptr(), FFTW_PATIENT);
+        Slat = fftw_plan_dft_r2c_3d(geom::Ix,geom::Iy,geom::Iz, stcf.ptr(), FFTstcf.ptr(), FFTW_MEASURE);
         fftw_set_timelimit(60);
-        Stime = fftw_plan_dft_1d(Npoints, FFTstcfT.ptr(), stcfT.ptr(), FFTW_FORWARD, FFTW_PATIENT);
+        Stime = fftw_plan_dft_1d(Npoints, FFTstcfT.ptr(), stcfT.ptr(), FFTW_FORWARD, FFTW_MEASURE);
 
         stcfT.IFill(0);
         FFTstcf.IFill(0);
@@ -79,21 +80,33 @@ namespace spinwaves {
         std::stringstream spnwvs;
         spnwvs << "output/spinwaves.txt";
         file_spnwvs.open(spnwvs.str());
-
     }
 
     void FFTspace(){
             
-        // convert back to 3D array from 1D list
-        for (int x = 0; x < params::Lx; x++){
-            for (int y = 0; y < params::Ly; y++){
-                for (int z = 0; z < params::Lz; z++){
+        // // convert back to 3D array from 1D list
+        // for (int x = 0; x < params::Lx; x++){
+        //     for (int y = 0; y < params::Ly; y++){
+        //         for (int z = 0; z < params::Lz; z++){
+        //             for (int q = 0; q < params::Nq; q++){
+        //                 stcf(x,y,z) = neigh::Sx1d(geom::LatCount(x,y,z,q)) * neigh::Sx1d(geom::LatCount(x,y,z,q)) + neigh::Sy1d(geom::LatCount(x,y,z,q)) * neigh::Sy1d(geom::LatCount(x,y,z,q));
+        //             }
+        //         }
+        //     }
+        // }      
+
+        for (int l = 0; l < geom::Ix; l += params::Idx){
+            for (int m = 0; m < geom::Iy; m += params::Idy){
+                for (int n = 0; n < geom::Iz; n += params::Idz){
                     for (int q = 0; q < params::Nq; q++){
-                        stcf(x,y,z) = neigh::Sx1d(geom::LatCount(x,y,z,q)) * neigh::Sx1d(geom::LatCount(x,y,z,q)) + neigh::Sy1d(geom::LatCount(x,y,z,q)) * neigh::Sy1d(geom::LatCount(x,y,z,q));
+                        lval = l + params::Isites[q][0];
+                        mval = m + params::Isites[q][1];
+                        nval = n + params::Isites[q][2];
+                        stcf(lval,mval,nval) = neigh::Sx1d(geom::Scount(lval,mval,nval)) * neigh::Sx1d(geom::Scount(lval,mval,nval)) + neigh::Sy1d(geom::Scount(lval,mval,nval)) * neigh::Sy1d(geom::Scount(lval,mval,nval));
                     }
                 }
             }
-        }        
+        }
 
         // compute fft
         fftw_execute(Slat);
@@ -102,7 +115,7 @@ namespace spinwaves {
         windowing = hammA - hammB * cos((2 * M_PI * icount) / (Npoints  - 1));
         std::cout << windowing << " ";
 
-        for (int z = 0; z < params::zdimS; z++){
+        for (int z = 0; z < geom::IzC; z++){
             FFTstcfarray(icount,z)[REAL] = windowing * FFTstcf(0,0,z)[REAL];
             FFTstcfarray(icount,z)[IMAG] = windowing * FFTstcf(0,0,z)[IMAG];
             file_spnwvs << FFTstcf(0,0,z)[REAL] << " " << FFTstcf(0,0,z)[IMAG] << "\t";
@@ -130,7 +143,7 @@ namespace spinwaves {
         peaksout << std::setprecision(10);
 
         // loop over all elememts in k array
-        for (int z = 0; z < params::zdimS; z++){
+        for (int z = 0; z < geom::IzC; z++){
 
             for (int j = 0; j < icount; j++){
                 FFTstcfT(j)[REAL] = FFTstcfarray(j,z)[REAL];
@@ -151,7 +164,7 @@ namespace spinwaves {
             }
 
             // convert index to k space
-            kpoint = z * ( ( (2 * M_PI)/ params::a1 ) / params::zdimS );
+            kpoint = z * ( ( (2 * M_PI)/ ( params::a1)) / ( geom::IzC ));
 
             double largest = os[0];
             double index;
@@ -165,13 +178,14 @@ namespace spinwaves {
             }
 
             // output peaks as frequency values to a file for comparison against LSWT
-            peaksout << kpoint << " " << index * ((1 / params::dt_spinwaves) / (Npoints)) << "\n";
+            peaksout << kpoint << " " << index * ( 1 / (params::dt_spinwaves * Npoints)) << "\n";
 
             // Create output files for k vectors
             std::stringstream sstr2;
-            sstr2 << "output/kz";
+            sstr2 << "output/spinwaves/kz";
             sstr2 << std::setw(2) << std::setfill('0') << z;
             sstr2 << ".txt";
+
             std::ofstream kzout;
             kzout.open(sstr2.str());
             kzout << std::setprecision(10);
