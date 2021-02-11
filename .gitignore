@@ -1,6 +1,7 @@
 output/magnetisation/*
 output/spinwaves/*
 cfg/*
+obj/*
 ASD
 lswt/output/*
 .DS_Store

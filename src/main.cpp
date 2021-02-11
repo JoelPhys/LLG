@@ -18,7 +18,7 @@
 #include "../inc/NeighbourList.h"
 #include "../inc/util.h"
 // #include "inc/FFT.h"
-// #include "../inc/spinwaves.h"
+#include "../inc/spinwaves.h"
 
 #define IMAG 1
 #define REAL 0
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
     neigh::IntialisePointersNL();
     util::InitUtil();
     IdentityMatrix();
-    // spinwaves::initialiseFFT();
+    spinwaves::initialiseFFT();
     // ======================================================================================================== //
 
     // ======= Temperature ==================================================================================== //
@@ -151,29 +151,29 @@ int main(int argc, char* argv[]){
             neigh::Heun(thermal_fluct);
             util::SortSublat();
             util::MagLength();
-            Rotation();
+            // Rotation();
             util::OutputMagToTerm(i);
             util::OutputMagToFile(i);
             util::SumMag(i);
 
             // SPINWAVES ===================================================================================== //
             // flip a random spin for spinwaves
-            // if (i >= params::start) {
-            //     neigh::Sx1d(0) = 0;
-            //     neigh::Sy1d(0) = 0;
-            //     neigh::Sz1d(0) = 1;
-            // }
+            if (i >= params::start) {
+                neigh::Sx1d(0) = 0;
+                neigh::Sy1d(0) = 0;
+                neigh::Sz1d(0) = 1;
+            }
 
-            // if ((i >= params::start) && (i % c == 0)){
-            //     spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
-            //     spinwaves::FFTspace();      
-            // }
+            if ((i >= params::start) && (i % c == 0)){
+                spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
+                spinwaves::FFTspace();      
+            }
             // ================================================================================================ //
         }
         // ==================================================================================================== //
     
         // Carry out time FFT once simulation is complete
-        // spinwaves::FFTtime();
+        spinwaves::FFTtime();
 
         // output sum of magnetisation
         util::OutputSumMag();

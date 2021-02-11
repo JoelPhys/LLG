@@ -173,7 +173,7 @@ int main(int argc, char* argv[]){
     myfile.open(sstr.str());
 
     // calculate J(k) =====================================================================================
-    for (int z = 0; z < IzC; z++){    
+    for (int z = 0; z < IzC; z+=2){    
 
         std::cout << z << std::endl;    
 
@@ -182,24 +182,24 @@ int main(int argc, char* argv[]){
         myfile << xval << " " << yval << "\n";
 
     }
-    for (int z = 0; z < IzC/2; z++){        
+    for (int z = 0; z < IzC/2; z+=2){        
         yval = ((Magnetisation * gamma1) / (dz * 2 * M_PI * mu_s)) * (J0 - FFTJzz(0,z,IzC-1-z)[0]);
         xval = z * ((2 * M_PI) / 0.287e-9)/ IzC;
         myfile << xval << " " << yval << "\n";
 
     }
-    // for (int z = 0; z < IzC/2; z+=2){        
-    //     yval = ((Magnetisation * gamma1) / ( 2 * M_PI * mu_s)) * (J0 - FFTJzz(0,IzC/2-z,IzC/2-z)[0]);
-    //     xval = z * ((2 * M_PI) / 0.287e-9)/ IzC;
-    //     myfile << xval << " " << yval << "\n";
+    for (int z = 0; z < IzC/2; z+=2){        
+        yval = ((Magnetisation * gamma1) / ( dz * 2 * M_PI * mu_s)) * (J0 - FFTJzz(0,IzC/2-z,IzC/2-z)[0]);
+        xval = z * ((2 * M_PI) / 0.287e-9)/ IzC;
+        myfile << xval << " " << yval << "\n";
 
-    // }
-    // for (int z = 0; z < IzC/2; z+=2){        
-    //     yval = ((Magnetisation * gamma1) / ( 2 * M_PI * mu_s)) * (J0 - FFTJzz(z,z,z)[0]);
-    //     xval = z * ((2 * M_PI) / 0.287e-9)/ IzC;
-    //     myfile << xval << " " << yval << "\n";
+    }
+    for (int z = 0; z < IzC/2; z+=2){        
+        yval = ((Magnetisation * gamma1) / ( dz * 2 * M_PI * mu_s)) * (J0 - FFTJzz(z,z,z)[0]);
+        xval = z * ((2 * M_PI) / 0.287e-9)/ IzC;
+        myfile << xval << " " << yval << "\n";
 
-    // }
+    }
     // ====================================================================================================
 
     

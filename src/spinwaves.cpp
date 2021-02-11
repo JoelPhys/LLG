@@ -62,7 +62,7 @@ namespace spinwaves {
         FFTstcf.resize(geom::Ix,geom::Iy,geom::IzC);
         stcfT.resize(Npoints);
         FFTstcfT.resize(Npoints);
-        FFTstcfarray.resize(params::Nt,geom::IzC);
+        FFTstcfarray.resize(params::Nt,geom::Ix);
 
         // FFT plans
         fftw_set_timelimit(60);
@@ -78,7 +78,7 @@ namespace spinwaves {
 
         // intialise output file 
         std::stringstream spnwvs;
-        spnwvs << "output/spinwaves.txt";
+        spnwvs << "output/spinwaves/spinwaves.txt";
         file_spnwvs.open(spnwvs.str());
     }
 
@@ -102,7 +102,7 @@ namespace spinwaves {
                         lval = l + params::Isites[q][0];
                         mval = m + params::Isites[q][1];
                         nval = n + params::Isites[q][2];
-                        stcf(lval,mval,nval) = neigh::Sx1d(geom::Scount(lval,mval,nval)) * neigh::Sx1d(geom::Scount(lval,mval,nval)) + neigh::Sy1d(geom::Scount(lval,mval,nval)) * neigh::Sy1d(geom::Scount(lval,mval,nval));
+                        stcf(lval,mval,nval) = neigh::Sz1d(geom::Scount(lval,mval,nval)) * neigh::Sz1d(geom::Scount(lval,mval,nval)); // neigh::Sx1d(geom::Scount(lval,mval,nval)) * neigh::Sx1d(geom::Scount(lval,mval,nval)) + neigh::Sy1d(geom::Scount(lval,mval,nval)) * neigh::Sy1d(geom::Scount(lval,mval,nval));
                     }
                 }
             }
@@ -115,10 +115,10 @@ namespace spinwaves {
         windowing = hammA - hammB * cos((2 * M_PI * icount) / (Npoints  - 1));
         std::cout << windowing << " ";
 
-        for (int z = 0; z < geom::IzC; z++){
-            FFTstcfarray(icount,z)[REAL] = windowing * FFTstcf(0,0,z)[REAL];
-            FFTstcfarray(icount,z)[IMAG] = windowing * FFTstcf(0,0,z)[IMAG];
-            file_spnwvs << FFTstcf(0,0,z)[REAL] << " " << FFTstcf(0,0,z)[IMAG] << "\t";
+        for (int z = 0; z < geom::Ix; z++){
+            FFTstcfarray(icount,z)[REAL] = windowing * FFTstcf(z,0,0)[REAL];
+            FFTstcfarray(icount,z)[IMAG] = windowing * FFTstcf(z,0,0)[IMAG];
+            file_spnwvs << FFTstcf(z,0,0)[REAL] << " " << FFTstcf(z,0,0)[IMAG] << "\t";
         }
         
         file_spnwvs << "\n";
@@ -137,13 +137,13 @@ namespace spinwaves {
 
         // Create output file for peaks
         std::stringstream peakstring;
-        peakstring << "output/peaks.txt";
+        peakstring << "output/spinwaves/peaks.txt";
         std::ofstream peaksout;
         peaksout.open(peakstring.str());
         peaksout << std::setprecision(10);
 
         // loop over all elememts in k array
-        for (int z = 0; z < geom::IzC; z++){
+        for (int z = 0; z < geom::Ix; z++){
 
             for (int j = 0; j < icount; j++){
                 FFTstcfT(j)[REAL] = FFTstcfarray(j,z)[REAL];
