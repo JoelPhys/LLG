@@ -151,10 +151,10 @@ int main(int argc, char* argv[]){
             neigh::Heun(thermal_fluct);
             util::SortSublat();
             util::MagLength();
-            // Rotation();
             util::OutputMagToTerm(i);
             util::OutputMagToFile(i);
             util::SumMag(i);
+            Rotation();
 
             // SPINWAVES ===================================================================================== //
             // flip a random spin for spinwaves
