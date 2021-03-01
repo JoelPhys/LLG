@@ -31,6 +31,8 @@ namespace neigh {
 
 
     double guassian_vals[3];
+    double ani[3];
+    double ani1[3];
     double H_ani[3];
     double H_ani_dash[3];
     double H_new[3];
@@ -84,7 +86,12 @@ namespace neigh {
         Sz1d.IFill(0);
         S_dash_normedx1d.IFill(0);
         S_dash_normedy1d.IFill(0);
-        S_dash_normedz1d.IFill(0);            
+        S_dash_normedz1d.IFill(0);  
+
+
+        ani[0] = 0.0;
+        ani[1] = 0.0; 
+        ani[2] = params::d_z_prime;      
     }
 
     void ReadFile(){
@@ -271,7 +278,7 @@ namespace neigh {
 
         double Jijsize = 0;
         for (int i = 0; i < adjncy.size() / (x_adj.size()-1); i++){
-            Jijsize += std::abs(Jij[i]);
+            Jijsize += (Jij[i]);
         }
 
         std::cout << "length of x_adj = " << x_adj.size() << std::endl;
@@ -282,6 +289,15 @@ namespace neigh {
     }
 
     void Heun(double Thermal_Fluct){
+
+        // // DO I NEED TO ROTATE ANISOTROPY
+        // ani1[0] = R(0,0) * ani[0] + R(0,1) * ani[1] + R(0,2) * ani[2];
+        // ani1[1] = R(1,0) * ani[0] + R(1,1) * ani[1] + R(1,2) * ani[2];
+        // ani1[2] = R(2,0) * ani[0] + R(2,1) * ani[1] + R(2,2) * ani[2];
+
+        // ani[0] = ani1[0];
+        // ani[1] = ani1[1];
+        // ani[2] = ani1[2];
 
         for (int a = 0; a < params::Nspins; a++){
 
@@ -294,9 +310,14 @@ namespace neigh {
             H_thermal(a,2) = guassian_vals[2] * Thermal_Fluct;
 
             // Uniaxial anisotropy in Z axis
-            H_ani[0]= 0;
-            H_ani[1]= 0;
-            H_ani[2]= params::d_z_prime * Sz1d(a);
+            // H_ani[0] = ani[0] * Sx1d(a);
+            // H_ani[1] = ani[1] * Sy1d(a);
+            // H_ani[2] = ani[2] * Sz1d(a);
+
+            // Uniaxial anisotropy in Z axis
+            H_ani[0] = 0;
+            H_ani[1] = 0;
+            H_ani[2] = params::d_z_prime * Sz1d(a);
 
             // Exchange interaction
             H_exch[0] = 0;
@@ -312,9 +333,9 @@ namespace neigh {
                 counting++;
             }
 
-            H_new[0] = H_thermal(a,0) + params::H_app(a,0) + H_ani[0] + H_exch[0];
-            H_new[1] = H_thermal(a,1) + params::H_app(a,1) + H_ani[1] + H_exch[1];
-            H_new[2] = H_thermal(a,2) + params::H_app(a,2) + H_ani[2] + H_exch[2];
+            H_new[0] = H_thermal(a,0) + params::H_appx(a) + H_ani[0] + H_exch[0];
+            H_new[1] = H_thermal(a,1) + params::H_appy(a) + H_ani[1] + H_exch[1];
+            H_new[2] = H_thermal(a,2) + params::H_appz(a) + H_ani[2] + H_exch[2];
 
             ScrossP[0] = Sx1d(a);
             ScrossP[1] = Sy1d(a);
@@ -339,6 +360,11 @@ namespace neigh {
 
         for (int a = 0; a < params::Nspins; a++){
 
+            // Uniaxial anisotropy in Z axis
+            // H_ani_dash[0] = ani[0] * S_dash_normedx1d(a);
+            // H_ani_dash[1] = ani[1] * S_dash_normedy1d(a);
+            // H_ani_dash[2] = ani[2] * S_dash_normedz1d(a);
+            
             H_ani_dash[0]= 0;
             H_ani_dash[1]= 0;
             H_ani_dash[2]= params::d_z_prime * S_dash_normedz1d(a);
@@ -356,9 +382,9 @@ namespace neigh {
                 counting++;
             }
 
-            H_new_dash[0] = H_thermal(a,0) + params::H_app(a,0) + H_ani_dash[0] + H_exch_dash[0];
-            H_new_dash[1] = H_thermal(a,1) + params::H_app(a,1) + H_ani_dash[1] + H_exch_dash[1];
-            H_new_dash[2] = H_thermal(a,2) + params::H_app(a,2) + H_ani_dash[2] + H_exch_dash[2];
+            H_new_dash[0] = H_thermal(a,0) + params::H_appx(a) + H_ani_dash[0] + H_exch_dash[0];
+            H_new_dash[1] = H_thermal(a,1) + params::H_appy(a) + H_ani_dash[1] + H_exch_dash[1];
+            H_new_dash[2] = H_thermal(a,2) + params::H_appz(a) + H_ani_dash[2] + H_exch_dash[2];
 
             // Calculate Corrector and Normalise
 
@@ -382,6 +408,13 @@ namespace neigh {
             Sy1d(a) = invmag1 * S_new[1];
             Sz1d(a) = invmag1 * S_new[2];
         }
+        // double sumx, sumy, sumz;
+        // for (int i = 0; i < params::Nspins; i++){
+        //     sumx += H_thermal(i,0);
+        //     sumy += H_thermal(i,1);
+        //     sumz += H_thermal(i,2);
+        // }
+        // std::cout << sumx << " " << sumy << " " << sumz << std::endl;
     }
 
 }

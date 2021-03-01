@@ -25,6 +25,11 @@
         extern Array<double> S_dash_normedx1d;
         extern Array<double> S_dash_normedy1d;
         extern Array<double> S_dash_normedz1d;
+        extern std::vector<unsigned int> adjncy;
+        extern std::vector<double> Jijy_prime;
+        extern std::vector<double> Jijz_prime;
+        extern std::vector<double> Jijx_prime;
+        extern std::vector<unsigned int> x_adj;
         // ======================================================================== //
 
         void IntialisePointersNL();
