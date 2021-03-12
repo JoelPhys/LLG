@@ -126,7 +126,6 @@ namespace neigh {
                     Ny.push_back(d);
                     Nz.push_back(e);
                     Jij.push_back(f);
-                    std::cout << count << " " << a << " " << b << " " << c << " " << d << " " << e << " " << f << std::endl;
                     count++;
                 }
             }
@@ -287,11 +286,6 @@ namespace neigh {
         double Jijsize = 0;
         for (int i = 0; i < adjncy.size() / (x_adj.size()-1); i++){
             Jijsize += (Jij[i]);
-        }
-
-        std::cout << x_adj[0] << " " << x_adj[1] << std::endl;
-        for (int i = x_adj[0]; i < x_adj[1]; i++){
-            std::cout << Jijx_prime[i] << std::endl;
         }
 
         std::cout << "length of x_adj = " << x_adj.size() << std::endl;

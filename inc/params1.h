@@ -44,6 +44,7 @@
         
         extern std::vector< std::vector<double> > sites;
         extern std::vector< std::vector<double> > Isites; // For integer lattice
+        extern std::vector< std::vector<double> > initm; // For integer lattice
 
         extern double PlatINV[3][3];
 

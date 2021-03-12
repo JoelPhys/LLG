@@ -50,6 +50,7 @@ namespace params {
 
 	std::vector< std::vector<double> > sites;
 	std::vector< std::vector<double> > Isites;
+	std::vector< std::vector<double> > initm;
 
 	//Intialise Config File ====================================================================================================================================//
 	void intitialiseConfig(const char* cfg_filename){
@@ -161,7 +162,7 @@ namespace params {
 
 		//=======================================================================================================
 
-		//Read Lattice Vectors
+		// Read Lattice Vectors =================================================================================
 		std::cout << "Lattice Vectors = " << std::endl;
 		for (int v = 0; v < 3; v++){
 
@@ -175,8 +176,25 @@ namespace params {
 			Plat[v][2] = setting[str1.c_str()][2];
 			std::cout << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2] << std::endl;
 		}
+		//=======================================================================================================
 
+		// Read Initial Magnetisation Vectors ===================================================================
+		initm.resize(Nq);
+		std::cout << " Initial Magnestaion Vectors = " << std::endl;
+		for (int v = 0; v < Nq; v++){
+			
+			initm[v].resize(3);
+			std::stringstream sstr2;
+			sstr2 << "initm" << v;
+			std::string str2 = sstr2.str();
 
+			libconfig::Setting& setting = cfg.lookup("InitialMagnetisation");   
+			initm[v][0] = setting[str2.c_str()][0];
+			initm[v][1] = setting[str2.c_str()][1];
+			initm[v][2] = setting[str2.c_str()][2];
+			std::cout << initm[v][0] << " " << initm[v][1] << " " << initm[v][2] << std::endl;
+		}
+		//=======================================================================================================
 
 		//Read external field
 		H_appx.resize(Nmoments);

@@ -83,16 +83,26 @@ int main(int argc, char* argv[]){
 		for (int x = 0; x < params::Lx; x++){
 			for (int y = 0; y < params::Ly; y++){
 				for (int z = 0; z < params::Lz; z++){
+					for (int q = 0; q < params::Nq; q++){
+						Sx4(x,y,z,q) = params::initm[q][0];
+						Sy4(x,y,z,q) = params::initm[q][1];
+						Sz4(x,y,z,q) = params::initm[q][2];
 
-					Sz4(x,y,z,0) = 1;
-					Sz4(x,y,z,1) = -1;
-					Sz4(x,y,z,2) = 1;
-					Sz4(x,y,z,3) = -1;
+						neigh::Sx1d(count1d + q) = Sx4(x,y,z,q);
+						neigh::Sy1d(count1d + q) = Sy4(x,y,z,q);
+						neigh::Sz1d(count1d + q) = Sz4(x,y,z,q);
 
-					neigh::Sz1d(count1d + 0) = Sz4(x,y,z,0);
-					neigh::Sz1d(count1d + 1) = Sz4(x,y,z,1);
-					neigh::Sz1d(count1d + 2) = Sz4(x,y,z,2);
-					neigh::Sz1d(count1d + 3) = Sz4(x,y,z,3);
+					}
+
+					// Sz4(x,y,z,0) = 1;
+					// Sz4(x,y,z,1) = -1;
+					// Sz4(x,y,z,2) = 1;
+					// Sz4(x,y,z,3) = -1;
+
+					// neigh::Sz1d(count1d + 0) = Sz4(x,y,z,0);
+					// neigh::Sz1d(count1d + 1) = Sz4(x,y,z,1);
+					// neigh::Sz1d(count1d + 2) = Sz4(x,y,z,2);
+					// neigh::Sz1d(count1d + 3) = Sz4(x,y,z,3);
 
 					count1d += params::Nq; 
 				}
