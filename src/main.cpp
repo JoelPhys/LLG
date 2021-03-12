@@ -54,7 +54,7 @@ int main(int argc, char* argv[]){
 	// ======================================================================================================== //
 
 	// ======= Temperature ==================================================================================== //
-	const double Temp = 5 * (atof(argv[2]));
+	const double Temp = (atof(argv[2]));
 	const double thermal_fluct = params::thermal_const * sqrt(Temp);
 	std::cout << "Temperature = " << Temp << "(K)" << std::endl;
 	std::cout << "Thermal Fluct = " << thermal_fluct << std::endl;
@@ -185,7 +185,7 @@ int main(int argc, char* argv[]){
 
 
 
-			if (i % 10 == 0){
+			if (i % 1 == 0){
 				#ifdef CUDA
 				cuglob::copy_spins_to_host();
 				#endif	
@@ -193,7 +193,7 @@ int main(int argc, char* argv[]){
 				util::SortSublat();
 				util::MagLength();
 				util::OutputMagToTerm(i);
-				util::OutputMagToFile(i);
+				// util::OutputMagToFile(i);
 			}
 
 			// SPINWAVES ===================================================================================== //
@@ -216,7 +216,7 @@ int main(int argc, char* argv[]){
 		// spinwaves::FFTtime();
 
 		// output sum of magnetisation
-		util::OutputSumMag();
+		// util::OutputSumMag();
 
 		end = clock();
 		std::cout << std::setprecision(10) << "Simulation Time = " << (double)(end - begin) / CLOCKS_PER_SEC << std::endl; 

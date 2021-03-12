@@ -127,7 +127,7 @@ namespace util {
 			std::cout << std::fixed << std::setprecision(6) << MdivMs(l) << "\t | \t";
 		}
 
-		//output Neel Vector
+		// output Neel Vector
 		for (int m = 0; m < 3; m++){
 			std::cout  <<(M(0,m) / params::NmomentsSubLat) + (M(1,m) / params::NmomentsSubLat) << "\t";
 		}

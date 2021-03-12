@@ -103,6 +103,7 @@ namespace neigh {
         }
 
         double a, b, c, d, e, f, sum1;
+        double count = 0;
 
         while (input >> a >> b >> c >> d >> e >> f)
         {
@@ -125,6 +126,8 @@ namespace neigh {
                     Ny.push_back(d);
                     Nz.push_back(e);
                     Jij.push_back(f);
+                    std::cout << count << " " << a << " " << b << " " << c << " " << d << " " << e << " " << f << std::endl;
+                    count++;
                 }
             }
             else {
@@ -164,7 +167,7 @@ namespace neigh {
         int NzP[length];
         double vecX, vecY, vecZ;
 
-        if (params::changesign == true){
+        if (params::changesign == "Y"){
             for (int i = 0; i < length; i++){
                 if (ib[i] == jb[i]){
                     Jij[i] = Jij[i];
@@ -180,7 +183,12 @@ namespace neigh {
                 }
             }
         }
-        else if (params::changesign == false){
+        else if (params::changesign == "N"){
+        }
+        else if (params::changesign == "ferromagnetic"){
+            for (int i = 0; i < length; i++){
+                Jij[i] = std::abs(Jij[i]);
+            }
         }
         else {
             std::cout << "WARNING: unassigned changesign flag." << std::endl;
@@ -279,6 +287,11 @@ namespace neigh {
         double Jijsize = 0;
         for (int i = 0; i < adjncy.size() / (x_adj.size()-1); i++){
             Jijsize += (Jij[i]);
+        }
+
+        std::cout << x_adj[0] << " " << x_adj[1] << std::endl;
+        for (int i = x_adj[0]; i < x_adj[1]; i++){
+            std::cout << Jijx_prime[i] << std::endl;
         }
 
         std::cout << "length of x_adj = " << x_adj.size() << std::endl;

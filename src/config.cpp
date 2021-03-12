@@ -32,7 +32,8 @@ namespace params {
 	// Jij SETTINGS
 	std::string Jij_filename;
 	std::string Jij_units;
-	bool JijCutoff, changesign, Jijhalf;
+	std::string changesign;
+	bool JijCutoff, Jijhalf;
 	double Jij_min;
 	int ibtoq;
 
@@ -222,7 +223,7 @@ namespace params {
 		Jij_filename = cfg.lookup("Exchange.InputFile").c_str();        
 		Jij_units = cfg.lookup("Exchange.Units").c_str();   
 		JijCutoff = cfg.lookup("Exchange.Cutoff");    
-		changesign = cfg.lookup("Exchange.ChangeSign");  
+		changesign = cfg.lookup("Exchange.ChangeSign").c_str();  
 		Jijhalf = cfg.lookup("Exchange.Double_Jij");    
 		Jij_min = cfg.lookup("Exchange.CutoffEnergy");    
 		ibtoq = cfg.lookup("Exchange.ibtoq");    

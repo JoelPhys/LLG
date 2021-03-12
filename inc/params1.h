@@ -34,7 +34,8 @@
         // Jij SETTINGS
         extern std::string Jij_filename;
         extern std::string Jij_units;
-        extern bool JijCutoff, changesign, Jijhalf;
+        extern std::string changesign;
+        extern bool JijCutoff, Jijhalf;
         extern double Jij_min;
         extern int ibtoq;
 
