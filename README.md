@@ -1,5 +1,5 @@
 # Manual
-| table | testing |
+
 ## Config file
 
 ## Compilation
