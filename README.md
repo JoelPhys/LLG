@@ -1,6 +1,6 @@
-#Manual
+# Manual
 
-##Config file
+## Config file
 
-##Compilation
+## Compilation
 
