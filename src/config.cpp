@@ -29,6 +29,10 @@ namespace params {
 
 	int relaxtime;
 
+	std::string afmflag;
+
+	std::string filepath;
+
 	// Jij SETTINGS
 	std::string Jij_filename;
 	std::string Jij_units;
@@ -237,6 +241,8 @@ namespace params {
 		else std::cout << "WARNING: Unknown Field Type." << std::endl;
 
 		start = cfg.lookup("Spinwaves.StartTime");
+		afmflag = cfg.lookup("Util.afmflag").c_str();  
+		filepath = cfg.lookup("Util.filepath").c_str();        
 		dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");
 		Jij_filename = cfg.lookup("Exchange.InputFile").c_str();        
 		Jij_units = cfg.lookup("Exchange.Units").c_str();   

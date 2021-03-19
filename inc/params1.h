@@ -30,6 +30,13 @@
 
         extern int xdimS, ydimS, zdimS, start;
         extern double dt_spinwaves;
+        
+        
+        // Specifies how the sublattices will be sorted in output
+        extern std::string afmflag;
+        
+        //output file location
+        extern std::string filepath;
 
         // Jij SETTINGS
         extern std::string Jij_filename;

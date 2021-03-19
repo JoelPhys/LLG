@@ -49,7 +49,6 @@ int main(int argc, char* argv[]){
 	neigh::IntialisePointersNL();
 	util::InitUtil();
 	IdentityMatrix();
-
 	// spinwaves::initialiseFFT();
 	// ======================================================================================================== //
 
@@ -91,19 +90,7 @@ int main(int argc, char* argv[]){
 						neigh::Sx1d(count1d + q) = Sx4(x,y,z,q);
 						neigh::Sy1d(count1d + q) = Sy4(x,y,z,q);
 						neigh::Sz1d(count1d + q) = Sz4(x,y,z,q);
-
-					}
-
-					// Sz4(x,y,z,0) = 1;
-					// Sz4(x,y,z,1) = -1;
-					// Sz4(x,y,z,2) = 1;
-					// Sz4(x,y,z,3) = -1;
-
-					// neigh::Sz1d(count1d + 0) = Sz4(x,y,z,0);
-					// neigh::Sz1d(count1d + 1) = Sz4(x,y,z,1);
-					// neigh::Sz1d(count1d + 2) = Sz4(x,y,z,2);
-					// neigh::Sz1d(count1d + 3) = Sz4(x,y,z,3);
-
+					}	
 					count1d += params::Nq; 
 				}
 			}
@@ -203,7 +190,7 @@ int main(int argc, char* argv[]){
 				util::SortSublat();
 				util::MagLength();
 				util::OutputMagToTerm(i);
-				// util::OutputMagToFile(i);
+				util::OutputMagToFile(i);
 			}
 
 			// SPINWAVES ===================================================================================== //

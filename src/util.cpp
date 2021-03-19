@@ -33,7 +33,7 @@ namespace util {
 
 	void InitOutputFile(double temp){
 		std::stringstream sstr;
-		sstr << "/home/b6033256/Mn2Au/output/mag_tsteps_" << params::Nt << "_T_" << temp << ".txt";
+		sstr << params::filepath << "mag_tsteps_" << params::Nt << "_T_" << temp << ".txt";
 		magfile.open(sstr.str());
 	}
 
@@ -48,31 +48,59 @@ namespace util {
 	//sort sites into sublattice
 	void SortSublat(){
 
-		for (int a = 0; a < params::Nspins; a++){   
-			if (modfunc(params::Nq,a) == 0){
+
+		if (params::afmflag == "SC"){
+			for (int a = 0; a < params::Nspins; a++){   
+				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 3) || (modfunc(params::Nq,a) == 5) || (modfunc(params::Nq,a) == 6)) {
+					M(0,0) += neigh::Sx1d(a);
+					M(0,1) += neigh::Sy1d(a);
+					M(0,2) += neigh::Sz1d(a); 
+				}
+				else {
+					M(1,0) += neigh::Sx1d(a);
+					M(1,1) += neigh::Sy1d(a);
+					M(1,2) += neigh::Sz1d(a); 
+				}
+			}
+		}
+		else if (params::afmflag == "N"){
+			for (int a = 0; a < params::Nspins; a++){   
 				M(0,0) += neigh::Sx1d(a);
 				M(0,1) += neigh::Sy1d(a);
 				M(0,2) += neigh::Sz1d(a); 
 			}
-			else if (modfunc(params::Nq,a) == 1) {
-				M(1,0) += neigh::Sx1d(a);
-				M(1,1) += neigh::Sy1d(a);
-				M(1,2) += neigh::Sz1d(a); 
+		}
+		else if (params::afmflag == "Mn2Au"){
+			for (int a = 0; a < params::Nspins; a++){   
+				if (modfunc(params::Nq,a) == 0){
+					M(0,0) += neigh::Sx1d(a);
+					M(0,1) += neigh::Sy1d(a);
+					M(0,2) += neigh::Sz1d(a); 
+				}
+				else if (modfunc(params::Nq,a) == 1) {
+					M(1,0) += neigh::Sx1d(a);
+					M(1,1) += neigh::Sy1d(a);
+					M(1,2) += neigh::Sz1d(a); 
+				}
+				else if (modfunc(params::Nq,a) == 2) {
+					M(0,0) += neigh::Sx1d(a);
+					M(0,1) += neigh::Sy1d(a);
+					M(0,2) += neigh::Sz1d(a);
+				}
+				else if (modfunc(params::Nq,a) == 3) {
+					M(1,0) += neigh::Sx1d(a);
+					M(1,1) += neigh::Sy1d(a);
+					M(1,2) += neigh::Sz1d(a); 
+				}
+				else {
+					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+					exit(0);
+				}
 			}
-			else if (modfunc(params::Nq,a) == 2) {
-				M(0,0) += neigh::Sx1d(a);
-				M(0,1) += neigh::Sy1d(a);
-				M(0,2) += neigh::Sz1d(a);
-			}
-			else if (modfunc(params::Nq,a) == 3) {
-				M(1,0) += neigh::Sx1d(a);
-				M(1,1) += neigh::Sy1d(a);
-				M(1,2) += neigh::Sz1d(a); 
-			}
-			else {
-				std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
-				exit(0);
-			}
+		}
+		else {
+			std::cerr << "ERROR: Unassigned afmflag" << std::endl;
+			exit(0);
 		}
 	}
 
@@ -127,10 +155,10 @@ namespace util {
 			std::cout << std::fixed << std::setprecision(6) << MdivMs(l) << "\t | \t";
 		}
 
-		// output Neel Vector
-		for (int m = 0; m < 3; m++){
-			std::cout  <<(M(0,m) / params::NmomentsSubLat) + (M(1,m) / params::NmomentsSubLat) << "\t";
-		}
+		//output Neel Vector
+		// for (int m = 0; m < 3; m++){
+		// 	std::cout  <<(M(0,m) / params::NmomentsSubLat) + (M(1,m) / params::NmomentsSubLat) << "\t";
+		// }
 		std::cout << "\n";
 	}
 
@@ -147,9 +175,9 @@ namespace util {
 		}
 
 		//output Neel Vector
-		for (int m = 0; m < 3; m++){
-			magfile << (M(0,m) / params::NmomentsSubLat) + (M(1,m) / params::NmomentsSubLat) << "\t";
-		}
+		// for (int m = 0; m < 3; m++){
+		// 	magfile << (M(0,m) / params::NmomentsSubLat) + (M(1,m) / params::NmomentsSubLat) << "\t";
+		// }
 		magfile << "\n";
 	}
 

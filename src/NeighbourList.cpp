@@ -193,6 +193,7 @@ namespace neigh {
             std::cout << "WARNING: unassigned changesign flag." << std::endl;
         }
 
+        std::cout << __LINE__ << std::endl;
 
         // Find inverse of lattice vectors
         Inverse3x3(params::Plat, params::PlatINV);
@@ -209,6 +210,7 @@ namespace neigh {
             NzP[i] = nearbyint((params::PlatINV[2][0] * vecX) + (params::PlatINV[2][1] * vecY) + (params::PlatINV[2][2] * vecZ));
 
         }
+        std::cout << __LINE__ << std::endl;
 
         int xval;
         int yval;
@@ -282,6 +284,7 @@ namespace neigh {
         else {
             std::cout << "WARNING: Unknown Jij units" << std::endl;
         }
+        std::cout << __LINE__ << std::endl;
 
         double Jijsize = 0;
         for (int i = 0; i < adjncy.size() / (x_adj.size()-1); i++){
