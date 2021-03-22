@@ -9,6 +9,7 @@
 namespace util {
 
     extern Array2D<double> M;
+    extern Array<double> Mt;
     extern Array<double> MmaG;
     extern Array<double> MdivMs;
     extern Array<double> MdivMsSum;

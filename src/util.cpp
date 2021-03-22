@@ -13,6 +13,7 @@ namespace util {
 
 
 	Array2D<double> M;
+	Array<double> Mt;
 	Array<double> Mmag;
 	Array<double> MdivMs;
 	Array<double> MdivMsSum;
@@ -23,6 +24,7 @@ namespace util {
 	std::ofstream magfile;
 
 	void InitUtil(){
+		Mt.resize(3);
 		M.resize(params::Nsublat,3);
 		Mmag.resize(params::Nsublat);
 		MdivMs.resize(params::Nsublat);
@@ -38,6 +40,13 @@ namespace util {
 	}
 
 	void ResetMag(){
+
+		// Total magnetisation
+		Mt(0) = 0.0;
+		Mt(1) = 0.0;
+		Mt(2) = 0.0;
+
+		// Sublattice magnetisation
 		for (int ii = 0; ii < params::Nsublat; ii++){ 
 			M(ii,0) = 0;
 			M(ii,1) = 0;
@@ -51,6 +60,12 @@ namespace util {
 
 		if (params::afmflag == "SC"){
 			for (int a = 0; a < params::Nspins; a++){   
+
+				// Total Magnetisation
+				Mt(0) += neigh::Sx1d(a);			
+				Mt(1) += neigh::Sy1d(a);
+				Mt(2) += neigh::Sz1d(a);
+
 				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 3) || (modfunc(params::Nq,a) == 5) || (modfunc(params::Nq,a) == 6)) {
 					M(0,0) += neigh::Sx1d(a);
 					M(0,1) += neigh::Sy1d(a);
@@ -72,6 +87,12 @@ namespace util {
 		}
 		else if (params::afmflag == "Mn2Au"){
 			for (int a = 0; a < params::Nspins; a++){   
+
+				// Total Magnetisation
+				Mt(0) += neigh::Sx1d(a);			
+				Mt(1) += neigh::Sy1d(a);
+				Mt(2) += neigh::Sz1d(a);
+
 				if (modfunc(params::Nq,a) == 0){
 					M(0,0) += neigh::Sx1d(a);
 					M(0,1) += neigh::Sy1d(a);
@@ -159,6 +180,10 @@ namespace util {
 		// for (int m = 0; m < 3; m++){
 		// 	std::cout  <<(M(0,m) / params::NmomentsSubLat) + (M(1,m) / params::NmomentsSubLat) << "\t";
 		// }
+
+		// output Total magnetisation
+		std::cout << Mt(0) / params::Nspins << "\t" << Mt(1)  / params::Nspins<< "\t" << Mt(2) / params::Nspins;
+
 		std::cout << "\n";
 	}
 
@@ -178,6 +203,9 @@ namespace util {
 		// for (int m = 0; m < 3; m++){
 		// 	magfile << (M(0,m) / params::NmomentsSubLat) + (M(1,m) / params::NmomentsSubLat) << "\t";
 		// }
+
+		// output Total magnetisation
+		magfile << Mt(0)  / params::Nspins << "\t" << Mt(1)  / params::Nspins<< "\t" << Mt(2) / params::Nspins;
 		magfile << "\n";
 	}
 

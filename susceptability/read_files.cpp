@@ -12,26 +12,26 @@
 int main(){
 
 
-	double Natoms = 250000;
+	double Natoms = 64000;
 	double mu_b = 9.2740e-24;
-	double mu_s = 3.8664 * mu_b;
+	double mu_s = 1.5 * mu_b;
 	double k_B = 1.3807e-23;
-	int stemp = 600;
-	int etemp = 605;
-	int step = 5;
+	int stemp = 0;
+	int etemp = 275;
+	int step = 10;
+	int tstep = 10;
 	std::ofstream output;
 
 	std::stringstream sstr;
-	sstr << "/Users/Hirst/Documents/PhD/LLG_code/LLB-master/src/test2_damp_0_1_spins_5e5/susfmtest.dat";
+	sstr << "/Volumes/ExternalHDD/Joel/Simple_Cubic/FM/susfm.dat";
 	output.open(sstr.str());
 
 
 	for (int T = stemp; T < etemp; T+=step){
 
-		// if (T != 40){
 		std::stringstream sstr_eq;
-		sstr_eq << "/Users/Hirst/Documents/PhD/LLG_code/LLB-master/src/test2_damp_0_1_spins_5e5/mag_tsteps_fm_1e+06_T_" << T << ".txt";
-
+		sstr_eq << "/Volumes/ExternalHDD/Joel/Simple_Cubic/FM/output/mag_tsteps_fm_1e+06_T_" << T << ".txt";
+ 		// sstr_eq << "/Users/Hirst/Documents/PhD/LLG_code/SimpleCrystal_3D/Unai_test/test.txt";
 
 		std::cout << "Reading file: " << sstr_eq.str() << std::endl;
 		std::ifstream input(sstr_eq.str());
@@ -50,8 +50,8 @@ int main(){
 		double sumysqr = 0;
 		double sumzsqr = 0;
 		double summsqr = 0;
-		double avgstart = 600000;
-		double avgend = 1000000;
+		double avgstart = 500000;
+		double avgend = 999990;
 		std::string line;
 
 		while (std::getline(input,line))
@@ -80,17 +80,15 @@ int main(){
 		double ysqr = 0;
 		double zsqr = 0;
 		double msqr = 0;
+		x = sumx / ((a-avgstart) / tstep);
+		y = sumy / ((a-avgstart) / tstep);
+		z = sumz / ((a-avgstart) / tstep);
+		m = summ / ((a-avgstart) / tstep);
+		xsqr = sumxsqr / ((a-avgstart) / tstep);
+		ysqr = sumysqr / ((a-avgstart) / tstep);
+		zsqr = sumzsqr / ((a-avgstart) / tstep);
+		msqr = summsqr / ((a-avgstart) / tstep);
 
-		x = sumx / (avgend-avgstart);
-		y = sumy / (avgend-avgstart);
-		z = sumz / (avgend-avgstart);
-		m = summ / (avgend-avgstart);
-		xsqr = sumxsqr / (avgend-avgstart);
-		ysqr = sumysqr / (avgend-avgstart);
-		zsqr = sumzsqr / (avgend-avgstart);
-		msqr = summsqr / (avgend-avgstart);
-		
-		std::cout << m << " " << msqr << std::endl;
 		double susX = 0;
 		double susY = 0;
 		double susZ = 0;
@@ -101,10 +99,7 @@ int main(){
 		susZ = ((Natoms * mu_s) / (k_B * static_cast<double>(T))) * (zsqr - z*z);
 		susM = ((Natoms * mu_s) / (k_B * static_cast<double>(T))) * (msqr - m*m);
 
-		output << T << " " << susX << " " << susY << " " << susZ << " " << susM << std::endl;
-
-
-		// }
+		output << T << " " << m << " " << susX << " " << susY << " " << susZ << " " << susM << std::endl;
 	}
 
 	output.close();
