@@ -5,11 +5,11 @@ import math
 import os
 
 count  = 0
-min = 0
-max = 1800
+min = 600
+max = 605
 steps = 5
-Nsteps = 360
-Avg_start = 10000
+Nsteps = 1
+Avg_start = 50000
 
 T = np.zeros(Nsteps)
 X = np.zeros(Nsteps)
@@ -29,7 +29,7 @@ SusY = np.zeros(Nsteps)
 SusZ = np.zeros(Nsteps)
 SusT = np.zeros(Nsteps)
 
-Natoms = 54000
+Natoms = 512000
 mu_b = 9.2740e-24
 mu_s = 3.8663 * mu_b
 k_B = 1.3807e-23
@@ -38,11 +38,11 @@ for i in range(min, max, steps):
 
     # omit missing files 
     if (i != 40):
-        string = "/Volumes/ExternalHDD/Joel/Mn2Au_AFM_GGA/mag_tsteps_gga_1e+06_T_" + str(i) + ".txt"
+        string = "/Users/Hirst/Documents/PhD/LLG_code/LLB-master/src/test3/mag_tsteps_fm_1e+06_T_" + str(i) + ".txt"
 
-        data = np.loadtxt(string, usecols =(0,1,2,3,4), max_rows=1000000)
+        data = np.loadtxt(string, usecols =(0,1,2,3,4), max_rows=100000)
 
-        length = 1000000
+        length = 100000
         Num_x = data[Avg_start:length,1]
         Num_y = data[Avg_start:length,2]
         Num_z = data[Avg_start:length,3]
@@ -85,5 +85,5 @@ for i in range(min, max, steps):
         count = count+1
 
 # np.savetxt("/Users/Hirst/flucttest.txt", np.c_[T, SusM], fmt='%s')
-np.savetxt("/Users/Hirst/Documents/testing/MvT2.txt", np.c_[T, X, Y, Z, M], fmt='%s')
-np.savetxt("/Users/Hirst/Documents/testing/Sus2.txt", np.c_[T, SusX, SusY, SusZ], fmt='%s')
+# np.savetxt("/Users/Hirst/Documents/testing/MvT2.txt", np.c_[T, X, Y, Z, M], fmt='%s')
+np.savetxt("/Users/Hirst/Documents/PhD/LLG_code/LLB-master/src/test3/pysusfm.dat", np.c_[T, M, SusX, SusY, SusZ, SusM], fmt='%s')

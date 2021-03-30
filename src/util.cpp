@@ -182,8 +182,9 @@ namespace util {
 		// }
 
 		// output Total magnetisation
-		std::cout << Mt(0) / params::Nspins << "\t" << Mt(1)  / params::Nspins<< "\t" << Mt(2) / params::Nspins;
-
+		if (params::afmflag != "N"){
+			std::cout << Mt(0) / params::Nspins << "\t" << Mt(1)  / params::Nspins<< "\t" << Mt(2) / params::Nspins;
+		}
 		std::cout << "\n";
 	}
 
@@ -205,7 +206,9 @@ namespace util {
 		// }
 
 		// output Total magnetisation
-		magfile << Mt(0)  / params::Nspins << "\t" << Mt(1)  / params::Nspins<< "\t" << Mt(2) / params::Nspins;
+		if (params::afmflag != "N"){
+			magfile << Mt(0)  / params::Nspins << "\t" << Mt(1)  / params::Nspins<< "\t" << Mt(2) / params::Nspins;
+		}
 		magfile << "\n";
 	}
 

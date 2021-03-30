@@ -64,9 +64,13 @@ namespace neigh {
     std::vector<double> Nx;
     std::vector<double> Ny;
     std::vector<double> Nz;
-    std::vector<double> Jij;
     std::vector<int> ib;
     std::vector<int> jb;
+
+    std::vector<double> Jijx;
+    std::vector<double> Jijy;
+    std::vector<double> Jijz;
+    
 
     void IntialisePointersNL(){
         H_thermal.resize(params::Nspins, 3);
@@ -102,44 +106,92 @@ namespace neigh {
             exit(0);
         }
 
-        double a, b, c, d, e, f, sum1;
-        double count = 0;
+        double sum1;
 
-        while (input >> a >> b >> c >> d >> e >> f)
-        {
-            if (params::JijCutoff == false) {
-                ib.push_back(a);
-                jb.push_back(b);
-                Nx.push_back(c);
-                Ny.push_back(d);
-                Nz.push_back(e);
-                Jij.push_back(f);
-            }
-            else if (params::JijCutoff == true) {
-                if (std::abs(f) < params::Jij_min) { 
+        if (params::format == "Jerome"){
+            double a, b, c, d, e, f;
+            double count = 0;
 
-                }
-                else {
+            while (input >> a >> b >> c >> d >> e >> f)
+            {
+                if (params::JijCutoff == false) {
                     ib.push_back(a);
                     jb.push_back(b);
                     Nx.push_back(c);
                     Ny.push_back(d);
                     Nz.push_back(e);
-                    Jij.push_back(f);
-                    count++;
+                    Jijx.push_back(f);
+                    Jijy.push_back(f);
+                    Jijz.push_back(f);
+                }
+                else if (params::JijCutoff == true) {
+                    if (std::abs(f) < params::Jij_min) { 
+
+                    }
+                    else {
+                        ib.push_back(a);
+                        jb.push_back(b);
+                        Nx.push_back(c);
+                        Ny.push_back(d);
+                        Nz.push_back(e);
+                        Jijx.push_back(f);
+                        Jijy.push_back(f);
+                        Jijz.push_back(f);
+                        count++;
+                    }
+                }
+                else {
+                    std::cout << "WARNING: Unasigned Jij cutoff flag" << std::endl;
                 }
             }
-            else {
-                std::cout << "WARNING: Unasigned Jij cutoff flag" << std::endl;
-            }
+            std::cout << "Jij input file has been read" << std::endl;
         }
-        std::cout << "Jij input file has been read" << std::endl;
+        else if (params::format == "diag"){
+            double a, b, c, d, e, f, g, h;
+            double count = 0;
 
-        length = Jij.size();
+            while (input >> a >> b >> c >> d >> e >> f >> g >> h)
+            {
+                if (params::JijCutoff == false) {
+                    ib.push_back(a);
+                    jb.push_back(b);
+                    Nx.push_back(c);
+                    Ny.push_back(d);
+                    Nz.push_back(e);
+                    Jijx.push_back(f);
+                    Jijy.push_back(g);
+                    Jijz.push_back(h);
+                }
+                else if (params::JijCutoff == true) {
+                    if (std::abs(f) < params::Jij_min) { 
+
+                    }
+                    else {
+                        ib.push_back(a);
+                        jb.push_back(b);
+                        Nx.push_back(c);
+                        Ny.push_back(d);
+                        Nz.push_back(e);
+                        Jijx.push_back(f);
+                        Jijy.push_back(g);
+                        Jijz.push_back(h);
+                        count++;
+                    }
+                }
+                else {
+                    std::cout << "WARNING: Unasigned Jij cutoff flag" << std::endl;
+                }
+            }
+            std::cout << "Jij input file has been read" << std::endl;
+        }
+
+        length = Jijx.size();
         
         if (params::Jijhalf == true) {
             for (int i = 0; i < length; i++){
-                Jij[i] = Jij[i] * 2;
+                Jijx[i] = Jijx[i] * 2;
+                Jijy[i] = Jijy[i] * 2;
+                Jijz[i] = Jijz[i] * 2;
             }
             std::cout << "Jij values have been doubled" << std::endl;
         }
@@ -152,14 +204,14 @@ namespace neigh {
         }
 
         for (int i = 0; i < length; i++){
-            sum1 += std::abs(Jij[i]);
+            sum1 += std::abs(Jijx[i]);
         }
 
         std::cout << "Sum of Jij = " << sum1 << std::endl;
         input.close();
     }
 
-    void InteractionMatrixJerome() {
+    void InteractionMatrix() {
 
         int NxP[length];
         int NyP[length];
@@ -169,16 +221,24 @@ namespace neigh {
         if (params::changesign == "Y"){
             for (int i = 0; i < length; i++){
                 if (ib[i] == jb[i]){
-                    Jij[i] = Jij[i];
+                    Jijx[i] = Jijx[i];
+                    Jijy[i] = Jijy[i];
+                    Jijz[i] = Jijz[i];
                 }
                 else if (((ib[i] == 3) && (jb[i] == 5)) || ((ib[i] == 5) && (jb[i] == 3))) {
-                    Jij[i] = Jij[i];
+                    Jijx[i] = Jijx[i];
+                    Jijy[i] = Jijy[i];
+                    Jijz[i] = Jijz[i];
                 }
                 else if (((ib[i] == 4) && (jb[i] == 6)) || ((ib[i] == 6) && (jb[i] == 4))) {
-                    Jij[i] = Jij[i];
+                    Jijx[i] = Jijx[i];
+                    Jijy[i] = Jijy[i];
+                    Jijz[i] = Jijz[i];
                 }
                 else  {
-                    Jij[i] = -1 * Jij[i];
+                    Jijx[i] = -1 * Jijx[i];
+                    Jijy[i] = -1 * Jijy[i];
+                    Jijz[i] = -1 * Jijz[i];
                 }
             }
         }
@@ -186,14 +246,14 @@ namespace neigh {
         }
         else if (params::changesign == "ferromagnetic"){
             for (int i = 0; i < length; i++){
-                Jij[i] = std::abs(Jij[i]);
+                Jijx[i] = std::abs(Jijx[i]);
+                Jijy[i] = std::abs(Jijy[i]);
+                Jijz[i] = std::abs(Jijz[i]);
             }
         }
         else {
             std::cout << "WARNING: unassigned changesign flag." << std::endl;
         }
-
-        std::cout << __LINE__ << std::endl;
 
         // Find inverse of lattice vectors
         Inverse3x3(params::Plat, params::PlatINV);
@@ -210,7 +270,6 @@ namespace neigh {
             NzP[i] = nearbyint((params::PlatINV[2][0] * vecX) + (params::PlatINV[2][1] * vecY) + (params::PlatINV[2][2] * vecZ));
 
         }
-        std::cout << __LINE__ << std::endl;
 
         int xval;
         int yval;
@@ -239,9 +298,9 @@ namespace neigh {
                                     adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
                                     adjcounter++;
 
-                                    Jijx_prime.push_back( ( Jij[i]  * 2.179872e-21) / params::mu_s);
-                                    Jijy_prime.push_back( ( Jij[i]  * 2.179872e-21) / params::mu_s);
-                                    Jijz_prime.push_back( ( Jij[i]  * 2.179872e-21) / params::mu_s);
+                                    Jijx_prime.push_back( ( Jijx[i]  * 2.179872e-21) / params::mu_s);
+                                    Jijy_prime.push_back( ( Jijy[i]  * 2.179872e-21) / params::mu_s);
+                                    Jijz_prime.push_back( ( Jijz[i]  * 2.179872e-21) / params::mu_s);
 
                                 }
                             }
@@ -269,9 +328,9 @@ namespace neigh {
                                     adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
                                     adjcounter++;
 
-                                    Jijx_prime.push_back( ( Jij[i] ) / params::mu_s);
-                                    Jijy_prime.push_back( ( Jij[i] ) / params::mu_s);
-                                    Jijz_prime.push_back( ( Jij[i] ) / params::mu_s);
+                                    Jijx_prime.push_back( ( Jijx[i] ) / params::mu_s);
+                                    Jijy_prime.push_back( ( Jijy[i] ) / params::mu_s);
+                                    Jijz_prime.push_back( ( Jijz[i] ) / params::mu_s);
 
                                 }
                             }
@@ -284,11 +343,10 @@ namespace neigh {
         else {
             std::cout << "WARNING: Unknown Jij units" << std::endl;
         }
-        std::cout << __LINE__ << std::endl;
 
         double Jijsize = 0;
         for (int i = 0; i < adjncy.size() / (x_adj.size()-1); i++){
-            Jijsize += (Jij[i]);
+            Jijsize += (Jijx[i]);
         }
 
         std::cout << "length of x_adj = " << x_adj.size() << std::endl;

@@ -57,7 +57,6 @@ namespace spinwaves {
         icount = 0;
 
 
-        std::cout << "testing ===== " << geom::IzC << std::endl;
         stcf.resize(geom::Ix,geom::Iy,geom::Iz);
         FFTstcf.resize(geom::Ix,geom::Iy,geom::IzC);
         stcfT.resize(Npoints);
@@ -80,6 +79,8 @@ namespace spinwaves {
         std::stringstream spnwvs;
         spnwvs << "output/spinwaves/spinwaves.txt";
         file_spnwvs.open(spnwvs.str());
+
+        std::cout << geom::IzC << std::endl;
     }
 
     void FFTspace(){
@@ -102,18 +103,31 @@ namespace spinwaves {
                         lval = l + params::Isites[q][0];
                         mval = m + params::Isites[q][1];
                         nval = n + params::Isites[q][2];
-                        stcf(lval,mval,nval) = neigh::Sx1d(geom::Scount(lval,mval,nval)) * neigh::Sx1d(geom::Scount(lval,mval,nval)) + neigh::Sy1d(geom::Scount(lval,mval,nval)) * neigh::Sy1d(geom::Scount(lval,mval,nval));
+                        // stcf(lval,mval,nval) = neigh::Sx1d(geom::Scount(lval,mval,nval)) * neigh::Sx1d(geom::Scount(lval,mval,nval)) + neigh::Sy1d(geom::Scount(lval,mval,nval)) * neigh::Sy1d(geom::Scount(lval,mval,nval));
+                        stcf(lval,mval,nval) = neigh::Sz1d(geom::Scount(lval,mval,nval));
                     }
                 }
             }
         }
+
+
 
         // compute fft
         fftw_execute(Slat);
 
         //windowing function
         windowing = hammA - hammB * cos((2 * M_PI * icount) / (Npoints  - 1));
-        std::cout << windowing << " ";
+
+
+        //lets try and program a k path
+        double kpath[5][3] = {{0,0,0},{1,0,0},{1,1,0},{0,0,0},{1,1,1}};
+
+        // for loop for difference between the k points
+        for (int i =0; i < 5; i++){
+            int dx = kpath[i+1][0] - kpath[i][0];
+            int dy = kpath[i+1][1] - kpath[i][1];
+            int dz = kpath[i+1][2] - kpath[i][2];
+        }
 
         for (int z = 0; z < geom::IzC; z++){
             FFTstcfarray(icount,z)[REAL] = windowing * FFTstcf(0,0,z)[REAL];

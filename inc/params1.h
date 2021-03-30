@@ -34,6 +34,9 @@
         
         // Specifies how the sublattices will be sorted in output
         extern std::string afmflag;
+
+        // Input file format
+        extern std::string format;
         
         //output file location
         extern std::string filepath;

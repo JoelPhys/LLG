@@ -34,7 +34,7 @@
 
         void IntialisePointersNL();
         void ReadFile();
-        void InteractionMatrixJerome();
+        void InteractionMatrix();
         void Heun(double Thermal_Fluct);
 
     }

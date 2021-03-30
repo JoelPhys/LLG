@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
 	geom::CountDistinct();
 	geom::CreateIntLattice();
 	neigh::ReadFile();
-	neigh::InteractionMatrixJerome();
+	neigh::InteractionMatrix();
 	neigh::IntialisePointersNL();
 	util::InitUtil();
 	IdentityMatrix();

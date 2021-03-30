@@ -30,7 +30,7 @@ namespace params {
 	int relaxtime;
 
 	std::string afmflag;
-
+	std::string format;
 	std::string filepath;
 
 	// Jij SETTINGS
@@ -99,21 +99,26 @@ namespace params {
 
 		lambda = cfg.lookup("MaterialConsts.lambda");
 		mu_s = cfg.lookup("MaterialConsts.mu_s");
+		std::cout << "Magnetic Moment = "<< mu_s << " (mu_b)" << std::endl;
 		d_z = cfg.lookup("MaterialConsts.d_z");
+		std::cout << "Uniaxial Anisotropy = " << d_z << " (J)" << std::endl;
 		a1 = cfg.lookup("MaterialConsts.a");
+		std::cout << "Lattice Parameter = "<< a1 << " (m)" << std::endl;
 		mu_s *= mu_b;
 		INVmu_s = 1 / mu_s;
 		thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
 		d_z_prime = 2 * ( d_z / mu_s );
-		std::cout << "TESTING " << d_z_prime;
 		lambdaPrime = 1 / (1+(lambda*lambda));
 
 		// system dimensions
 		Lx = cfg.lookup("Geom.UnitCellsInX");
 		Ly = cfg.lookup("Geom.UnitCellsInY");
 		Lz = cfg.lookup("Geom.UnitCellsInZ");
+		std::cout << "Number of unit cells = " << Lx << "x" << Ly << "x" << Lz << std::endl;
 		Nq = cfg.lookup("Geom.NumberOfSites");
+		std::cout << "Number of sites in unit cell = " << Nq << std::endl;
 		Nsublat = cfg.lookup("Geom.NumberOfSublat");
+		std::cout << "Number of sublattices = " << Nsublat << std::endl;
 		ax = 2;
 		ay = 2;
 		az = 2;
@@ -146,7 +151,6 @@ namespace params {
 
 		// Read integer site position ===========================================================================
 		Isites.resize(Nq);
-		std::cout << "Isites = " << std::endl;
 		for (int s = 0; s < Nq; s++){
 			Isites[s].resize(3);
 
@@ -242,14 +246,17 @@ namespace params {
 
 		start = cfg.lookup("Spinwaves.StartTime");
 		afmflag = cfg.lookup("Util.afmflag").c_str();  
+		format = cfg.lookup("Exchange.Format").c_str();  
 		filepath = cfg.lookup("Util.filepath").c_str();        
 		dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");
 		Jij_filename = cfg.lookup("Exchange.InputFile").c_str();        
 		Jij_units = cfg.lookup("Exchange.Units").c_str();   
 		JijCutoff = cfg.lookup("Exchange.Cutoff");    
+		std::cout << "Exhchange Cutoff = " << JijCutoff << std::endl;
 		changesign = cfg.lookup("Exchange.ChangeSign").c_str();  
 		Jijhalf = cfg.lookup("Exchange.Double_Jij");    
 		Jij_min = cfg.lookup("Exchange.CutoffEnergy");    
+		std::cout << "Exhchange Energy Minimum = " << Jij_min << " (" << Jij_units << ")" << std::endl;
 		ibtoq = cfg.lookup("Exchange.ibtoq");    
 
 	}
