@@ -12,18 +12,20 @@
 int main(){
 
 
-	double Natoms = 64000;
+	double Natoms = 108000;
 	double mu_b = 9.2740e-24;
-	double mu_s = 1.5 * mu_b;
+	double mu_s = 3.8663 * mu_b;
 	double k_B = 1.3807e-23;
-	int stemp = 0;
-	int etemp = 900;
-	int step = 10;
+	int stemp = 1600;
+	int etemp = 1605;
+	int step = 250;
 	int tstep = 10;
+	double avgstart = 50000;
+	double avgend = 1e6;
 	std::ofstream output;
 
 	std::stringstream sstr;
-	sstr << "/Volumes/ExternalHDD/Joel/Simple_Cubic/64000/FM/susfmretry.dat";
+	sstr << "/Volumes/ExternalHDD/Joel/Mn2Au_AFM_GGA/testing_relaxation_rates/sus1600.dat";
 	output.open(sstr.str());
 
 
@@ -34,11 +36,9 @@ int main(){
 
 
 			std::stringstream sstr_eq;
-			sstr_eq << "/Volumes/ExternalHDD/Joel/Simple_Cubic/64000/FM/output/mag_tsteps_fm_1e+06_T_" << T << ".txt";
-			// sstr_eq << "/Users/Hirst/Documents/PhD/LLG_code/SimpleCrystal_3D/Unai_test/test.txt";
+			sstr_eq << "/Volumes/ExternalHDD/Joel/Mn2Au_AFM_GGA/testing_relaxation_rates/ASD/mag_afm_tsteps_100000_T_" << T << ".txt";
 			int count  = 0;
-		
-			std::cout << "Reading file: " << sstr_eq.str() << std::endl;
+			std::cout << "Reading file: " << sstr_eq.str() << "\n";
 			std::ifstream input(sstr_eq.str());
 			if (!input){
 				std::cout << "ERROR: Could not open file" << std::endl;
@@ -55,8 +55,6 @@ int main(){
 			double sumysqr = 0;
 			double sumzsqr = 0;
 			double summsqr = 0;
-			double avgstart = 500000;
-			double avgend = 999990;
 			std::string line;
 
 			while (std::getline(input,line))
@@ -76,6 +74,7 @@ int main(){
 				}
 			}
 
+
 			double x = 0;
 			double y = 0;
 			double z = 0;
@@ -84,14 +83,6 @@ int main(){
 			double ysqr = 0;
 			double zsqr = 0;
 			double msqr = 0;
-			// x = sumx / ((avgend-avgstart) / tstep);
-			// y = sumy / ((avgend-avgstart) / tstep);
-			// z = sumz / ((avgend-avgstart) / tstep);
-			// m = summ / ((avgend-avgstart) / tstep);
-			// xsqr = sumxsqr / ((avgend-avgstart) / tstep);
-			// ysqr = sumysqr / ((avgend-avgstart) / tstep);
-			// zsqr = sumzsqr / ((avgend-avgstart) / tstep);
-			// msqr = summsqr / ((avgend-avgstart) / tstep);
 
 			x = sumx / count;
 			y = sumy / count;
@@ -101,9 +92,6 @@ int main(){
 			ysqr = sumysqr / count;
 			zsqr = sumzsqr / count;
 			msqr = summsqr / count;
-
-			
-			std::cout << m << "\t" << msqr << "\n";
 
 			double susX = 0;
 			double susY = 0;

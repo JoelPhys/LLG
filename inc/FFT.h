@@ -10,7 +10,6 @@
     #include <random>
     #include <algorithm>
     #include "fftw3.h"
-    // #include "params.h"
     #include "params1.h"
     #include "array2d.h"
     #include "array3d.h"
