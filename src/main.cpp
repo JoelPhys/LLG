@@ -170,6 +170,18 @@ int main(int argc, char* argv[]){
 		// ========== LOOP THROUGH TIMESTEPS ================================================================ //
 		for (int i = 0; i < params::Nt; i++){
 
+
+			if (i % 10 == 0){
+				#ifdef CUDA
+				cuglob::copy_spins_to_host();
+				#endif	
+				util::ResetMag();
+				util::SortSublat();
+				util::MagLength();
+				util::OutputMagToTerm(i);
+				// util::OutputMagToFile(i);
+			}
+
 			t = t + params::dt;
 			tau = tau + params::dtau;
 
@@ -182,16 +194,7 @@ int main(int argc, char* argv[]){
 
 
 
-			if (i % 1 == 0){
-				#ifdef CUDA
-				cuglob::copy_spins_to_host();
-				#endif	
-				util::ResetMag();
-				util::SortSublat();
-				util::MagLength();
-				util::OutputMagToTerm(i);
-				// util::OutputMagToFile(i);
-			}
+
 
 			// SPINWAVES ===================================================================================== //
 			// flip a random spin for spinwaves

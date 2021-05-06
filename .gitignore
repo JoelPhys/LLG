@@ -1,6 +1,5 @@
 output/magnetisation/*
 output/spinwaves/*
-cfg/*
 ASD
 lswt/output/*
 .DS_Store
