@@ -134,11 +134,11 @@ namespace spinwaves {
         double kpath[5][3] = {{0,0,0},{1,0,0},{1,1,0},{0,0,0},{1,1,1}};
 
         // for loop for difference between the k points
-        for (int i =0; i < 5; i++){
-            int dx = kpath[i+1][0] - kpath[i][0];
-            int dy = kpath[i+1][1] - kpath[i][1];
-            int dz = kpath[i+1][2] - kpath[i][2];
-        }
+       // for (int i =0; i < 5; i++){
+       //     int dx = kpath[i+1][0] - kpath[i][0];
+       //     int dy = kpath[i+1][1] - kpath[i][1];
+       //     int dz = kpath[i+1][2] - kpath[i][2];
+       // }
 
         double kpts = geom::IzC;      
 

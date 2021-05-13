@@ -49,7 +49,7 @@ int main(int argc, char* argv[]){
 	neigh::IntialisePointersNL();
 	util::InitUtil();
 	IdentityMatrix();
-	spinwaves::initialiseFFT();
+	//spinwaves::initialiseFFT();
 	// ======================================================================================================== //
 
 	// ======= Temperature ==================================================================================== //
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]){
 		}
 
 
-		#ifdef CUDA
+#ifdef CUDA
 		std::cout << "CUDA Simulation" << std::endl;
 		cuglob::device_info();
 		cuglob::allocate_heun_memory();
@@ -108,7 +108,7 @@ int main(int argc, char* argv[]){
 		cuint::init_device_vars();
 		cuglob::copy_thermal_to_device(thermal_fluct);
 		cuthermal::curand_generator();
-		#endif            
+#endif            
 		// ================================================================================================== //
 	}
 	if (std::string(argv[3]) == "1"){
@@ -171,26 +171,42 @@ int main(int argc, char* argv[]){
 		for (int i = 0; i < params::Nt; i++){
 
 
+			//if (i ==  params::Nt / 2) {
+			//	std::cout << "ROTATION MATRIX APPLIED" << std::endl;
+			//	Rotation();
+			//}
+
+#ifdef CUDA
+                        if (i ==  params::Nt / 2) {
+                                std::cout << "ROTATION MATRIX APPLIED" << std::endl;
+				cuint::cuRotation();
+                        }
+
+#endif
+
+
+
 			if (i % 10 == 0){
-				#ifdef CUDA
+#ifdef CUDA
 				cuglob::copy_spins_to_host();
-				#endif	
+#endif	
 				util::ResetMag();
 				util::SortSublat();
 				util::MagLength();
 				util::OutputMagToTerm(i);
-				// util::OutputMagToFile(i);
+				//std::cout << i << " " << neigh::Sx1d[0] << " " << neigh::Sy1d[0] << " " << neigh::Sz1d[0] << std::endl; 
+				util::OutputMagToFile(i);
 			}
 
 			t = t + params::dt;
 			tau = tau + params::dtau;
 
-			#ifdef CUDA
+#ifdef CUDA
 			cuthermal::gen_thermal_noise();
 			cuint::integration();
-			#else
+#else
 			neigh::Heun(thermal_fluct);
-			#endif
+#endif
 
 
 
@@ -204,16 +220,16 @@ int main(int argc, char* argv[]){
 			//     neigh::Sz1d(0) = 0;
 			// }
 
-			if ((i >= params::start) && (i % c == 0)){
-			    spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
-			    spinwaves::FFTspace();      
-			}
+			//if ((i >= params::start) && (i % c == 0)){
+			//    spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
+			//    spinwaves::FFTspace();      
+			//}
 			// ================================================================================================ //
 		}
 		// ==================================================================================================== //
 
 		// Carry out time FFT once simulation is complete
-		spinwaves::FFTtime();
+		//spinwaves::FFTtime();
 
 		// output sum of magnetisation
 		// util::OutputSumMag();
@@ -225,9 +241,9 @@ int main(int argc, char* argv[]){
 		util::CloseMagFile();
 
 		//Deallocate Device memory
-		#ifdef CUDA 
+#ifdef CUDA 
 		cuthermal::destroy_generator();
-		#endif
+#endif
 	}
 
 	return 0;

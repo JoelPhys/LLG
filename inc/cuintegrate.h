@@ -9,6 +9,7 @@ namespace cuint {
 
 	extern int threadsperbock;
 	extern int bpg;
+	void cuRotation();
 	void init_device_vars();
 	void integration();
 }

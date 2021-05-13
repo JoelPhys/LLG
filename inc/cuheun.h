@@ -15,6 +15,7 @@ namespace cuheun {
 	extern double *Htx, *Hty, *Htz;
 
 	void allocate_heun_consts();
+	extern __global__ void cuRotfun(int, double *, double *, double *);
 	extern __global__ void cuHeun1(int, double *, float *, float *, float *, int *, int *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *,  double *, double *, double *, double *, double *);
 	extern __global__ void cuHeun2(int , int *, int *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *,  double *, double *, double *, double *, double *);
 	
