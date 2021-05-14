@@ -78,9 +78,6 @@ void IdentityMatrix(){
 
 void Rotation(){
 
-	//convert degrees to radians
-	C = M_PI / 180.0;
-	double angle = C * 90;
 	double x,y,z;
 	//loop through all spins
 	for (int i = 0; i < params::Nspins; i++){
@@ -90,17 +87,14 @@ void Rotation(){
 			
 			// Asign to temporary variables to avoid overwriting each component
 			x = neigh::Sx1d[i]; 
-			y = neigh::Sy1d[i] * cos(angle) - neigh::Sz1d[i] * sin(angle);
-			z = neigh::Sy1d[i] * sin(angle) + neigh::Sz1d[i] * cos(angle);
+			y = neigh::Sy1d[i] * cos(params::angle) - neigh::Sz1d[i] * sin(params::angle);
+			z = neigh::Sy1d[i] * sin(params::angle) + neigh::Sz1d[i] * cos(params::angle);
 			
 			// assign each component to the magnetisation vector
 			neigh::Sx1d[i] = x;
 			neigh::Sy1d[i] = y;
 			neigh::Sz1d[i] = z;
 			
-			std::cout << neigh::Sx1d[i] << " "; 
-			std::cout << neigh::Sy1d[i] << " ";
-			std::cout << neigh::Sz1d[i] << std::endl;
 		}
 
 	}

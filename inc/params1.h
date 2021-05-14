@@ -30,7 +30,9 @@
 
         extern int xdimS, ydimS, zdimS, start;
         extern double dt_spinwaves;
-        
+
+	//Rotation angle
+	extern double angle;	
         
         // Specifies how the sublattices will be sorted in output
         extern std::string afmflag;

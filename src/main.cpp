@@ -172,13 +172,13 @@ int main(int argc, char* argv[]){
 
 
 			//if (i ==  params::Nt / 2) {
-			//	std::cout << "ROTATION MATRIX APPLIED" << std::endl;
+			//std::cout << "Rotation matrix applied at time t = " << std::scientific << i * params::dt << std::endl;
 			//	Rotation();
 			//}
 
 #ifdef CUDA
                         if (i ==  params::Nt / 2) {
-                                std::cout << "ROTATION MATRIX APPLIED" << std::endl;
+                                std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
 				cuint::cuRotation();
                         }
 
@@ -194,7 +194,6 @@ int main(int argc, char* argv[]){
 				util::SortSublat();
 				util::MagLength();
 				util::OutputMagToTerm(i);
-				//std::cout << i << " " << neigh::Sx1d[0] << " " << neigh::Sy1d[0] << " " << neigh::Sz1d[0] << std::endl; 
 				util::OutputMagToFile(i);
 			}
 

@@ -21,6 +21,7 @@ namespace cuheun {
 	__constant__ double c_lambda;
 	__constant__ double c_lambdap;
 	__constant__ int c_Nq;
+	__constant__ double c_angle;
 
 	void allocate_heun_consts(){
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambda), &params::lambda, sizeof(double)));
@@ -29,6 +30,7 @@ namespace cuheun {
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dzp), &params::d_z_prime, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_hdtau), &params::half_dtau, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nq), &params::Nq, sizeof(int)));
+		CUDA_CALL(cudaMemcpyToSymbol(*(&c_angle), &params::angle, sizeof(double)));
 	}
 
 
@@ -38,14 +40,13 @@ namespace cuheun {
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 	
        		if (i < N){
-			double angle = 90 * M_PI / 180;
 
 		double vec[3];
 		if (( i % c_Nq == 0) || (i % c_Nq == 3) || (i % c_Nq == 5) || (i % c_Nq == 6)) {
 
                         vec[0] = dSx1d[i];
-                        vec[1] = dSy1d[i] * cos(angle) - dSz1d[i] * sin(angle);
-                        vec[2] = dSy1d[i] * sin(angle) + dSz1d[i] * cos(angle);
+                        vec[1] = dSy1d[i] * cos(c_angle) - dSz1d[i] * sin(c_angle);
+                        vec[2] = dSy1d[i] * sin(c_angle) + dSz1d[i] * cos(c_angle);
 
 
 			dSx1d[i] = vec[0];

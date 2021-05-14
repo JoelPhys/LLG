@@ -3,6 +3,7 @@
 #include <fstream>
 #include <libconfig.h++>
 #include <ctime>
+#include <cmath>
 #include <vector>
 #include <cstdio>
 #include <iomanip>
@@ -26,6 +27,7 @@ namespace params {
 	double a1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
 	int xdimS, ydimS, zdimS, start;
 	double dt_spinwaves;
+	double angle;
 
 	int relaxtime;
 
@@ -122,6 +124,12 @@ namespace params {
 		ax = 2;
 		ay = 2;
 		az = 2;
+
+		// Angle for sublattice rotation
+		angle = cfg.lookup("angle");
+		angle *= M_PI / 180.0;
+
+
 
 		Nspins = Nq*Lx*Ly*Lz;
 		Nmoments = (Nq*Lx*Ly*Lz); 
