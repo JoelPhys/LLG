@@ -36,25 +36,23 @@ namespace cuheun {
 
 
 	__global__ void cuRotfun(int N, double *dSx1d, double  *dSy1d, double  *dSz1d){
-	
+
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
-	
-       		if (i < N){
 
-		double vec[3];
-		if (( i % c_Nq == 0) || (i % c_Nq == 3) || (i % c_Nq == 5) || (i % c_Nq == 6)) {
+		if (i < N){
 
-                        vec[0] = dSx1d[i];
-                        vec[1] = dSy1d[i] * cos(c_angle) - dSz1d[i] * sin(c_angle);
-                        vec[2] = dSy1d[i] * sin(c_angle) + dSz1d[i] * cos(c_angle);
+			double vec[3];
+			if (( i % c_Nq == 0) || (i % c_Nq == 3) || (i % c_Nq == 5) || (i % c_Nq == 6)) {
 
+                                vec[0] = dSx1d[i] * cos(c_angle) - dSy1d[i] * sin(c_angle);
+                                vec[1] = dSx1d[i] * sin(c_angle) + dSy1d[i] * cos(c_angle);
+                                vec[2] = dSz1d[i];
 
-			dSx1d[i] = vec[0];
-                        dSy1d[i] = vec[1];
-                        dSz1d[i] = vec[2];
+				dSx1d[i] = vec[0];
+				dSy1d[i] = vec[1];
+				dSz1d[i] = vec[2];
 
-
-		}
+			}
 		}
 	}
 
