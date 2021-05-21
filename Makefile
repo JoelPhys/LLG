@@ -53,7 +53,7 @@ OBJNVCC = \
 obj/cumalloc.o \
 obj/cuthermal.o \
 obj/cuheun.o \
-obj/cuintegrate.o
+obj/cufuncs.o
 
 obj/%.o: src/%.cpp
 	$(GCC) $(OPT) -DCUDA -c -o $@ $< #-I/cm/shared/apps/fftw/openmpi/gcc/64/3.3.4/include/ -I/home/b6033256/libs/libconfig-1.5/include/

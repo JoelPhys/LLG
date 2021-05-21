@@ -223,6 +223,47 @@ namespace params {
 		}
 		//=======================================================================================================
 
+		// Read external field ==============================================================================================================================================================================================
+		H_appx.resize(Nmoments);
+		H_appy.resize(Nmoments);
+		H_appz.resize(Nmoments);
+
+		H_appx.IFill(0);
+		H_appy.IFill(0);
+		H_appz.IFill(0);
+
+		Type = cfg.lookup("ExternalField.Type").c_str(); 
+		libconfig::Setting& setting1 = cfg.lookup("ExternalField");
+
+		if (Type == "Uniform") {    
+			std::cout << "Field type = " << Type << std::endl;
+			for (int a = 0; a < Nmoments; a++){     
+				H_appx(a) = setting1["Field"][0]; 
+				H_appy(a) = setting1["Field"][1]; 
+				H_appz(a) = setting1["Field"][2];
+			}   
+			std::cout << "Field values = [" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "]" << std::endl;
+		}
+		else if (Type == "Split") {   
+			std::cout << "Field type = " << Type << std::endl;           
+			for (int a = 0; a < Nmoments; a++){     
+				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 2)) {
+					H_appx(a) = setting1["Field"][0]; 
+					H_appy(a) = setting1["Field"][1]; 
+					H_appz(a) = setting1["Field"][2];
+				}
+				else if ((modfunc(params::Nq,a) == 1) || (modfunc(params::Nq,a) == 3)) {
+					H_appx(a) = -1.0 * static_cast<double>(setting1["Field"][0]); 
+					H_appy(a) = -1.0 * static_cast<double>(setting1["Field"][1]); 
+					H_appz(a) = -1.0 * static_cast<double>(setting1["Field"][2]);
+				}
+				else std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+			}
+			std::cout << "Field values = [" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "]" << std::endl;		
+		}
+		else std::cout << "WARNING: Unknown Field Type." << std::endl;
+		// =============================================================================================================================================================================================================================================================================================
+		
 		start = cfg.lookup("Spinwaves.StartTime");
 		afmflag = cfg.lookup("Util.afmflag").c_str();  
 		format = cfg.lookup("Exchange.Format").c_str();  

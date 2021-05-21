@@ -30,7 +30,7 @@
 #include "../inc/cuheun.h"
 #include "../inc/cumalloc.h"
 #include "../inc/cudefine.h"
-#include "../inc/cuintegrate.h"
+#include "../inc/cufuncs.h"
 #endif
 
 #define IMAG 1
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]){
 		}
 
 
-#ifdef CUDA
+		#ifdef CUDA
 		std::cout << "CUDA Simulation" << std::endl;
 		cuglob::device_info();
 		cuglob::allocate_heun_memory();
@@ -105,10 +105,10 @@ int main(int argc, char* argv[]){
 		cuglob::copy_spins_to_device();
 		cuglob::copy_field_to_device();
 		cuglob::copy_jij_to_device();
-		cuint::init_device_vars();
+		cufuncs::init_device_vars();
 		cuglob::copy_thermal_to_device(thermal_fluct);
 		cuthermal::curand_generator();
-#endif            
+		#endif            
 		// ================================================================================================== //
 	}
 	if (std::string(argv[3]) == "1"){
@@ -176,20 +176,20 @@ int main(int argc, char* argv[]){
 			//	Rotation();
 			//}
 
-#ifdef CUDA
-                        if (i ==  0 /*params::Nt / 2*/) {
-                                std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
-				cuint::cuRotation();
-                        }
+			#ifdef CUDA
+			if (i ==  0 /*params::Nt / 2*/) {
+				std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
+				cufuncs::cuRotation();
+			}
 
-#endif
+			#endif
 
 
 
 			if (i % 10 == 0){
-#ifdef CUDA
+				#ifdef CUDA
 				cuglob::copy_spins_to_host();
-#endif	
+				#endif	
 				util::ResetMag();
 				util::SortSublat();
 				util::MagLength();
@@ -200,12 +200,12 @@ int main(int argc, char* argv[]){
 			t = t + params::dt;
 			tau = tau + params::dtau;
 
-#ifdef CUDA
+			#ifdef CUDA
 			cuthermal::gen_thermal_noise();
-			cuint::integration();
-#else
+			cufuncs::integration();
+			#else
 			neigh::Heun(thermal_fluct);
-#endif
+			#endif
 
 
 
@@ -240,9 +240,9 @@ int main(int argc, char* argv[]){
 		util::CloseMagFile();
 
 		//Deallocate Device memory
-#ifdef CUDA 
+		#ifdef CUDA 
 		cuthermal::destroy_generator();
-#endif
+		#endif
 	}
 
 	return 0;

@@ -5,16 +5,16 @@
 #include "../inc/cumalloc.h"
 #include "../inc/cuheun.h"
 #include "../inc/cuthermal.h"
-#include "../inc/cuintegrate.h"
+#include "../inc/cufuncs.h"
 #include <iostream>
-namespace cuint {
+namespace cufuncs {
 
 	int threadsperblock;
 	int bpg;
 
 	void init_device_vars(){
-		threadsperblock = 512;
-        	bpg = (params::Nspins + threadsperblock - 1) / threadsperblock;
+		threadsperblock = 256;
+        bpg = (params::Nspins + threadsperblock - 1) / threadsperblock;
 	}
 
 	void cuRotation(){

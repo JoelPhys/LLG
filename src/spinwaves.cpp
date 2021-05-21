@@ -14,7 +14,6 @@
 #include "../inc/array3d.h"
 #include "../inc/array4d.h"
 #include "../inc/mathfuncs.h"
-#include "../inc/params.h"
 #include "../inc/geom.h"
 #include "../inc/spinwaves.h"
 #include "../inc/NeighbourList.h"

@@ -1,11 +1,11 @@
-#ifndef _CUINTEGRATE_H_
-#define _CUINTEGRATE_H_
+#ifndef _CUFUNCS_H_
+#define _CUFUNCS_H_
 
 #include <cuda.h> 
 #include <curand.h>
 #include <cuda_runtime.h>
 
-namespace cuint {
+namespace cufuncs {
 
 	extern int threadsperbock;
 	extern int bpg;
