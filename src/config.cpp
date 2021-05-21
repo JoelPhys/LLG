@@ -31,6 +31,7 @@ namespace params {
 
 	int relaxtime;
 
+	// Util variables
 	std::string afmflag;
 	std::string format;
 	std::string filepath;
@@ -54,6 +55,7 @@ namespace params {
 	double Plat[3][3];
 	double PlatINV[3][3];
 
+	// Site positions 
 	std::vector< std::vector<double> > sites;
 	std::vector< std::vector<double> > Isites;
 	std::vector< std::vector<double> > initm;
@@ -88,48 +90,57 @@ namespace params {
 	// Read Parameters ==========================================================================================================================================//
 	void readparams(){
 
+
+		// Global Constants
 		k_B = cfg.lookup("PhysicalConsts.BoltzmannConstant");
 		mu_b = cfg.lookup("PhysicalConsts.BohrMagneton");
 		gamma = cfg.lookup("PhysicalConsts.GyromagneticRatio");
 
+		// Time parameters
 		dt = cfg.lookup("Time.SizeOfStep");
-
 		Nt = cfg.lookup("Time.NumberOfSteps");
 		relaxtime = cfg.lookup("Time.RelaxationTime");
+		
+		// Reduced Time variables
 		dtau = gamma * dt;
 		half_dtau = 0.5 * dtau;   
 
+		// Material Constants
 		lambda = cfg.lookup("MaterialConsts.lambda");
 		mu_s = cfg.lookup("MaterialConsts.mu_s");
-		std::cout << "Magnetic Moment = "<< mu_s << " (mu_b)" << std::endl;
 		d_z = cfg.lookup("MaterialConsts.d_z");
-		std::cout << "Uniaxial Anisotropy = " << d_z << " (J)" << std::endl;
 		a1 = cfg.lookup("MaterialConsts.a");
-		std::cout << "Lattice Parameter = "<< a1 << " (m)" << std::endl;
+
 		mu_s *= mu_b;
 		INVmu_s = 1 / mu_s;
 		thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
 		d_z_prime = 2 * ( d_z / mu_s );
 		lambdaPrime = 1 / (1+(lambda*lambda));
 
+		// Print key parameters to log file
+		std::cout << "Magnetic Moment = "<< mu_s << " (mu_b)" << std::endl;
+		std::cout << "Uniaxial Anisotropy = " << d_z << " (J)" << std::endl;
+		std::cout << "Lattice Parameter = "<< a1 << " (m)" << std::endl;
+
 		// system dimensions
 		Lx = cfg.lookup("Geom.UnitCellsInX");
 		Ly = cfg.lookup("Geom.UnitCellsInY");
 		Lz = cfg.lookup("Geom.UnitCellsInZ");
-		std::cout << "Number of unit cells = " << Lx << "x" << Ly << "x" << Lz << std::endl;
 		Nq = cfg.lookup("Geom.NumberOfSites");
-		std::cout << "Number of sites in unit cell = " << Nq << std::endl;
 		Nsublat = cfg.lookup("Geom.NumberOfSublat");
-		std::cout << "Number of sublattices = " << Nsublat << std::endl;
 		ax = 2;
 		ay = 2;
 		az = 2;
 
-		// Angle for sublattice rotation
+		// Print system parameters to log file
+		std::cout << "Number of unit cells = " << Lx << "x" << Ly << "x" << Lz << std::endl;
+		std::cout << "Number of sites in unit cell = " << Nq << std::endl;
+		std::cout << "Number of sublattices = " << Nsublat << std::endl;
+
+		// Angle of sublattice rotation
 		angle = cfg.lookup("angle");
 		angle *= M_PI / 180.0;
-
-
+		
 
 		Nspins = Nq*Lx*Ly*Lz;
 		Nmoments = (Nq*Lx*Ly*Lz); 
@@ -211,46 +222,6 @@ namespace params {
 			std::cout << initm[v][0] << " " << initm[v][1] << " " << initm[v][2] << std::endl;
 		}
 		//=======================================================================================================
-
-		//Read external field
-		H_appx.resize(Nmoments);
-		H_appy.resize(Nmoments);
-		H_appz.resize(Nmoments);
-
-		H_appx.IFill(0);
-		H_appy.IFill(0);
-		H_appz.IFill(0);
-
-		Type = cfg.lookup("ExternalField.Type").c_str(); 
-		libconfig::Setting& setting1 = cfg.lookup("ExternalField");
-
-		if (Type == "Uniform") {    
-			std::cout << "Field type = " << Type << std::endl;
-			for (int a = 0; a < Nmoments; a++){     
-				H_appx(a) = setting1["Field"][0]; 
-				H_appy(a) = setting1["Field"][1]; 
-				H_appz(a) = setting1["Field"][2];
-			}   
-			std::cout << "Field values = [" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "]" << std::endl;
-		}
-		else if (Type == "Split") {   
-			std::cout << "Field type = " << Type << std::endl;           
-			for (int a = 0; a < Nmoments; a++){     
-				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 2)) {
-					H_appx(a) = setting1["Field"][0]; 
-					H_appy(a) = setting1["Field"][1]; 
-					H_appz(a) = setting1["Field"][2];
-				}
-				else if ((modfunc(params::Nq,a) == 1) || (modfunc(params::Nq,a) == 3)) {
-					H_appx(a) = -1.0 * static_cast<double>(setting1["Field"][0]); 
-					H_appy(a) = -1.0 * static_cast<double>(setting1["Field"][1]); 
-					H_appz(a) = -1.0 * static_cast<double>(setting1["Field"][2]);
-				}
-				else std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
-			}
-			std::cout << "Field values = [" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "]" << std::endl;		
-		}
-		else std::cout << "WARNING: Unknown Field Type." << std::endl;
 
 		start = cfg.lookup("Spinwaves.StartTime");
 		afmflag = cfg.lookup("Util.afmflag").c_str();  

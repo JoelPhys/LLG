@@ -12,20 +12,20 @@
 int main(){
 
 
-	double Natoms = 32000;
+	double Natoms = 108000;
 	double mu_b = 9.2740e-24;
-	double mu_s = 1.5 * mu_b;
+	double mu_s = 3.8663 * mu_b;
 	double k_B = 1.3807e-23;
-	int stemp = 25;
-	int etemp = 801;
-	int step = 25;
+	int stemp = 0;
+	int etemp = 1401;
+	int step = 100;
 	int tstep = 10;
-	double avgstart = 50000;
-	double avgend = 600000;
+	double avgstart = 100000;
+	double avgend = 200000;
 	std::ofstream output;
 
 	std::stringstream sstr;
-	sstr << "/Volumes/ExternalHDD/Joel/Simple_Cubic/64000/AFM_with_unaxial_anisotropy/dz_5e-22/susfm.dat";
+	sstr << "/home/sr4871/PhD/materials/mn2au/AFMR/ASD/attempt2susfm.dat";
 	output.open(sstr.str());
 
 
@@ -36,7 +36,7 @@ int main(){
 
 
 			std::stringstream sstr_eq;
-			sstr_eq << "/Volumes/ExternalHDD/Joel/Simple_Cubic/64000/AFM_with_unaxial_anisotropy/dz_5e-22/ASD/mag_afm_tsteps_1e+06_T_" << T << ".txt";
+			sstr_eq << "/home/sr4871/PhD/materials/mn2au/AFMR/ASD/attempt2/mag_tsteps_200000_T_" << std::setfill('0') << std::setw(4) << T << ".txt";
 			int count  = 0;
 			std::cout << "Reading file: " << sstr_eq.str() << "\n";
 			std::ifstream input(sstr_eq.str());

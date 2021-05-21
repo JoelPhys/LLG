@@ -42,7 +42,7 @@ namespace cuheun {
 		if (i < N){
 
 			double vec[3];
-			if (( i % c_Nq == 0) || (i % c_Nq == 3) || (i % c_Nq == 5) || (i % c_Nq == 6)) {
+			if (( i % c_Nq == 1) || (i % c_Nq == 3)) {
 
                                 vec[0] = dSx1d[i] * cos(c_angle) - dSy1d[i] * sin(c_angle);
                                 vec[1] = dSx1d[i] * sin(c_angle) + dSy1d[i] * cos(c_angle);

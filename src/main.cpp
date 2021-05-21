@@ -177,7 +177,7 @@ int main(int argc, char* argv[]){
 			//}
 
 #ifdef CUDA
-                        if (i ==  params::Nt / 2) {
+                        if (i ==  0 /*params::Nt / 2*/) {
                                 std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
 				cuint::cuRotation();
                         }
