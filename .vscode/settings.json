@@ -82,5 +82,6 @@
         "typeindex": "cpp",
         "variant": "cpp",
         "*.h++": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

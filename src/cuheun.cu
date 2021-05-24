@@ -158,27 +158,6 @@ namespace cuheun {
 		}
 	}
 
-	void testing(){
 
-		Array<double> testingx;
-		Array<double> testingy, testingz;
-		double sumx = 0;
-		double sumy = 0;
-		double sumz = 0;
-		testingx.resize(params::Nspins);
-		testingy.resize(params::Nspins);
-		testingz.resize(params::Nspins);
-
-		CUDA_CALL(cudaMemcpy(testingx.ptr(), Sdashnx, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
-		CUDA_CALL(cudaMemcpy(testingy.ptr(), Sdashny, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
-		CUDA_CALL(cudaMemcpy(testingz.ptr(), Sdashnz, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
-
-		for (int i = 0; i < params::Nspins; i++){
-			sumx += testingx[i];
-			sumy += testingy[i];
-			sumz += testingz[i];
-		}
-		std::cout << sumx << " " << sumy << " " << sumz << std::endl;	
-	}
 
 }

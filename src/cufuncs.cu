@@ -6,7 +6,10 @@
 #include "../inc/cuheun.h"
 #include "../inc/cuthermal.h"
 #include "../inc/cufuncs.h"
+#include "../inc/cufields.h"
+#include "../inc/fields.h"
 #include <iostream>
+
 namespace cufuncs {
 
 	int threadsperblock;
@@ -15,6 +18,10 @@ namespace cufuncs {
 	void init_device_vars(){
 		threadsperblock = 256;
         bpg = (params::Nspins + threadsperblock - 1) / threadsperblock;
+	}
+
+	void cuSquarePulse(double time){
+		cufields::square_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::start_time, fields::end_time, fields::height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 	}
 
 	void cuRotation(){

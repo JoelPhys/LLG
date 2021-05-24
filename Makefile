@@ -44,6 +44,7 @@ obj/main.o \
 obj/NeighbourList.o \
 obj/mathfuncs.o \
 obj/config.o \
+obj/fields.o \
 obj/geom.o \
 obj/error.o \
 obj/spinwaves.o \
@@ -52,6 +53,7 @@ obj/util.o
 OBJNVCC = \
 obj/cumalloc.o \
 obj/cuthermal.o \
+obj/cufields.o \
 obj/cuheun.o \
 obj/cufuncs.o
 

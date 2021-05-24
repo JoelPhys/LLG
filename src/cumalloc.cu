@@ -7,6 +7,8 @@
 #include "../inc/cuheun.h"
 #include "../inc/cuthermal.h"
 #include "../inc/cudefine.h"
+#include "../inc/fields.h"
+
 
 namespace cuglob {
 
@@ -122,9 +124,9 @@ namespace cuglob {
 	}
 
 	void copy_field_to_device(){
-		CUDA_CALL(cudaMemcpy(Hapx, params::H_appx.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
-		CUDA_CALL(cudaMemcpy(Hapy, params::H_appy.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
-		CUDA_CALL(cudaMemcpy(Hapz, params::H_appz.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(Hapx, fields::H_appx.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(Hapy, fields::H_appy.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(Hapz, fields::H_appz.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
 	}
 
 	void copy_thermal_to_device(double Thermal_Fluct){

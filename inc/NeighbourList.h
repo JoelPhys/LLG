@@ -9,7 +9,8 @@
     #include <iomanip>
     #include <random>
     #include <algorithm>
-    // #include "params.h"
+    #include "params1.h"
+    #include "array.h"
     #include "array.h"
     #include "array2d.h"
     #include "array3d.h"

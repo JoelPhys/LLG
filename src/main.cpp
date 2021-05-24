@@ -14,6 +14,7 @@
 #include "../inc/array4d.h"
 #include "../inc/mathfuncs.h"
 #include "../inc/params1.h"
+#include "../inc/fields.h"
 #include "../inc/geom.h"
 #include "../inc/NeighbourList.h"
 #include "../inc/util.h"
@@ -21,13 +22,13 @@
 #include "../inc/spinwaves.h"
 
 //Cuda Header files
-
 #ifdef CUDA
 #include <cuda.h>
 #include <curand.h>
 #include <cuda_runtime.h>
 #include "../inc/cuthermal.h"
 #include "../inc/cuheun.h"
+#include "../inc/cufields.h"
 #include "../inc/cumalloc.h"
 #include "../inc/cudefine.h"
 #include "../inc/cufuncs.h"
@@ -41,6 +42,7 @@ int main(int argc, char* argv[]){
 	// functions ============================================================================================== //
 	params::intitialiseConfig(argv[1]); 
 	params::readparams();
+	fields::readfields();
 	geom::CreateLattice();
 	geom::CountDistinct();
 	geom::CreateIntLattice();
@@ -177,11 +179,10 @@ int main(int argc, char* argv[]){
 			//}
 
 			#ifdef CUDA
-			if (i ==  0 /*params::Nt / 2*/) {
-				std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
-				cufuncs::cuRotation();
-			}
-
+			// if (i ==  0 /*params::Nt / 2*/) {
+			// 	std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
+			// 	cufuncs::cuRotation();
+			// }
 			#endif
 
 
@@ -201,6 +202,7 @@ int main(int argc, char* argv[]){
 			tau = tau + params::dtau;
 
 			#ifdef CUDA
+			cufuncs::cuSquarePulse(static_cast<double>(i));
 			cuthermal::gen_thermal_noise();
 			cufuncs::integration();
 			#else

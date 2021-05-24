@@ -8,9 +8,10 @@
 #include <random>
 #include <algorithm>
 #include "../inc/mathfuncs.h"
-// #include "params.h"
+#include "../inc/fields.h"
 #include "../inc/params1.h"
 #include "../inc/geom.h"
+#include "../inc/array.h"
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
 #include "../inc/libconfig.h++"
@@ -401,9 +402,9 @@ namespace neigh {
                 counting++;
             }
 
-            H_new[0] = H_thermal(a,0) + params::H_appx(a) + H_ani[0] + H_exch[0];
-            H_new[1] = H_thermal(a,1) + params::H_appy(a) + H_ani[1] + H_exch[1];
-            H_new[2] = H_thermal(a,2) + params::H_appz(a) + H_ani[2] + H_exch[2];
+            H_new[0] = H_thermal(a,0) + fields::H_appx(a) + H_ani[0] + H_exch[0];
+            H_new[1] = H_thermal(a,1) + fields::H_appy(a) + H_ani[1] + H_exch[1];
+            H_new[2] = H_thermal(a,2) + fields::H_appz(a) + H_ani[2] + H_exch[2];
 
             ScrossP[0] = Sx1d(a);
             ScrossP[1] = Sy1d(a);
@@ -450,9 +451,9 @@ namespace neigh {
                 counting++;
             }
 
-            H_new_dash[0] = H_thermal(a,0) + params::H_appx(a) + H_ani_dash[0] + H_exch_dash[0];
-            H_new_dash[1] = H_thermal(a,1) + params::H_appy(a) + H_ani_dash[1] + H_exch_dash[1];
-            H_new_dash[2] = H_thermal(a,2) + params::H_appz(a) + H_ani_dash[2] + H_exch_dash[2];
+            H_new_dash[0] = H_thermal(a,0) + fields::H_appx(a) + H_ani_dash[0] + H_exch_dash[0];
+            H_new_dash[1] = H_thermal(a,1) + fields::H_appy(a) + H_ani_dash[1] + H_exch_dash[1];
+            H_new_dash[2] = H_thermal(a,2) + fields::H_appz(a) + H_ani_dash[2] + H_exch_dash[2];
 
             // Calculate Corrector and Normalise
 

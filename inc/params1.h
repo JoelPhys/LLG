@@ -20,10 +20,6 @@
 
         extern double lambda, lambdaPrime, mu_s, INVmu_s, d_z, thermal_const, d_z_prime;
 
-        extern Array<double> H_appx;
-        extern Array<double> H_appy;
-        extern Array<double> H_appz;
-
         extern int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
         extern int Idx, Idy, Idz; // For integer lattice
         extern double a1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
