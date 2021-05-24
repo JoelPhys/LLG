@@ -69,9 +69,13 @@ namespace fields {
 			std::cout << "Field values = [" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << std::endl;
 		}
 		else if (Type == "Square_Pulse"){
+			std::cout << "Field type = " << Type << std::endl;
 			height = params::cfg.lookup("ExternalField.height");
 			start_time = params::cfg.lookup("ExternalField.start_time");
 			end_time = params::cfg.lookup("ExternalField.end_time");
+			std::cout << "Start time of pulse = " << start_time << " timesteps \n";
+			std::cout << "End time of pulse = " << end_time << " timesteps \n";
+			std::cout << "Magniture of pulse = " << height << " (T) \n";
 		}
 		else std::cout << "WARNING: Unknown Field Type." << std::endl;
 
