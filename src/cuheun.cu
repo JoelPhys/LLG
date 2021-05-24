@@ -15,6 +15,8 @@ namespace cuheun {
 	double *DelSx, *DelSy, *DelSz;
 	double *Htx, *Hty, *Htz;  
 
+	__constant__ double c_dxp;	
+	__constant__ double c_dyp;
 	__constant__ double c_dzp;
 	__constant__ double c_dtau; 
 	__constant__ double c_hdtau; 
@@ -27,6 +29,8 @@ namespace cuheun {
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambda), &params::lambda, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambdap), &params::lambdaPrime, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dtau), &params::dtau, sizeof(double)));
+		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dxp), &params::d_x_prime, sizeof(double)));
+		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dyp), &params::d_y_prime, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dzp), &params::d_z_prime, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_hdtau), &params::half_dtau, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nq), &params::Nq, sizeof(int)));
@@ -65,7 +69,7 @@ namespace cuheun {
 			Hty[a] = static_cast<double>(gvalsy1[a]) * Thermal_Fluct[a];
 			Htz[a] = static_cast<double>(gvalsz1[a]) * Thermal_Fluct[a];
 
-			double Han[3] = {0.0, 0.0, c_dzp * dSz1d[a]};
+			double Han[3] = {c_dxp * dSx1d[a], c_dyp * dSy1d[a], c_dzp * dSz1d[a]};
 			double Hex[3] = {0.0, 0.0, 0.0};
 			int counting = dx_adj1[a];
 
@@ -113,7 +117,7 @@ namespace cuheun {
 		const int a = blockDim.x * blockIdx.x + threadIdx.x;
 
 		if (a < N){
-			double Han_dash[3] = {0.0, 0.0, c_dzp * Sdashnz[a]};
+			double Han_dash[3] = {c_dxp * Sdashnx[a], c_dyp * Sdashny[a], c_dzp * Sdashnz[a]};
 			double Hex_dash[3] = {0.0, 0.0, 0.0};
 			int counting = dx_adj1[a];
 

@@ -187,7 +187,7 @@ int main(int argc, char* argv[]){
 
 
 
-			if (i % 10 == 0){
+			if (i % 50 == 0){
 				#ifdef CUDA
 				cuglob::copy_spins_to_host();
 				#endif	

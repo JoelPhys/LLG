@@ -18,7 +18,11 @@
         extern double dt, Nt, dtau, half_dtau;   
         extern int relaxtime;
 
-        extern double lambda, lambdaPrime, mu_s, INVmu_s, d_z, thermal_const, d_z_prime;
+        extern double lambda, lambdaPrime, mu_s, INVmu_s, thermal_const;
+	
+	// Anisotropy
+	extern double d_x, d_y, d_z;
+	extern double d_x_prime, d_y_prime, d_z_prime;
 
         extern int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
         extern int Idx, Idy, Idz; // For integer lattice

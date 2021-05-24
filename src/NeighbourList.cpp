@@ -384,8 +384,8 @@ namespace neigh {
             // H_ani[2] = ani[2] * Sz1d(a);
 
             // Uniaxial anisotropy in Z axis
-            H_ani[0] = 0;
-            H_ani[1] = 0;
+            H_ani[0] = params::d_x_prime * Sx1d(a);
+            H_ani[1] = params::d_y_prime * Sy1d(a);
             H_ani[2] = params::d_z_prime * Sz1d(a);
 
             // Exchange interaction
@@ -434,8 +434,8 @@ namespace neigh {
             // H_ani_dash[1] = ani[1] * S_dash_normedy1d(a);
             // H_ani_dash[2] = ani[2] * S_dash_normedz1d(a);
             
-            H_ani_dash[0]= 0;
-            H_ani_dash[1]= 0;
+            H_ani_dash[0]= params::d_x_prime * S_dash_normedx1d(a);
+            H_ani_dash[1]= params::d_y_prime * S_dash_normedy1d(a);
             H_ani_dash[2]= params::d_z_prime * S_dash_normedz1d(a);
 
             H_exch_dash[0] = 0;

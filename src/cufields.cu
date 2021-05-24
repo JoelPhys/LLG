@@ -11,29 +11,29 @@
 
 namespace cufields {
 
-    __global__ void square_pulse(int N, double time, double start_time, double end_time, double height, double *Hapx, double *Hapy, double *Hapz){
+	__global__ void square_pulse(int N, double time, double start_time, double end_time, double height, double *Hapx, double *Hapy, double *Hapz){
 
-        const int i = blockDim.x*blockIdx.x + threadIdx.x;
+		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
 		if (i < N){
 
-            if ((time >= start_time) && (time < end_time)){
-                Hapx[i] = 0.0;
-                Hapy[i] = 0.0;
-                Hapz[i] = height;  
-            }
-            else {
-                Hapx[i] = 1.0;
-                Hapy[i] = 0.0;
-                Hapz[i] = 0.0; 
-            }
+			if ((time >= start_time) && (time < end_time)){
+				Hapx[i] = 0.0;
+				Hapy[i] = 0.0;
+				Hapz[i] = height;  
+			}
+			else {
+				Hapx[i] = 0.0;
+				Hapy[i] = 0.0;
+				Hapz[i] = 0.0; 
+			}
 
 		}
 
-    }
+	}
 
 
-    void testing(){
+	void testing(){
 
 		Array<double> testingx;
 		Array<double> testingy, testingz;

@@ -21,7 +21,11 @@ namespace params {
 
 	double k_B, mu_b, gamma;
 	double dt, Nt, dtau, half_dtau;   
-	double lambda, lambdaPrime, mu_s, INVmu_s, d_z, thermal_const, d_z_prime;
+	double lambda, lambdaPrime, mu_s, INVmu_s, thermal_const;
+	
+	double d_x, d_y, d_z;
+	double d_z_prime, d_x_prime, d_y_prime;
+	
 	int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
 	int Idx, Idy, Idz; // For integer lattice
 	double a1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
@@ -101,18 +105,25 @@ namespace params {
 		// Material Constants
 		lambda = cfg.lookup("MaterialConsts.lambda");
 		mu_s = cfg.lookup("MaterialConsts.mu_s");
-		d_z = cfg.lookup("MaterialConsts.d_z");
 		a1 = cfg.lookup("MaterialConsts.a");
+
+		// Anisotropy
+		d_x = cfg.lookup("Anisotropy.d_x");
+		d_y = cfg.lookup("Anisotropy.d_y");
+		d_z = cfg.lookup("Anisotropy.d_z");
+		d_x_prime = 2 * ( d_x / mu_s );
+		d_y_prime = 2 * ( d_y / mu_s );	
+		d_z_prime = 2 * ( d_z / mu_s );
+
 
 		mu_s *= mu_b;
 		INVmu_s = 1 / mu_s;
 		thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
-		d_z_prime = 2 * ( d_z / mu_s );
 		lambdaPrime = 1 / (1+(lambda*lambda));
 
 		// Print key parameters to log file
 		std::cout << "Magnetic Moment = "<< mu_s << " (mu_b)" << std::endl;
-		std::cout << "Uniaxial Anisotropy = " << d_z << " (J)" << std::endl;
+		std::cout << "Uniaxial Anisotropy = [" << d_x << " , " << d_y << " , " << d_z << "] (J)" << std::endl;
 		std::cout << "Lattice Parameter = "<< a1 << " (m)" << std::endl;
 
 		// system dimensions
