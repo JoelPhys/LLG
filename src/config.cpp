@@ -106,6 +106,8 @@ namespace params {
 		lambda = cfg.lookup("MaterialConsts.lambda");
 		mu_s = cfg.lookup("MaterialConsts.mu_s");
 		a1 = cfg.lookup("MaterialConsts.a");
+                mu_s *= mu_b;
+                INVmu_s = 1 / mu_s;
 
 		// Anisotropy
 		d_x = cfg.lookup("Anisotropy.d_x");
@@ -115,9 +117,6 @@ namespace params {
 		d_y_prime = 2 * ( d_y / mu_s );	
 		d_z_prime = 2 * ( d_z / mu_s );
 
-
-		mu_s *= mu_b;
-		INVmu_s = 1 / mu_s;
 		thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
 		lambdaPrime = 1 / (1+(lambda*lambda));
 

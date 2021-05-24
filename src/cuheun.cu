@@ -26,6 +26,7 @@ namespace cuheun {
 	__constant__ double c_angle;
 
 	void allocate_heun_consts(){
+		std::cout << "TESTING D " << params::d_x_prime << " " << params::d_y_prime << " " << params::d_z_prime << std::endl;
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambda), &params::lambda, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambdap), &params::lambdaPrime, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dtau), &params::dtau, sizeof(double)));
