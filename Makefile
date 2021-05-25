@@ -61,7 +61,7 @@ obj/%.o: src/%.cpp
 	$(GCC) $(OPT) -DCUDA -c -o $@ $< #-I/cm/shared/apps/fftw/openmpi/gcc/64/3.3.4/include/ -I/home/b6033256/libs/libconfig-1.5/include/
 
 obj/%.o: src/%.cu
-	$(NVCC) -DCUDA -G -c -o $@ $< #-I/cm/shared/apps/fftw/openmpi/gcc/64/3.3.4/include/
+	$(NVCC) -O3 -DCUDA -c -o $@ $< #-I/cm/shared/apps/fftw/openmpi/gcc/64/3.3.4/include/
 
 
 #obj/%.o: src/%.cpp
