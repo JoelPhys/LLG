@@ -53,6 +53,9 @@
 
         //atom sites
         extern double Plat[3][3];
+
+        //Boundary Conditions
+        extern std::string bc;
         
         extern std::vector< std::vector<double> > sites;
         extern std::vector< std::vector<double> > Isites; // For integer lattice

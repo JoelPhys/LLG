@@ -281,69 +281,139 @@ namespace neigh {
         x_adj.push_back(0);
 
         // ========== Neighbour List =========== //
-        if (params::Jij_units == "mRy") {
-            for (int x = 0; x < params::Lx; ++x){                // Depth
-                for (int y = 0; y < params::Ly; ++y){            // Row
-                    for (int z = 0; z < params::Lz; ++z){        // Column
-                        for (int q = 0; q < params::Nq; ++q){    // Unit Cell
-                            for (int i = 0; i < length; i++){
+        if (params::bc == "periodic"){
+            if (params::Jij_units == "mRy") {
+                for (int x = 0; x < params::Lx; ++x){                // Depth
+                    for (int y = 0; y < params::Ly; ++y){            // Row
+                        for (int z = 0; z < params::Lz; ++z){        // Column
+                            for (int q = 0; q < params::Nq; ++q){    // Unit Cell
+                                for (int i = 0; i < length; i++){
 
-                                if (q == ib[i]+params::ibtoq){
-                                    xval = modfunc(params::Lx, NxP[i] + x);
-                                    yval = modfunc(params::Ly, NyP[i] + y); 
-                                    zval = modfunc(params::Lz, NzP[i] + z);
+                                    if (q == ib[i]+params::ibtoq){
+                                        xval = modfunc(params::Lx, NxP[i] + x);
+                                        yval = modfunc(params::Ly, NyP[i] + y); 
+                                        zval = modfunc(params::Lz, NzP[i] + z);
 
-                                    qval = jb[i]+params::ibtoq;
-                                    
+                                        qval = jb[i]+params::ibtoq;
+                                        
 
-                                    adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
-                                    adjcounter++;
+                                        adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
+                                        adjcounter++;
 
-                                    Jijx_prime.push_back( ( Jijx[i]  * 2.179872e-21) / params::mu_s);
-                                    Jijy_prime.push_back( ( Jijy[i]  * 2.179872e-21) / params::mu_s);
-                                    Jijz_prime.push_back( ( Jijz[i]  * 2.179872e-21) / params::mu_s);
+                                        Jijx_prime.push_back( ( Jijx[i]  * 2.179872e-21) / params::mu_s);
+                                        Jijy_prime.push_back( ( Jijy[i]  * 2.179872e-21) / params::mu_s);
+                                        Jijz_prime.push_back( ( Jijz[i]  * 2.179872e-21) / params::mu_s);
 
+                                    }
                                 }
+                                x_adj.push_back(adjcounter);
                             }
-                            x_adj.push_back(adjcounter);
                         }
                     }
-                }
-            }  
+                }  
+            }
+            else if (params::Jij_units == "J") {
+                for (int x = 0; x < params::Lx; ++x){                // Depth
+                    for (int y = 0; y < params::Ly; ++y){            // Row
+                        for (int z = 0; z < params::Lz; ++z){        // Column
+                            for (int q = 0; q < params::Nq; ++q){    // Unit Cell
+                                for (int i = 0; i < length; i++){
+
+                                    if (q == ib[i]+params::ibtoq){
+                                        xval = modfunc(params::Lx, NxP[i] + x);
+                                        yval = modfunc(params::Ly, NyP[i] + y); 
+                                        zval = modfunc(params::Lz, NzP[i] + z);
+
+                                        qval = jb[i]+params::ibtoq;
+                                        
+                                        adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
+                                        adjcounter++;
+
+                                        Jijx_prime.push_back( ( Jijx[i] ) / params::mu_s);
+                                        Jijy_prime.push_back( ( Jijy[i] ) / params::mu_s);
+                                        Jijz_prime.push_back( ( Jijz[i] ) / params::mu_s);
+
+                                    }
+                                }
+                                x_adj.push_back(adjcounter);
+                            }
+                        }
+                    }
+                }  
+            }
+            else {
+                std::cout << "WARNING: Unknown Jij units" << std::endl;
+            }
         }
-        else if (params::Jij_units == "J") {
-            for (int x = 0; x < params::Lx; ++x){                // Depth
-                for (int y = 0; y < params::Ly; ++y){            // Row
-                    for (int z = 0; z < params::Lz; ++z){        // Column
-                        for (int q = 0; q < params::Nq; ++q){    // Unit Cell
-                            for (int i = 0; i < length; i++){
+        else if (params::bc == "open"){
+            if (params::Jij_units == "mRy") {
+                for (int x = 0; x < params::Lx; ++x){                // Depth
+                    for (int y = 0; y < params::Ly; ++y){            // Row
+                        for (int z = 0; z < params::Lz; ++z){        // Column
+                            for (int q = 0; q < params::Nq; ++q){    // Unit Cell
+                                for (int i = 0; i < length; i++){
 
-                                if (q == ib[i]+params::ibtoq){
-                                    xval = modfunc(params::Lx, NxP[i] + x);
-                                    yval = modfunc(params::Ly, NyP[i] + y); 
-                                    zval = modfunc(params::Lz, NzP[i] + z);
+                                    if (q == ib[i]+params::ibtoq){
+                                        xval = NxP[i] + x;
+                                        yval = NyP[i] + y; 
+                                        zval = NzP[i] + z;
 
-                                    qval = jb[i]+params::ibtoq;
-                                    
+                                        qval = jb[i]+params::ibtoq;
+                                        
+                                        if ((xval >= 0) && (yval >= 0) && (zval >= 0)){
+                                            adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
+                                            adjcounter++;
 
-                                    adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
-                                    adjcounter++;
-
-                                    Jijx_prime.push_back( ( Jijx[i] ) / params::mu_s);
-                                    Jijy_prime.push_back( ( Jijy[i] ) / params::mu_s);
-                                    Jijz_prime.push_back( ( Jijz[i] ) / params::mu_s);
-
+                                            Jijx_prime.push_back( ( Jijx[i]  * 2.179872e-21) / params::mu_s);
+                                            Jijy_prime.push_back( ( Jijy[i]  * 2.179872e-21) / params::mu_s);
+                                            Jijz_prime.push_back( ( Jijz[i]  * 2.179872e-21) / params::mu_s);
+                                        }
+                                    }
                                 }
+                                x_adj.push_back(adjcounter);
                             }
-                            x_adj.push_back(adjcounter);
                         }
                     }
-                }
-            }  
+                }  
+            }
+            else if (params::Jij_units == "J") {
+                for (int x = 0; x < params::Lx; ++x){                // Depth
+                    for (int y = 0; y < params::Ly; ++y){            // Row
+                        for (int z = 0; z < params::Lz; ++z){        // Column
+                            for (int q = 0; q < params::Nq; ++q){    // Unit Cell
+                                for (int i = 0; i < length; i++){
+
+                                    if (q == ib[i]+params::ibtoq){
+                                        xval = NxP[i] + x;
+                                        yval = NyP[i] + y; 
+                                        zval = NzP[i] + z;
+
+                                        qval = jb[i]+params::ibtoq;
+
+                                        if (((xval >= 0) && (yval >= 0) && (zval >= 0)) && ((xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz))) {
+                                            adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
+                                            adjcounter++;
+
+                                            Jijx_prime.push_back( ( Jijx[i] ) / params::mu_s);
+                                            Jijy_prime.push_back( ( Jijy[i] ) / params::mu_s);
+                                            Jijz_prime.push_back( ( Jijz[i] ) / params::mu_s);
+                                        }        
+                                    }
+                                }
+                                x_adj.push_back(adjcounter);
+                            }
+                        }
+                    }
+                }  
+            }
+            else {
+                std::cout << "WARNING: Unknown Jij units" << std::endl;
+            }
         }
         else {
-            std::cout << "WARNING: Unknown Jij units" << std::endl;
-        }
+            std::cout << "ERROR: Unknown Boundary Conditions" << std::endl;
+            exit(0);
+        } 
 
         double Jijsize = 0;
         for (int i = 0; i < adjncy.size() / (x_adj.size()-1); i++){
@@ -354,7 +424,7 @@ namespace neigh {
         std::cout << "length of adjncy = " << adjncy.size() << std::endl;
         std::cout << "number of neighbours = " << adjncy.size() / (x_adj.size()-1) << std::endl;
         std::cout << "length of Jij = " << Jijz_prime.size() << std::endl;
-        std::cout << "sum of neighbouring Jijs = " << Jijsize << std::endl;
+        std::cout << "sum of neighbouring Jijs = " << Jijsize << " (J)" << std::endl;
     }
 
     void Heun(double Thermal_Fluct){

@@ -49,7 +49,7 @@ namespace fields {
 				H_appy(a) = setting1["Field"][1];
 				H_appz(a) = setting1["Field"][2];
 			}
-			std::cout << "Field values = [" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << std::endl;              
+			std::cout << "Field values = [" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "] (T)" << std::endl;              
 		}
 		else if (Type == "Split") {
 			std::cout << "Field type = " << Type << std::endl;
@@ -66,7 +66,7 @@ namespace fields {
 				}
 				else std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
 			}
-			std::cout << "Field values = [" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << std::endl;
+			std::cout << "Field values = [" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "] (T)" << std::endl;
 		}
 		else if (Type == "Square_Pulse"){
 			std::cout << "Field type = " << Type << std::endl;

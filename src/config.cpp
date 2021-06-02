@@ -35,6 +35,9 @@ namespace params {
 
 	int relaxtime;
 
+	//Boundary Conditions
+	std::string bc;
+
 	// Util variables
 	std::string afmflag;
 	std::string format;
@@ -155,6 +158,9 @@ namespace params {
 		zdim = az*Lz;
 		NsitesINV = 1/(xdim*ydim*zdim);
 		zdimC = zdim/2+1;
+
+		//Boundary Conditions
+		bc = cfg.lookup("Geom.BoundaryConditions").c_str(); 
 
 		//Read Site positions ==============================================================================
 		sites.resize(Nq);

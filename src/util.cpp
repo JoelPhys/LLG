@@ -119,6 +119,67 @@ namespace util {
 				}
 			}
 		}
+		else if (params::afmflag == "NiO"){
+			for (int a = 0; a < params::Nspins; a++){   
+
+				// Total Magnetisation
+				Mt(0) += neigh::Sx1d(a);			
+				Mt(1) += neigh::Sy1d(a);
+				Mt(2) += neigh::Sz1d(a);
+
+				if (a / params::Nq % 2 == 0){
+					if (modfunc(params::Nq,a) == 0){
+						M(1,0) += neigh::Sx1d(a);
+						M(1,1) += neigh::Sy1d(a);
+						M(1,2) += neigh::Sz1d(a); 
+					}
+					else if (modfunc(params::Nq,a) == 1) {
+						M(1,0) += neigh::Sx1d(a);
+						M(1,1) += neigh::Sy1d(a);
+						M(1,2) += neigh::Sz1d(a); 
+					}
+					else if (modfunc(params::Nq,a) == 2) {
+						M(0,0) += neigh::Sx1d(a);
+						M(0,1) += neigh::Sy1d(a);
+						M(0,2) += neigh::Sz1d(a);
+					}
+					else if (modfunc(params::Nq,a) == 3) {
+						M(1,0) += neigh::Sx1d(a);
+						M(1,1) += neigh::Sy1d(a);
+						M(1,2) += neigh::Sz1d(a); 
+					}
+					else {
+						std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+						exit(0);
+					}
+				}
+				else if (a / params::Nq % 2 == 1) {
+					if (modfunc(params::Nq,a) == 0){
+						M(0,0) += neigh::Sx1d(a);
+						M(0,1) += neigh::Sy1d(a);
+						M(0,2) += neigh::Sz1d(a); 
+					}
+					else if (modfunc(params::Nq,a) == 1) {
+						M(0,0) += neigh::Sx1d(a);
+						M(0,1) += neigh::Sy1d(a);
+						M(0,2) += neigh::Sz1d(a); 
+					}
+					else if (modfunc(params::Nq,a) == 2) {
+						M(1,0) += neigh::Sx1d(a);
+						M(1,1) += neigh::Sy1d(a);
+						M(1,2) += neigh::Sz1d(a);
+					}
+					else if (modfunc(params::Nq,a) == 3) {
+						M(0,0) += neigh::Sx1d(a);
+						M(0,1) += neigh::Sy1d(a);
+						M(0,2) += neigh::Sz1d(a); 
+					}
+					else {
+						std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+					}	
+				}
+			}
+		}
 		else {
 			std::cerr << "ERROR: Unassigned afmflag" << std::endl;
 			exit(0);
