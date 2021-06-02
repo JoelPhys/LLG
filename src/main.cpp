@@ -196,6 +196,10 @@ int main(int argc, char* argv[]){
 				util::MagLength();
 				util::OutputMagToTerm(i);
 				util::OutputMagToFile(i);
+				// if ((i >= params::start)){
+			    // 	spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
+			    // 	spinwaves::FFTspace();      
+				// }
 			}
 
 			t = t + params::dt;

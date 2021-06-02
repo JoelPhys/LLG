@@ -121,6 +121,7 @@ namespace params {
 		lambdaPrime = 1 / (1+(lambda*lambda));
 
 		// Print key parameters to log file
+		std::cout << "Damping constant = " << lambda << std::endl;
 		std::cout << "Magnetic Moment = "<< mu_s << " (mu_b)" << std::endl;
 		std::cout << "Uniaxial Anisotropy = [" << d_x << " , " << d_y << " , " << d_z << "] (J)" << std::endl;
 		std::cout << "Lattice Parameter = "<< a1 << " (m)" << std::endl;

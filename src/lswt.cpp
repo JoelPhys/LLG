@@ -67,7 +67,7 @@ int main(int argc, char* argv[]){
     
     // std::ifstream input("../Mn2Au/mn2au-lmto-jij_new/rsj-gga-af-p3.mn2au");
     // std::ifstream input("../../SimpleCrystal_3D/input/SC_test1.dat");
-    std::ifstream input("../../Fe/BCC_testlswt.dat");
+    std::ifstream input("BCC_testlswt.dat");
     double a, b, c, d, e, f;
     std::vector<double> Nx;
     std::vector<double> Ny;
@@ -168,7 +168,7 @@ int main(int argc, char* argv[]){
     // ======================================================================================================
 
     std::stringstream sstr;
-    sstr << "output/bcc_fm_lswt_" << Magnetisation << ".txt";
+    sstr << "../output/bcc_fm_lswt_" << Magnetisation << ".txt";
     std::ofstream myfile;
     myfile.open(sstr.str());
 
@@ -177,7 +177,7 @@ int main(int argc, char* argv[]){
 
         std::cout << z << std::endl;    
 
-        yval = Magnetisation * (gamma1 / (dz * 2 * M_PI * mu_s)) * (J0 - FFTJzz(0,0,z)[0]);
+        yval = Magnetisation * (gamma1 / (2 * M_PI * mu_s)) * (J0 - FFTJzz(0,0,z)[0]);
         xval = z * ((2 * M_PI) / a1)/ IzC;
         myfile << xval << " " << yval << "\n";
 

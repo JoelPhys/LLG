@@ -254,7 +254,7 @@ namespace spinwaves {
             int n = icount/2;
             int s = icount/2 + icount/2 - 1;
             int mean = icount/4;
-            double sg = 10;
+            double sg = 30;
             double sum = 0;
             double g[n];
             double w[s];

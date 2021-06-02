@@ -84,23 +84,23 @@ void Rotation(){
 
 		//Find spins in the second sublattice
 		if ((modfunc(params::Nq,i) == 0) || (modfunc(params::Nq,i) == 3) || (modfunc(params::Nq,i) == 5) || (modfunc(params::Nq,i) == 6)) {
-			
+
 			// Asign to temporary variables to avoid overwriting each component
 			x = neigh::Sx1d[i]; 
 			y = neigh::Sy1d[i] * cos(params::angle) - neigh::Sz1d[i] * sin(params::angle);
 			z = neigh::Sy1d[i] * sin(params::angle) + neigh::Sz1d[i] * cos(params::angle);
-			
+
 			// assign each component to the magnetisation vector
 			neigh::Sx1d[i] = x;
 			neigh::Sy1d[i] = y;
 			neigh::Sz1d[i] = z;
-			
+
 		}
 
 	}
 
 
-	}
+}
 
 
 
@@ -109,71 +109,71 @@ void Rotation(){
 
 
 
-	// void Rotation(){
+// void Rotation(){
 
-	//             //normalise M
-	//             Mnew[0] = util::M(0,0) / params::NmomentsSubLat;
-	//             Mnew[1] = util::M(0,1) / params::NmomentsSubLat;
-	//             Mnew[2] = util::M(0,2) / params::NmomentsSubLat;
+//             //normalise M
+//             Mnew[0] = util::M(0,0) / params::NmomentsSubLat;
+//             Mnew[1] = util::M(0,1) / params::NmomentsSubLat;
+//             Mnew[2] = util::M(0,2) / params::NmomentsSubLat;
 
-	//             norm = sqrt(Mnew[0] * Mnew[0] + Mnew[1] * Mnew[1] + Mnew[2] * Mnew[2]);
+//             norm = sqrt(Mnew[0] * Mnew[0] + Mnew[1] * Mnew[1] + Mnew[2] * Mnew[2]);
 
-	//             Mu[0] = Mnew[0] / norm;
-	//             Mu[1] = Mnew[1] / norm;
-	//             Mu[2] = Mnew[2] / norm;
+//             Mu[0] = Mnew[0] / norm;
+//             Mu[1] = Mnew[1] / norm;
+//             Mu[2] = Mnew[2] / norm;
 
-	//             C = Mu[0] * xu[0] + Mu[1] * xu[1] + Mu[2] * xu[2]; 
+//             C = Mu[0] * xu[0] + Mu[1] * xu[1] + Mu[2] * xu[2]; 
 
-	//             D[0] = Mu[1] * xu[2] - Mu[2] * xu[1]; 
-	//             D[1] = Mu[2] * xu[0] - Mu[0] * xu[2]; 
-	//             D[2] = Mu[0] * xu[1] - Mu[1] * xu[0]; 
+//             D[0] = Mu[1] * xu[2] - Mu[2] * xu[1]; 
+//             D[1] = Mu[2] * xu[0] - Mu[0] * xu[2]; 
+//             D[2] = Mu[0] * xu[1] - Mu[1] * xu[0]; 
 
-	//             X[0][0] = 0;
-	//             X[0][1] = -1 * D[2];
-	//             X[0][2] = D[1];
-	//             X[1][0] = D[2];
-	//             X[1][1] = 0;
-	//             X[1][2] = -1 * D[0];
-	//             X[2][0] = -1 * D[1];
-	//             X[2][1] = D[0];
-	//             X[2][2] = 0;
+//             X[0][0] = 0;
+//             X[0][1] = -1 * D[2];
+//             X[0][2] = D[1];
+//             X[1][0] = D[2];
+//             X[1][1] = 0;
+//             X[1][2] = -1 * D[0];
+//             X[2][0] = -1 * D[1];
+//             X[2][1] = D[0];
+//             X[2][2] = 0;
 
-	//             norm1 = sqrt(D[0] * D[0] + D[1] * D[1] + D[2] * D[2]); 
+//             norm1 = sqrt(D[0] * D[0] + D[1] * D[1] + D[2] * D[2]); 
 
-	//             for (int w = 0; w < 3; w++){
-	//                 for (int e = 0; e < 3; e++){
-	//                     Xsqr[w][e] = 0;
-	//                 }
-	//             }
+//             for (int w = 0; w < 3; w++){
+//                 for (int e = 0; e < 3; e++){
+//                     Xsqr[w][e] = 0;
+//                 }
+//             }
 
-	//             for (int w = 0; w < 3; w++){
-	//                 for (int e = 0; e < 3; e++){
-	//                     for (int r = 0; r < 3; r++){
-	//                         Xsqr[w][e] += X[w][r] * X[r][e];
-	//                     }
-	//                 }
-	//             }
+//             for (int w = 0; w < 3; w++){
+//                 for (int e = 0; e < 3; e++){
+//                     for (int r = 0; r < 3; r++){
+//                         Xsqr[w][e] += X[w][r] * X[r][e];
+//                     }
+//                 }
+//             }
 
-	//             for (int w = 0; w < 3; w++){
-	//                 for (int e = 0; e < 3; e++){
-	//                     R(w,e) = Id(w,e) + X[w][e] + ( (1 - C) / (norm1*norm1) ) * Xsqr[w][e];
-	//                 }
-	//             }
+//             for (int w = 0; w < 3; w++){
+//                 for (int e = 0; e < 3; e++){
+//                     R(w,e) = Id(w,e) + X[w][e] + ( (1 - C) / (norm1*norm1) ) * Xsqr[w][e];
+//                 }
+//             }
 
-	//             for (int a = 0; a < params::Nspins; a++){     
-	//                     Stest[0] = R(0,0) * neigh::Sx1d[a] + R(0,1) * neigh::Sy1d[a] + R(0,2) * neigh::Sz1d[a];
-	//                     Stest[1] = R(1,0) * neigh::Sx1d[a] + R(1,1) * neigh::Sy1d[a] + R(1,2) * neigh::Sz1d[a];
-	//                     Stest[2] = R(2,0) * neigh::Sx1d[a] + R(2,1) * neigh::Sy1d[a] + R(2,2) * neigh::Sz1d[a];
+//             for (int a = 0; a < params::Nspins; a++){     
+//                     Stest[0] = R(0,0) * neigh::Sx1d[a] + R(0,1) * neigh::Sy1d[a] + R(0,2) * neigh::Sz1d[a];
+//                     Stest[1] = R(1,0) * neigh::Sx1d[a] + R(1,1) * neigh::Sy1d[a] + R(1,2) * neigh::Sz1d[a];
+//                     Stest[2] = R(2,0) * neigh::Sx1d[a] + R(2,1) * neigh::Sy1d[a] + R(2,2) * neigh::Sz1d[a];
 
-	//                     neigh::Sx1d[a] = Stest[0];
-	//                     neigh::Sy1d[a] = Stest[1];
-	//                     neigh::Sz1d[a] = Stest[2];
+//                     neigh::Sx1d[a] = Stest[0];
+//                     neigh::Sy1d[a] = Stest[1];
+//                     neigh::Sz1d[a] = Stest[2];
 
-	//             }
+//             }
 
-	//             // std::cout << Stest[0] << " ";
-	//             // std::cout << R(1][0] * Mnew[0] + R(1][1] * Mnew[1] + R(1][2] * Mnew[2] << " ";
-	//             // std::cout << R(2][0] * Mnew[0] + R(2][1] * Mnew[1] + R(2][2] * Mnew[2] << std::endl;
+//             // std::cout << Stest[0] << " ";
+//             // std::cout << R(1][0] * Mnew[0] + R(1][1] * Mnew[1] + R(1][2] * Mnew[2] << " ";
+//             // std::cout << R(2][0] * Mnew[0] + R(2][1] * Mnew[1] + R(2][2] * Mnew[2] << std::endl;
 
-	// }
+// }
 

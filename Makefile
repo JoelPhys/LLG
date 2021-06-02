@@ -72,7 +72,7 @@ obj/%.o: src/%.cu
 #       $(GCC) $(OPT) -o $@ $^ $(LIBS)
 
 ASDcu: $(OBJ) $(OBJNVCC)
-	$(NVCC) -DCUDA -G -o $@ $^ $(LIBS) $(CULIBS)
+	$(NVCC) -DCUDA -O3 -o $@ $^ $(LIBS) $(CULIBS)
 
 
 clean:
