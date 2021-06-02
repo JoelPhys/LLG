@@ -84,7 +84,7 @@ void Rotation(){
 
 		//Find spins in the second sublattice
 		if ((modfunc(params::Nq,i) == 0) || (modfunc(params::Nq,i) == 3) || (modfunc(params::Nq,i) == 5) || (modfunc(params::Nq,i) == 6)) {
-
+			
 			// Asign to temporary variables to avoid overwriting each component
 			x = neigh::Sx1d[i]; 
 			y = neigh::Sy1d[i] * cos(params::angle) - neigh::Sz1d[i] * sin(params::angle);
