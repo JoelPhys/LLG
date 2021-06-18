@@ -51,7 +51,7 @@ int main(int argc, char* argv[]){
 	neigh::IntialisePointersNL();
 	util::InitUtil();
 	IdentityMatrix();
-	//spinwaves::initialiseFFT();
+	spinwaves::initialiseFFT();
 	// ======================================================================================================== //
 
 	// ======= Temperature ==================================================================================== //
@@ -81,6 +81,7 @@ int main(int argc, char* argv[]){
 
 		int count1d = 0;
 
+		if (params::afmflag != "NiO"){
 		for (int x = 0; x < params::Lx; x++){
 			for (int y = 0; y < params::Ly; y++){
 				for (int z = 0; z < params::Lz; z++){
@@ -97,7 +98,35 @@ int main(int argc, char* argv[]){
 				}
 			}
 		}
-
+		}
+		else {
+		for (int a = 0; a < params::Nspins; a++){
+			if (a / params::Nq % 2 == 0){
+				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 1) || (modfunc(params::Nq,a) == 3)) {
+					neigh::Sz1d(a) = 1.0; 
+				}
+				else if (modfunc(params::Nq,a) == 2) {
+					neigh::Sz1d(a) = -1.0;
+				}
+				else {
+					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+					exit(0);
+				}
+			}
+			else if (a / params::Nq % 2 == 1) {
+				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 1) || (modfunc(params::Nq,a) == 3)) {
+					neigh::Sz1d(a) = -1.0; 
+				}
+				else if (modfunc(params::Nq,a) == 2) {
+					neigh::Sz1d(a) = 1.0;
+				}
+				else {
+					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+					exit(0);
+				}
+			}
+		}
+		}
 
 		#ifdef CUDA
 		std::cout << "CUDA Simulation" << std::endl;
@@ -172,22 +201,14 @@ int main(int argc, char* argv[]){
 		// ========== LOOP THROUGH TIMESTEPS ================================================================ //
 		for (int i = 0; i < params::Nt; i++){
 
-
-			//if (i ==  params::Nt / 2) {
-			//std::cout << "Rotation matrix applied at time t = " << std::scientific << i * params::dt << std::endl;
-			//	Rotation();
-			//}
-
 			#ifdef CUDA
-			// if (i ==  0 /*params::Nt / 2*/) {
+			// if (i ==  params::Nt / 2) {
 			// 	std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
 			// 	cufuncs::cuRotation();
 			// }
 			#endif
 
-
-
-			if (i % 50 == 0){
+			if (i % 30 == 0){
 				#ifdef CUDA
 				cuglob::copy_spins_to_host();
 				#endif	
@@ -196,19 +217,20 @@ int main(int argc, char* argv[]){
 				util::MagLength();
 				util::OutputMagToTerm(i);
 				util::OutputMagToFile(i);
-				// if ((i >= params::start)){
-			    // 	spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
-			    // 	spinwaves::FFTspace();      
-				// }
+				if ((i >= params::start)){
+			    	spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
+			    	spinwaves::FFTspace();      
+				}
+				std::cout << neigh::Sz1d(0) << std::endl;
 			}
 
 			t = t + params::dt;
 			tau = tau + params::dtau;
 
 			#ifdef CUDA
-			cufuncs::cuSquarePulse(static_cast<double>(i));
+			// cufuncs::cuSquarePulse(static_cast<double>(i));
 			cuthermal::gen_thermal_noise();
-			cufuncs::integration();
+			cufuncs::integration(static_cast<double>(i));
 			#else
 			neigh::Heun(thermal_fluct);
 			#endif
@@ -234,7 +256,7 @@ int main(int argc, char* argv[]){
 		// ==================================================================================================== //
 
 		// Carry out time FFT once simulation is complete
-		//spinwaves::FFTtime();
+		spinwaves::FFTtime();
 
 		// output sum of magnetisation
 		// util::OutputSumMag();

@@ -24,12 +24,17 @@ namespace cufuncs {
 		cufields::square_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::start_time, fields::end_time, fields::height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 	}
 
+	void cuGaussPulse(double time){
+		cufields::gaussian_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+	}
+
+
 	void cuRotation(){
 		cuheun::cuRotfun<<<bpg,threadsperblock>>>(params::Nspins, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d); 
 	}
 
-	void integration(){
-		cuheun::cuHeun1<<<bpg,threadsperblock>>>(params::Nspins, cuglob::dtfa, cuthermal::gvalsx, cuthermal::gvalsy, cuthermal::gvalsz, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx, cuglob::dJy, cuglob::dJz, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx,  cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
-		cuheun::cuHeun2<<<bpg,threadsperblock>>>(params::Nspins, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx, cuglob::dJy, cuglob::dJz, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx, cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
+	void integration(double time){
+		cuheun::cuHeun1<<<bpg,threadsperblock>>>(params::Nspins, time, cuglob::dtfa, cuthermal::gvalsx, cuthermal::gvalsy, cuthermal::gvalsz, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx, cuglob::dJy, cuglob::dJz, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx,  cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
+		cuheun::cuHeun2<<<bpg,threadsperblock>>>(params::Nspins, time, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx, cuglob::dJy, cuglob::dJz, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx, cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
 	}
 }

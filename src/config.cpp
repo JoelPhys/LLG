@@ -23,9 +23,15 @@ namespace params {
 	double dt, Nt, dtau, half_dtau;   
 	double lambda, lambdaPrime, mu_s, INVmu_s, thermal_const;
 	
-	double d_x, d_y, d_z;
-	double d_z_prime, d_x_prime, d_y_prime;
+
+	// Uniaxial Anisotropy
+	double dxu, dyu, dzu;
+	double dzup, dxup, dyup;
 	
+	//Cubic Anisotropy
+	double dxc, dyc, dzc;
+	double dzcp, dxcp, dycp;
+
 	int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
 	int Idx, Idy, Idz; // For integer lattice
 	double a1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
@@ -112,13 +118,21 @@ namespace params {
                 mu_s *= mu_b;
                 INVmu_s = 1 / mu_s;
 
-		// Anisotropy
-		d_x = cfg.lookup("Anisotropy.d_x");
-		d_y = cfg.lookup("Anisotropy.d_y");
-		d_z = cfg.lookup("Anisotropy.d_z");
-		d_x_prime = 2 * ( d_x / mu_s );
-		d_y_prime = 2 * ( d_y / mu_s );	
-		d_z_prime = 2 * ( d_z / mu_s );
+		// Uniaxial Anisotropy
+		dxu = cfg.lookup("Uniaxial_Anisotropy.d_x");
+		dyu = cfg.lookup("Uniaxial_Anisotropy.d_y");
+		dzu = cfg.lookup("Uniaxial_Anisotropy.d_z");
+		dxup = 2 * ( dxu / mu_s );
+		dyup = 2 * ( dyu / mu_s );	
+		dzup = 2 * ( dzu / mu_s );
+
+		// Cubic Anisotropy
+		dxc = cfg.lookup("Cubic_Anisotropy.d_x");
+		dyc = cfg.lookup("Cubic_Anisotropy.d_y");
+		dzc = cfg.lookup("Cubic_Anisotropy.d_z");
+		dxcp = 2 * ( dxc / mu_s );
+		dycp = 2 * ( dyc / mu_s );	
+		dzcp = 2 * ( dzc / mu_s );
 
 		thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
 		lambdaPrime = 1 / (1+(lambda*lambda));
@@ -126,7 +140,8 @@ namespace params {
 		// Print key parameters to log file
 		std::cout << "Damping constant = " << lambda << std::endl;
 		std::cout << "Magnetic Moment = "<< mu_s << " (mu_b)" << std::endl;
-		std::cout << "Uniaxial Anisotropy = [" << d_x << " , " << d_y << " , " << d_z << "] (J)" << std::endl;
+		std::cout << "Uniaxial Anisotropy = [" << dxu << " , " << dyu << " , " << dzu << "] (J)" << std::endl;
+		std::cout << "Cubic Anisotropy = [" << dxc << " , " << dyc << " , " << dzc << "] (J)" << std::endl;
 		std::cout << "Lattice Parameter = "<< a1 << " (m)" << std::endl;
 
 		// system dimensions

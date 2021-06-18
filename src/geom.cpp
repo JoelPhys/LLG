@@ -117,10 +117,10 @@ namespace geom {
             }
         }
 
-        // for (int l = 0; l < 10; l++){
-        //     for (int m = 0; m < 10; m++){
+        // for (int l = 0; l < 8; l++){
+        //     for (int m = 0; m < 24; m++){
 
-        //         std::cout << Sx(0,l,m) <<  " ";
+        //         std::cout << Sz(1,l,m) <<  " ";
         //     }
         //     std::cout << std::endl;
         // }

@@ -29,6 +29,9 @@ namespace fields {
 	double end_time;
 	double height;
 
+	double std_dev;
+	double centre_pos;
+
 	void readfields(){
 
 		H_appx.resize(params::Nmoments);
@@ -77,7 +80,19 @@ namespace fields {
 			std::cout << "End time of pulse = " << end_time << " timesteps \n";
 			std::cout << "Magniture of pulse = " << height << " (T) \n";
 		}
-		else std::cout << "WARNING: Unknown Field Type." << std::endl;
+		else if (Type == "Gaussian_Pulse"){
+			std::cout << "Field type = " << Type << std::endl;
+			height = params::cfg.lookup("ExternalField.height");
+			centre_pos = params::cfg.lookup("ExternalField.centre");
+			std_dev = params::cfg.lookup("ExternalField.std_dev");
+			std::cout << "Central Position of Pulse = " << start_time << " timesteps \n";
+			std::cout << "Standard Deviation of Pulse = " << end_time << " timesteps \n";
+			std::cout << "Magniture of pulse = " << height << " (T) \n";
+		}
+		else {	
+			std::cout << "ERROR: Unknown Field Type." << std::endl;
+			exit(0);
+		} 
 
 	}
 }

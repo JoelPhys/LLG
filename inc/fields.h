@@ -12,6 +12,8 @@ namespace fields {
 	extern double start_time;
 	extern double end_time;
 	extern double height;
+	extern double std_dev;
+	extern double centre_pos;
 
 	void readfields();
 

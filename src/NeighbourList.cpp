@@ -32,10 +32,11 @@ namespace neigh {
 
 
     double guassian_vals[3];
-    double ani[3];
     double ani1[3];
-    double H_ani[3];
-    double H_ani_dash[3];
+    double H_uni[3];
+    double H_uni_dash[3];
+    double H_cub[3];
+    double H_cub_dash[3];
     double H_new[3];
     double H_new_dash[3];
     double S_dash[3];
@@ -91,12 +92,7 @@ namespace neigh {
         Sz1d.IFill(0);
         S_dash_normedx1d.IFill(0);
         S_dash_normedy1d.IFill(0);
-        S_dash_normedz1d.IFill(0);  
-
-
-        ani[0] = 0.0;
-        ani[1] = 0.0; 
-        ani[2] = params::d_z_prime;      
+        S_dash_normedz1d.IFill(0);     
     }
 
     void ReadFile(){
@@ -295,7 +291,7 @@ namespace neigh {
                                         zval = modfunc(params::Lz, NzP[i] + z);
 
                                         qval = jb[i]+params::ibtoq;
-                                        
+
 
                                         adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
                                         adjcounter++;
@@ -360,7 +356,7 @@ namespace neigh {
 
                                         qval = jb[i]+params::ibtoq;
                                         
-                                        if ((xval >= 0) && (yval >= 0) && (zval >= 0)){
+                                        if (((xval >= 0) && (yval >= 0) && (zval >= 0)) && ((xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz))) {
                                             adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
                                             adjcounter++;
 
@@ -390,7 +386,7 @@ namespace neigh {
 
                                         qval = jb[i]+params::ibtoq;
 
-                                        if (((xval >= 0) && (yval >= 0) && (zval >= 0)) && ((xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz))) {
+                                        if ((xval >= 0) && (yval >= 0) && (zval >= 0) && (xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz)) {
                                             adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
                                             adjcounter++;
 
@@ -429,15 +425,6 @@ namespace neigh {
 
     void Heun(double Thermal_Fluct){
 
-        // // DO I NEED TO ROTATE ANISOTROPY
-        // ani1[0] = R(0,0) * ani[0] + R(0,1) * ani[1] + R(0,2) * ani[2];
-        // ani1[1] = R(1,0) * ani[0] + R(1,1) * ani[1] + R(1,2) * ani[2];
-        // ani1[2] = R(2,0) * ani[0] + R(2,1) * ani[1] + R(2,2) * ani[2];
-
-        // ani[0] = ani1[0];
-        // ani[1] = ani1[1];
-        // ani[2] = ani1[2];
-
         for (int a = 0; a < params::Nspins; a++){
 
             for (int k = 0; k < 3; k++){
@@ -448,15 +435,15 @@ namespace neigh {
             H_thermal(a,1) = guassian_vals[1] * Thermal_Fluct;
             H_thermal(a,2) = guassian_vals[2] * Thermal_Fluct;
 
-            // Uniaxial anisotropy in Z axis
-            // H_ani[0] = ani[0] * Sx1d(a);
-            // H_ani[1] = ani[1] * Sy1d(a);
-            // H_ani[2] = ani[2] * Sz1d(a);
+            // Uniaxial anisotropy
+            H_uni[0] = params::dxup * Sx1d(a);
+            H_uni[1] = params::dyup * Sy1d(a);
+            H_uni[2] = params::dzup * Sz1d(a);
 
-            // Uniaxial anisotropy in Z axis
-            H_ani[0] = params::d_x_prime * Sx1d(a);
-            H_ani[1] = params::d_y_prime * Sy1d(a);
-            H_ani[2] = params::d_z_prime * Sz1d(a);
+            // Cubic Anisotropy
+            H_cub[0] = params::dxcp * Sx1d(a) * Sx1d(a) * Sx1d(a);
+            H_cub[1] = params::dycp * Sy1d(a) * Sy1d(a) * Sy1d(a);
+            H_cub[2] = params::dzcp * Sz1d(a) * Sz1d(a) * Sz1d(a);
 
             // Exchange interaction
             H_exch[0] = 0;
@@ -472,9 +459,9 @@ namespace neigh {
                 counting++;
             }
 
-            H_new[0] = H_thermal(a,0) + fields::H_appx(a) + H_ani[0] + H_exch[0];
-            H_new[1] = H_thermal(a,1) + fields::H_appy(a) + H_ani[1] + H_exch[1];
-            H_new[2] = H_thermal(a,2) + fields::H_appz(a) + H_ani[2] + H_exch[2];
+            H_new[0] = H_thermal(a,0) + fields::H_appx(a) + H_uni[0] + H_cub[0] + H_exch[0];
+            H_new[1] = H_thermal(a,1) + fields::H_appy(a) + H_uni[1] + H_cub[1] + H_exch[1];
+            H_new[2] = H_thermal(a,2) + fields::H_appz(a) + H_uni[2] + H_cub[2] + H_exch[2];
 
             ScrossP[0] = Sx1d(a);
             ScrossP[1] = Sy1d(a);
@@ -498,15 +485,16 @@ namespace neigh {
         }
 
         for (int a = 0; a < params::Nspins; a++){
-
-            // Uniaxial anisotropy in Z axis
-            // H_ani_dash[0] = ani[0] * S_dash_normedx1d(a);
-            // H_ani_dash[1] = ani[1] * S_dash_normedy1d(a);
-            // H_ani_dash[2] = ani[2] * S_dash_normedz1d(a);
             
-            H_ani_dash[0]= params::d_x_prime * S_dash_normedx1d(a);
-            H_ani_dash[1]= params::d_y_prime * S_dash_normedy1d(a);
-            H_ani_dash[2]= params::d_z_prime * S_dash_normedz1d(a);
+            //  Uniaxial Anisototropy
+            H_uni_dash[0]= params::dxup * S_dash_normedx1d(a);
+            H_uni_dash[1]= params::dyup * S_dash_normedy1d(a);
+            H_uni_dash[2]= params::dzup * S_dash_normedz1d(a);
+
+            // Cubic Ansisotropy
+            H_cub_dash[0]= params::dxcp * S_dash_normedx1d(a) * S_dash_normedx1d(a) * S_dash_normedx1d(a);
+            H_cub_dash[1]= params::dycp * S_dash_normedy1d(a) * S_dash_normedy1d(a) * S_dash_normedy1d(a);
+            H_cub_dash[2]= params::dzcp * S_dash_normedz1d(a) * S_dash_normedz1d(a) * S_dash_normedz1d(a);
 
             H_exch_dash[0] = 0;
             H_exch_dash[1] = 0;
@@ -521,9 +509,9 @@ namespace neigh {
                 counting++;
             }
 
-            H_new_dash[0] = H_thermal(a,0) + fields::H_appx(a) + H_ani_dash[0] + H_exch_dash[0];
-            H_new_dash[1] = H_thermal(a,1) + fields::H_appy(a) + H_ani_dash[1] + H_exch_dash[1];
-            H_new_dash[2] = H_thermal(a,2) + fields::H_appz(a) + H_ani_dash[2] + H_exch_dash[2];
+            H_new_dash[0] = H_thermal(a,0) + fields::H_appx(a) + H_uni_dash[0] + H_cub_dash[0] + H_exch_dash[0];
+            H_new_dash[1] = H_thermal(a,1) + fields::H_appy(a) + H_uni_dash[1] + H_cub_dash[1] + H_exch_dash[1];
+            H_new_dash[2] = H_thermal(a,2) + fields::H_appz(a) + H_uni_dash[2] + H_cub_dash[2] + H_exch_dash[2];
 
             // Calculate Corrector and Normalise
 

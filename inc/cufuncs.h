@@ -11,7 +11,8 @@ namespace cufuncs {
 	extern int bpg;
 	void cuRotation();
 	void cuSquarePulse(double time);
+	void cuGaussPulse(double time);
 	void init_device_vars();
-	void integration();
+	void integration(double time);
 }
 #endif

@@ -18,9 +18,9 @@ namespace cufields {
 		if (i < N){
 
 			if ((time >= start_time) && (time < end_time)){
-				Hapx[i] = 0.0;
+				Hapx[i] = height;
 				Hapy[i] = 0.0;
-				Hapz[i] = height;  
+				Hapz[i] = 0.0;  
 			}
 			else {
 				Hapx[i] = 0.0;
@@ -32,6 +32,25 @@ namespace cufields {
 
 	}
 
+	__global__ void gaussian_pulse(int N, double time, double height, double std_dev, double centre_pos,  double *Hapx, double *Hapy, double *Hapz){
+
+		const int i = blockDim.x*blockIdx.x + threadIdx.x;
+
+
+
+		if (i < N){
+
+			double gauss;
+			gauss = height * exp(-1 * (((i - centre_pos) * (i - centre_pos))/(2 * std_dev * std_dev)));
+
+			Hapx[i] = gauss;
+			Hapy[i] = 0.0;
+			Hapz[i] = 0.0; 
+
+		}
+
+
+	}
 
 	void testing(){
 

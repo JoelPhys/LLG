@@ -15,9 +15,12 @@ namespace cuheun {
 	double *DelSx, *DelSy, *DelSz;
 	double *Htx, *Hty, *Htz;  
 
-	__constant__ double c_dxp;	
-	__constant__ double c_dyp;
-	__constant__ double c_dzp;
+	__constant__ double c_dxup;	
+	__constant__ double c_dyup;
+	__constant__ double c_dzup;
+	__constant__ double c_dxcp;
+	__constant__ double c_dycp;
+	__constant__ double c_dzcp;
 	__constant__ double c_dtau; 
 	__constant__ double c_hdtau; 
 	__constant__ double c_lambda;
@@ -29,9 +32,12 @@ namespace cuheun {
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambda), &params::lambda, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambdap), &params::lambdaPrime, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dtau), &params::dtau, sizeof(double)));
-		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dxp), &params::d_x_prime, sizeof(double)));
-		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dyp), &params::d_y_prime, sizeof(double)));
-		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dzp), &params::d_z_prime, sizeof(double)));
+		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dxup), &params::dxup, sizeof(double)));
+		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dyup), &params::dyup, sizeof(double)));
+		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dzup), &params::dzup, sizeof(double)));
+		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dxcp), &params::dxcp, sizeof(double)));
+		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dycp), &params::dycp, sizeof(double)));
+		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dzcp), &params::dzcp, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_hdtau), &params::half_dtau, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nq), &params::Nq, sizeof(int)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_angle), &params::angle, sizeof(double)));
@@ -48,9 +54,9 @@ namespace cuheun {
 			double vec[3];
 			if (( i % c_Nq == 1) || (i % c_Nq == 3)) {
 
-                                vec[0] = dSx1d[i] * cos(c_angle) - dSy1d[i] * sin(c_angle);
-                                vec[1] = dSx1d[i] * sin(c_angle) + dSy1d[i] * cos(c_angle);
-                                vec[2] = dSz1d[i];
+				vec[0] = dSx1d[i] * cos(c_angle) - dSy1d[i] * sin(c_angle);
+				vec[1] = dSx1d[i] * sin(c_angle) + dSy1d[i] * cos(c_angle);
+				vec[2] = dSz1d[i];
 
 				dSx1d[i] = vec[0];
 				dSy1d[i] = vec[1];
@@ -60,7 +66,7 @@ namespace cuheun {
 		}
 	}
 
-	__global__ void cuHeun1(int N, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx, double *dJy, double *dJz, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
+	__global__ void cuHeun1(int N,  double time, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx, double *dJy, double *dJz, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
 		const int a = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -69,7 +75,16 @@ namespace cuheun {
 			Hty[a] = static_cast<double>(gvalsy1[a]) * Thermal_Fluct[a];
 			Htz[a] = static_cast<double>(gvalsz1[a]) * Thermal_Fluct[a];
 
-			double Han[3] = {c_dxp * dSx1d[a], c_dyp * dSy1d[a], c_dzp * dSz1d[a]};
+			double Huni[3];
+			Huni[0] = c_dxup * dSx1d[a]; 
+			Huni[1] = c_dyup * dSy1d[a]; 
+			Huni[2] = c_dzup * dSz1d[a]; 
+
+			double Hcub[3];
+			Hcub[0] = c_dxcp * dSx1d[a] * dSx1d[a] * dSx1d[a]; 
+			Hcub[1] = c_dycp * dSy1d[a] * dSy1d[a] * dSy1d[a]; 
+			Hcub[2] = c_dzcp * dSz1d[a] * dSz1d[a] * dSz1d[a];
+
 			double Hex[3] = {0.0, 0.0, 0.0};
 			int counting = dx_adj1[a];
 
@@ -81,9 +96,9 @@ namespace cuheun {
 			}
 
 			double Hnew[3];
-			Hnew[0] = Htx[a] + Hapx[a] + Han[0] + Hex[0];
-			Hnew[1] = Hty[a] + Hapy[a] + Han[1] + Hex[1];
-			Hnew[2] = Htz[a] + Hapz[a] + Han[2] + Hex[2];
+			Hnew[0] = Htx[a] + Hapx[a] + Huni[0] + Hcub[0] + Hex[0];
+			Hnew[1] = Hty[a] + Hapy[a] + Huni[1] + Hcub[1] + Hex[1];
+			Hnew[2] = Htz[a] + Hapz[a] + Huni[2] + Hcub[2] + Hex[2];
 
 			double SxH[3];
 			SxH[0] = dSy1d[a] * Hnew[2] - dSz1d[a] * Hnew[1];
@@ -112,12 +127,22 @@ namespace cuheun {
 		} 
 	}
 
-	__global__ void cuHeun2(int N, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx, double *dJy, double *dJz, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
+	__global__ void cuHeun2(int N, double time, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx, double *dJy, double *dJz, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
 		const int a = blockDim.x * blockIdx.x + threadIdx.x;
 
 		if (a < N){
-			double Han_dash[3] = {c_dxp * Sdashnx[a], c_dyp * Sdashny[a], c_dzp * Sdashnz[a]};
+
+			double Huni_dash[3];
+			Huni_dash[0] = c_dxup * Sdashnx[a];
+			Huni_dash[1] = c_dyup * Sdashny[a];
+			Huni_dash[2]=  c_dzup * Sdashnz[a];
+
+			double Hcub_dash[3];
+			Hcub_dash[0] = c_dxcp * Sdashnx[a] * Sdashnx[a] * Sdashnx[a];
+			Hcub_dash[1] = c_dycp * Sdashny[a] * Sdashny[a] * Sdashny[a];
+			Hcub_dash[2]=  c_dzcp * Sdashnz[a] * Sdashnz[a] * Sdashnz[a];
+
 			double Hex_dash[3] = {0.0, 0.0, 0.0};
 			int counting = dx_adj1[a];
 
@@ -131,9 +156,9 @@ namespace cuheun {
 			}
 
 			double Hnew_dash[3];
-			Hnew_dash[0] = Htx[a] + Hapx[a] + Han_dash[0] + Hex_dash[0];
-			Hnew_dash[1] = Hty[a] + Hapy[a] + Han_dash[1] + Hex_dash[1];
-			Hnew_dash[2] = Htz[a] + Hapz[a] + Han_dash[2] + Hex_dash[2];
+			Hnew_dash[0] = Htx[a] + Hapx[a] + Huni_dash[0] + Hcub_dash[0] + Hex_dash[0];
+			Hnew_dash[1] = Hty[a] + Hapy[a] + Huni_dash[1] + Hcub_dash[1] + Hex_dash[1];
+			Hnew_dash[2] = Htz[a] + Hapz[a] + Huni_dash[2] + Hcub_dash[2] + Hex_dash[2];
 
 			double SxHd[3];
 			SxHd[0] = Sdashny[a] * Hnew_dash[2] - Sdashnz[a] * Hnew_dash[1];
@@ -159,6 +184,17 @@ namespace cuheun {
 			dSx1d[a] = cinvmag1 * Sn[0];
 			dSy1d[a] = cinvmag1 * Sn[1];
 			dSz1d[a] = cinvmag1 * Sn[2];
+
+			// if (a == 0){
+			// 	double vec[3];
+			// 	vec[0] = cos(0.00001 * time);
+			// 	vec[1] = sin(0.00001 * time);
+			// 	vec[2] = 0.0;
+
+			// 	dSx1d[a] = vec[0];
+			// 	dSy1d[a] = vec[1];
+			// 	dSz1d[a] = vec[2];
+			// }
 		}
 	}
 
