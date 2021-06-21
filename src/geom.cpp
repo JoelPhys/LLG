@@ -1,6 +1,8 @@
 #include "../inc/params1.h"
 #include "../inc/array4d.h"
 #include "../inc/geom.h"
+#include "../inc/NeighbourList.h"
+#include "../inc/mathfuncs.h"
 #include <vector>
 #include <iostream>
 #include <unordered_set>
@@ -127,4 +129,66 @@ namespace geom {
 
     }
 
+    void InitSpins(){
+
+        Array4D<double> Sx4, Sy4, Sz4;
+		Sx4.resize(params::Lx, params::Ly, params::Lz, params::Nq);
+		Sy4.resize(params::Lx, params::Ly, params::Lz, params::Nq);
+		Sz4.resize(params::Lx, params::Ly, params::Lz, params::Nq);
+
+		Sx4.IFill(0);
+		Sy4.IFill(0);
+		Sz4.IFill(0);
+
+
+		int count1d = 0;
+
+		if (params::afmflag != "NiO"){
+		for (int x = 0; x < params::Lx; x++){
+			for (int y = 0; y < params::Ly; y++){
+				for (int z = 0; z < params::Lz; z++){
+					for (int q = 0; q < params::Nq; q++){
+						Sx4(x,y,z,q) = params::initm[q][0];
+						Sy4(x,y,z,q) = params::initm[q][1];
+						Sz4(x,y,z,q) = params::initm[q][2];
+
+						neigh::Sx1d(count1d + q) = Sx4(x,y,z,q);
+						neigh::Sy1d(count1d + q) = Sy4(x,y,z,q);
+						neigh::Sz1d(count1d + q) = Sz4(x,y,z,q);
+					}	
+					count1d += params::Nq; 
+				}
+			}
+		}
+		}
+		else {
+		for (int a = 0; a < params::Nspins; a++){
+			if (a / params::Nq % 2 == 0){
+				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 1) || (modfunc(params::Nq,a) == 3)) {
+					neigh::Sz1d(a) = 1.0; 
+				}
+				else if (modfunc(params::Nq,a) == 2) {
+					neigh::Sz1d(a) = -1.0;
+				}
+				else {
+					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+					exit(0);
+				}
+			}
+			else if (a / params::Nq % 2 == 1) {
+				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 1) || (modfunc(params::Nq,a) == 3)) {
+					neigh::Sz1d(a) = -1.0; 
+				}
+				else if (modfunc(params::Nq,a) == 2) {
+					neigh::Sz1d(a) = 1.0;
+				}
+				else {
+					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+					exit(0);
+				}
+			}
+		}
+		}
+
+    }
 }

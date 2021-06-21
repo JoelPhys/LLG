@@ -20,6 +20,7 @@
         void CreateLattice();     
         void CountDistinct(); 
         void CreateIntLattice();           
+        void InitSpins();
     }
 
 #endif
