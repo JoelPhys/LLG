@@ -8,6 +8,7 @@
 #include "../inc/cuthermal.h"
 #include "../inc/cudefine.h"
 #include "../inc/fields.h"
+#include "../inc/geom.h"
 
 
 namespace cuglob {
@@ -15,6 +16,7 @@ namespace cuglob {
 	double *dSx1d, *dSy1d, *dSz1d;
 	double *Hapx, *Hapy, *Hapz;
 	double *dJx, *dJy, *dJz;
+	int *dlw, *drw;
 	int *dx_adj, *dadjncy;
 	double *dtfa;
 	Array<double> pJx, pJy, pJz;
@@ -55,6 +57,8 @@ namespace cuglob {
 		CUDA_CALL(cudaFree(cuthermal::gvalsx));
 		CUDA_CALL(cudaFree(cuthermal::gvalsy));
 		CUDA_CALL(cudaFree(cuthermal::gvalsz));
+		CUDA_CALL(cudaFree(dlw));
+		CUDA_CALL(cudaFree(drw));
 		std::cout << "memory deallocated on device" << std::endl;
 	}
 
@@ -80,14 +84,13 @@ namespace cuglob {
 		CUDA_CALL(cudaMalloc((void**)&cuheun::DelSz, sizeof(double)*params::Nspins));
 		CUDA_CALL(cudaMemset(cuheun::DelSz, 0.0, sizeof(double) * params::Nspins));
 
-
 		// Stochastic Magnetic Field
-                CUDA_CALL(cudaMalloc((void**)&cuheun::Htx, sizeof(double)*params::Nspins));
-                CUDA_CALL(cudaMemset(cuheun::Htx, 0.0, sizeof(double) * params::Nspins));
-                CUDA_CALL(cudaMalloc((void**)&cuheun::Hty, sizeof(double)*params::Nspins));
-                CUDA_CALL(cudaMemset(cuheun::Hty, 0.0, sizeof(double) * params::Nspins));
-                CUDA_CALL(cudaMalloc((void**)&cuheun::Htz, sizeof(double)*params::Nspins));
-                CUDA_CALL(cudaMemset(cuheun::Htz, 0.0, sizeof(double) * params::Nspins));
+		CUDA_CALL(cudaMalloc((void**)&cuheun::Htx, sizeof(double)*params::Nspins));
+		CUDA_CALL(cudaMemset(cuheun::Htx, 0.0, sizeof(double) * params::Nspins));
+		CUDA_CALL(cudaMalloc((void**)&cuheun::Hty, sizeof(double)*params::Nspins));
+		CUDA_CALL(cudaMemset(cuheun::Hty, 0.0, sizeof(double) * params::Nspins));
+		CUDA_CALL(cudaMalloc((void**)&cuheun::Htz, sizeof(double)*params::Nspins));
+		CUDA_CALL(cudaMemset(cuheun::Htz, 0.0, sizeof(double) * params::Nspins));
 
 		//external field
 		CUDA_CALL(cudaMalloc((void**)&Hapx, sizeof(double)*params::Nspins));
@@ -105,11 +108,9 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(cuthermal::gvalsy, 0.0, sizeof(float) * params::Nspins));
 		CUDA_CALL(cudaMemset(cuthermal::gvalsz, 0.0, sizeof(float) * params::Nspins));
 
-
 		//thermal array
 		CUDA_CALL(cudaMalloc((void**)&dtfa, sizeof(double)* params::Nspins));
 		CUDA_CALL(cudaMemset(dtfa, 0.0, sizeof(double) * params::Nspins));
-
 
 		// Jij matrices
 		CUDA_CALL(cudaMalloc((void**)&dJx, sizeof(double)*neigh::Jijx_prime.size()));
@@ -117,6 +118,13 @@ namespace cuglob {
 		CUDA_CALL(cudaMalloc((void**)&dJz, sizeof(double)*neigh::Jijx_prime.size()));
 		CUDA_CALL(cudaMalloc((void**)&dx_adj, sizeof(int)*neigh::x_adj.size()));
 		CUDA_CALL(cudaMalloc((void**)&dadjncy, sizeof(int)*neigh::adjncy.size()));
+
+		// Domain Wall arrays
+		CUDA_CALL(cudaMalloc((void**)&dlw, sizeof(int)*geom::lw.size()));
+		CUDA_CALL(cudaMalloc((void**)&drw, sizeof(int)*geom::rw.size()));
+		CUDA_CALL(cudaMemset(dlw, 0.0, sizeof(int) * geom::lw.size()));
+		CUDA_CALL(cudaMemset(drw, 0.0, sizeof(int) * geom::rw.size()));
+
 
 		// clear memory at exit of program
 		atexit(clear_memory);
@@ -175,6 +183,11 @@ namespace cuglob {
 		CUDA_CALL(cudaMemcpy(dSx1d, neigh::Sx1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(dSy1d, neigh::Sy1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(dSz1d, neigh::Sz1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+	}
+
+	void copy_dw_to_device(){
+		CUDA_CALL(cudaMemcpy(dlw, geom::lw.ptr(), sizeof(int) * geom::lw.size(), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(drw, geom::rw.ptr(), sizeof(int) * geom::rw.size(), cudaMemcpyHostToDevice));
 	}
 
 	void copy_spins_to_host(){

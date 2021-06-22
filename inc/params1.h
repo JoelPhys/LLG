@@ -35,8 +35,8 @@
         extern int xdimS, ydimS, zdimS, start;
         extern double dt_spinwaves;
 
-	//Rotation angle
-	extern double angle;	
+        //Rotation angle
+        extern double angle;	
         
         // Specifies how the sublattices will be sorted in output
         extern std::string afmflag;
@@ -59,7 +59,9 @@
         extern double Plat[3][3];
 
         //Boundary Conditions
-        extern std::string bc;
+        extern std::string xbound;
+        extern std::string ybound;
+        extern std::string zbound;
         
         extern std::vector< std::vector<double> > sites;
         extern std::vector< std::vector<double> > Isites; // For integer lattice

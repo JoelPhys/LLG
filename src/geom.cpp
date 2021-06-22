@@ -1,5 +1,7 @@
 #include "../inc/params1.h"
 #include "../inc/array4d.h"
+#include "../inc/array3d.h"
+#include "../inc/array.h"
 #include "../inc/geom.h"
 #include "../inc/NeighbourList.h"
 #include "../inc/mathfuncs.h"
@@ -9,7 +11,8 @@
 
 namespace geom {
 
-
+    Array<int> lw;
+    Array<int> rw;
     Array4D<double> latticeX;
     Array4D<double> latticeY;
     Array4D<double> latticeZ;
@@ -152,9 +155,29 @@ namespace geom {
 						Sy4(x,y,z,q) = params::initm[q][1];
 						Sz4(x,y,z,q) = params::initm[q][2];
 
+                        // testing domain walls
+                        if (x < params::Lx/2){
+                            Sx4(x,y,z,q) = params::initm[q][0];
+                            Sy4(x,y,z,q) = params::initm[q][1];
+                            Sz4(x,y,z,q) = params::initm[q][2];                       
+                        }
+                        else if (x > params::Lx/2){
+                            Sx4(x,y,z,q) = -1 * params::initm[q][0];
+                            Sy4(x,y,z,q) = -1 * params::initm[q][1];
+                            Sz4(x,y,z,q) = -1 * params::initm[q][2];                         
+                        }
+                        else if (x == params::Lx/2){
+                            Sx4(x,y,z,q) = 0.0;
+                            Sz4(x,y,z,q) = 1.0;                        
+                        }
+
 						neigh::Sx1d(count1d + q) = Sx4(x,y,z,q);
 						neigh::Sy1d(count1d + q) = Sy4(x,y,z,q);
 						neigh::Sz1d(count1d + q) = Sz4(x,y,z,q);
+
+
+
+
 					}	
 					count1d += params::Nq; 
 				}
@@ -191,4 +214,28 @@ namespace geom {
 		}
 
     }
+
+    void InitDomainWall(){
+
+
+		lw.resize(params::Ly*params::Lz);
+		rw.resize(params::Ly*params::Lz);
+		lw.IFill(0);
+		rw.IFill(0);
+    
+        int inc = 0;
+
+		// find all sites when x is 0
+		for (int j = 0; j < params::Ly; j++){
+			for (int k = 0; k < params::Lz; k++){
+                lw(inc) = geom::LatCount(0,j,k,2);
+                rw(inc) = geom::LatCount(params::Lx-1,j,k,2);
+                inc++;
+			}
+		}
+
+        std::cout << "Initialised Domain Wall \n";
+
+	}
+
 }

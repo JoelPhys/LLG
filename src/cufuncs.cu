@@ -8,6 +8,7 @@
 #include "../inc/cufuncs.h"
 #include "../inc/cufields.h"
 #include "../inc/fields.h"
+#include "../inc/geom.h"
 #include <iostream>
 
 namespace cufuncs {
@@ -18,6 +19,11 @@ namespace cufuncs {
 	void init_device_vars(){
 		threadsperblock = 256;
         bpg = (params::Nspins + threadsperblock - 1) / threadsperblock;
+	}
+
+	void cuDomainWall(){
+		int nspinsdw = params::Ly*params::Lz;
+		cuheun::cuFixSpins<<<bpg,threadsperblock>>>(nspinsdw, cuglob::dlw, cuglob::drw, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d);
 	}
 
 	void cuSquarePulse(double time){

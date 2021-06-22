@@ -3,6 +3,7 @@
 #include "array4d.h"
 #include "array3d.h"
 
+
     namespace geom {
 
         extern Array4D<double> latticeX;
@@ -13,6 +14,8 @@
         extern Array3D<double> Sz;
         extern Array3D<int> Scount;
         extern Array4D<int> LatCount;
+        extern Array<int> lw;
+        extern Array<int> rw;
 
         extern int Ix, Iy, Iz, IzC;
         extern int latXsize, latYsize, latZsize, latZsizeS;
@@ -21,6 +24,7 @@
         void CountDistinct(); 
         void CreateIntLattice();           
         void InitSpins();
+        void InitDomainWall();
     }
 
 #endif

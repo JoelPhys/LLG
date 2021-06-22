@@ -10,6 +10,7 @@ namespace cufuncs {
 	extern int threadsperbock;
 	extern int bpg;
 	void cuRotation();
+	void cuDomainWall();
 	void cuSquarePulse(double time);
 	void cuGaussPulse(double time);
 	void init_device_vars();

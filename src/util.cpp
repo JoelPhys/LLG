@@ -6,6 +6,7 @@
 #include "../inc/array.h"
 #include "../inc/array2d.h"
 #include "../inc/mathfuncs.h"
+#include "../inc/geom.h"
 
 
 
@@ -19,9 +20,13 @@ namespace util {
 	Array<double> MdivMsSum;
 	Array2D<double> Msum;
 	Array2D<double> MsumSQR;
+	Array<double> sumx, sumy, sumz;
+	int lc;
+
 	int isum = 0;
 
 	std::ofstream magfile;
+	std::ofstream dwfile;
 
 	void InitUtil(){
 		Mt.resize(3);
@@ -31,12 +36,21 @@ namespace util {
 		MdivMsSum.resize(params::Nsublat);
 		Msum.resize(params::Nsublat,3);
 		MsumSQR.resize(params::Nsublat,3);
+		sumx.resize(params::Lx);
+		sumy.resize(params::Lx);
+		sumz.resize(params::Lx);
 	}
 
-	void InitOutputFile(double temp){
+	void InitMagFile(double temp){
 		std::stringstream sstr;
-		sstr << params::filepath << "mag_tsteps_" << params::Nt << "_T_" << temp << ".txt";
+		sstr << params::filepath << "mag_tsteps_" << params::Nt << "_T_" << temp << ".dat";
 		magfile.open(sstr.str());
+	}
+
+	void InitDWFile(double temp){
+		std::stringstream sstr;
+		sstr << params::filepath << "dw_T_" << temp << ".dat";
+		dwfile.open(sstr.str());
 	}
 
 	void ResetMag(){
@@ -277,6 +291,28 @@ namespace util {
 		magfile << std::flush;
 		magfile.close();
 	}
+
+	void OutputDWtoFile(int i){
+		for (int h = 0; h < params::Lx; h++){
+			sumx(h) = 0.0;
+			sumy(h) = 0.0;
+			sumz(h) = 0.0;
+			for (int j =0; j < params::Ly; j++){
+				for (int k =0; k < params::Lz; k++){
+					lc = geom::LatCount(h,j,k,2);
+					sumx(h) += neigh::Sx1d(lc);
+					sumy(h) += neigh::Sy1d(lc);
+					sumz(h) += neigh::Sz1d(lc);
+				}
+			}
+			sumx(h) /= params::Ly*params::Lz;
+			sumy(h) /= params::Ly*params::Lz;
+			sumz(h) /= params::Ly*params::Lz;
+			dwfile << sumx(h) << " " << sumy(h) << " " << sumz(h) << " ";
+		}
+		dwfile << "\n";
+	}
+
 
 
 }

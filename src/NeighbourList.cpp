@@ -277,139 +277,128 @@ namespace neigh {
         x_adj.push_back(0);
 
         // ========== Neighbour List =========== //
-        if (params::bc == "periodic"){
-            if (params::Jij_units == "mRy") {
-                for (int x = 0; x < params::Lx; ++x){                // Depth
-                    for (int y = 0; y < params::Ly; ++y){            // Row
-                        for (int z = 0; z < params::Lz; ++z){        // Column
-                            for (int q = 0; q < params::Nq; ++q){    // Unit Cell
-                                for (int i = 0; i < length; i++){
+        if (params::Jij_units == "mRy") {
+            for (int x = 0; x < params::Lx; ++x){                // Depth
+                for (int y = 0; y < params::Ly; ++y){            // Row
+                    for (int z = 0; z < params::Lz; ++z){        // Column
+                        for (int q = 0; q < params::Nq; ++q){    // Unit Cell
+                            for (int i = 0; i < length; i++){
 
-                                    if (q == ib[i]+params::ibtoq){
+                                if (q == ib[i]+params::ibtoq){
+
+                                    if (params::xbound == "periodic"){
                                         xval = modfunc(params::Lx, NxP[i] + x);
-                                        yval = modfunc(params::Ly, NyP[i] + y); 
+                                    }
+                                    else if (params::xbound == "open"){
+                                        xval = NxP[i] + x;
+                                    }
+                                    else {
+                                        std::cout << "ERROR: Unknown xbound " << std::endl;
+                                        exit(0);
+                                    }
+                                    if (params::ybound == "periodic"){
+                                        yval = modfunc(params::Ly, NyP[i] + y);
+                                    }
+                                    else if (params::ybound == "open"){
+                                        yval = NyP[i] + y; 
+                                    }
+                                    else {
+                                        std::cout << "ERROR: Unknown ybound " << std::endl;
+                                        exit(0);
+                                    }
+                                    if (params::zbound == "periodic"){
                                         zval = modfunc(params::Lz, NzP[i] + z);
+                                    }
+                                    else if (params::zbound == "open"){
+                                        zval = NzP[i] + z; 
+                                    }
+                                    else {
+                                        std::cout << "ERROR: Unknown zbound " << std::endl;
+                                        exit(0);
+                                    }
 
-                                        qval = jb[i]+params::ibtoq;
+                                    qval = jb[i]+params::ibtoq;
 
-
+                                    if (((xval >= 0) && (yval >= 0) && (zval >= 0)) && ((xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz))) {
                                         adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
                                         adjcounter++;
 
                                         Jijx_prime.push_back( ( Jijx[i]  * 2.179872e-21) / params::mu_s);
                                         Jijy_prime.push_back( ( Jijy[i]  * 2.179872e-21) / params::mu_s);
                                         Jijz_prime.push_back( ( Jijz[i]  * 2.179872e-21) / params::mu_s);
-
                                     }
                                 }
-                                x_adj.push_back(adjcounter);
                             }
+                            x_adj.push_back(adjcounter);
                         }
                     }
-                }  
-            }
-            else if (params::Jij_units == "J") {
-                for (int x = 0; x < params::Lx; ++x){                // Depth
-                    for (int y = 0; y < params::Ly; ++y){            // Row
-                        for (int z = 0; z < params::Lz; ++z){        // Column
-                            for (int q = 0; q < params::Nq; ++q){    // Unit Cell
-                                for (int i = 0; i < length; i++){
+                }
+            }  
+        }
+        else if (params::Jij_units == "J") {
+            for (int x = 0; x < params::Lx; ++x){                // Depth
+                for (int y = 0; y < params::Ly; ++y){            // Row
+                    for (int z = 0; z < params::Lz; ++z){        // Column
+                        for (int q = 0; q < params::Nq; ++q){    // Unit Cell
+                            for (int i = 0; i < length; i++){
 
-                                    if (q == ib[i]+params::ibtoq){
+                                if (q == ib[i]+params::ibtoq){
+
+                                    if (params::xbound == "periodic"){
                                         xval = modfunc(params::Lx, NxP[i] + x);
-                                        yval = modfunc(params::Ly, NyP[i] + y); 
+                                    }
+                                    else if (params::xbound == "open"){
+                                        xval = NxP[i] + x;
+                                    }
+                                    else {
+                                        std::cout << "ERROR: Unknown xbound " << std::endl;
+                                        exit(0);
+                                    }
+                                    if (params::ybound == "periodic"){
+                                        yval = modfunc(params::Ly, NyP[i] + y);
+                                    }
+                                    else if (params::ybound == "open"){
+                                        yval = NyP[i] + y; 
+                                    }
+                                    else {
+                                        std::cout << "ERROR: Unknown ybound " << std::endl;
+                                        exit(0);
+                                    }
+                                    if (params::zbound == "periodic"){
                                         zval = modfunc(params::Lz, NzP[i] + z);
+                                    }
+                                    else if (params::zbound == "open"){
+                                        zval = NzP[i] + z; 
+                                    }
+                                    else {
+                                        std::cout << "ERROR: Unknown zbound " << std::endl;
+                                        exit(0);
+                                    }
 
-                                        qval = jb[i]+params::ibtoq;
-                                        
+                                    qval = jb[i]+params::ibtoq;
+
+                                    if (((xval >= 0) && (yval >= 0) && (zval >= 0)) && ((xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz))) {
                                         adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
                                         adjcounter++;
 
                                         Jijx_prime.push_back( ( Jijx[i] ) / params::mu_s);
                                         Jijy_prime.push_back( ( Jijy[i] ) / params::mu_s);
                                         Jijz_prime.push_back( ( Jijz[i] ) / params::mu_s);
-
                                     }
                                 }
-                                x_adj.push_back(adjcounter);
                             }
+                            x_adj.push_back(adjcounter);
                         }
                     }
-                }  
-            }
-            else {
-                std::cout << "WARNING: Unknown Jij units" << std::endl;
-            }
-        }
-        else if (params::bc == "open"){
-            if (params::Jij_units == "mRy") {
-                for (int x = 0; x < params::Lx; ++x){                // Depth
-                    for (int y = 0; y < params::Ly; ++y){            // Row
-                        for (int z = 0; z < params::Lz; ++z){        // Column
-                            for (int q = 0; q < params::Nq; ++q){    // Unit Cell
-                                for (int i = 0; i < length; i++){
-
-                                    if (q == ib[i]+params::ibtoq){
-                                        xval = NxP[i] + x;
-                                        yval = NyP[i] + y; 
-                                        zval = NzP[i] + z;
-
-                                        qval = jb[i]+params::ibtoq;
-                                        
-                                        if (((xval >= 0) && (yval >= 0) && (zval >= 0)) && ((xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz))) {
-                                            adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
-                                            adjcounter++;
-
-                                            Jijx_prime.push_back( ( Jijx[i]  * 2.179872e-21) / params::mu_s);
-                                            Jijy_prime.push_back( ( Jijy[i]  * 2.179872e-21) / params::mu_s);
-                                            Jijz_prime.push_back( ( Jijz[i]  * 2.179872e-21) / params::mu_s);
-                                        }
-                                    }
-                                }
-                                x_adj.push_back(adjcounter);
-                            }
-                        }
-                    }
-                }  
-            }
-            else if (params::Jij_units == "J") {
-                for (int x = 0; x < params::Lx; ++x){                // Depth
-                    for (int y = 0; y < params::Ly; ++y){            // Row
-                        for (int z = 0; z < params::Lz; ++z){        // Column
-                            for (int q = 0; q < params::Nq; ++q){    // Unit Cell
-                                for (int i = 0; i < length; i++){
-
-                                    if (q == ib[i]+params::ibtoq){
-                                        xval = NxP[i] + x;
-                                        yval = NyP[i] + y; 
-                                        zval = NzP[i] + z;
-
-                                        qval = jb[i]+params::ibtoq;
-
-                                        if ((xval >= 0) && (yval >= 0) && (zval >= 0) && (xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz)) {
-                                            adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
-                                            adjcounter++;
-
-                                            Jijx_prime.push_back( ( Jijx[i] ) / params::mu_s);
-                                            Jijy_prime.push_back( ( Jijy[i] ) / params::mu_s);
-                                            Jijz_prime.push_back( ( Jijz[i] ) / params::mu_s);
-                                        }        
-                                    }
-                                }
-                                x_adj.push_back(adjcounter);
-                            }
-                        }
-                    }
-                }  
-            }
-            else {
-                std::cout << "WARNING: Unknown Jij units" << std::endl;
-            }
+                }
+            }  
         }
         else {
-            std::cout << "ERROR: Unknown Boundary Conditions" << std::endl;
+            std::cout << "ERROR: Unknown Jij units" << std::endl;
             exit(0);
-        } 
+        }
+
+        std::cout << x_adj[0] << " " << x_adj[1] << " " << x_adj[2] <<  std::endl;
 
         double Jijsize = 0;
         for (int i = 0; i < adjncy.size() / (x_adj.size()-1); i++){
@@ -418,7 +407,7 @@ namespace neigh {
 
         std::cout << "length of x_adj = " << x_adj.size() << std::endl;
         std::cout << "length of adjncy = " << adjncy.size() << std::endl;
-        std::cout << "number of neighbours = " << adjncy.size() / (x_adj.size()-1) << std::endl;
+        std::cout << "average number of neighbours = " << adjncy.size() / (x_adj.size()-1) << std::endl;
         std::cout << "length of Jij = " << Jijz_prime.size() << std::endl;
         std::cout << "sum of neighbouring Jijs = " << Jijsize << " (J)" << std::endl;
     }

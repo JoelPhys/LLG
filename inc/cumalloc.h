@@ -9,6 +9,7 @@ namespace cuglob {
 	extern double *Hapx, *Hapy, *Hapz;
 	extern double *dJx, *dJy, *dJz;
 	extern int *dx_adj, *dadjncy;
+	extern int *dlw, *drw;
 	extern double *dtfa;
 	extern Array<double> pJx, pJy, pJz;
 	extern Array<int> px_adj, padjncy;
@@ -21,6 +22,7 @@ namespace cuglob {
 	void allocate_device_consts();
 	void copy_spins_to_device();
 	void copy_spins_to_host();
+	void copy_dw_to_device();
 	void clear_memory();
 	void copy_thermal_to_device(double Thermal_Fluct);
 
