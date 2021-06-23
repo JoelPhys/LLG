@@ -2,6 +2,7 @@ output/magnetisation/*
 output/spinwaves/*
 ASD
 lswt/output/*
+cfg/*
 .DS_Store
 susceptability/read_files
 script.sh
