@@ -49,7 +49,7 @@ namespace util {
 
 	void InitDWFile(double temp){
 		std::stringstream sstr;
-		sstr << params::filepath << "dw_T_" << temp << ".dat";
+		sstr << params::filepath << "dw_T_" << std::setw(4) << std::setfill('0') << temp << ".dat";
 		dwfile.open(sstr.str());
 	}
 
@@ -243,7 +243,7 @@ namespace util {
 	}
 
 	void OutputMagToTerm(int i){
-		std::cout << std::fixed << i <<  " | ";
+		std::cout << std::scientific << i << " " << i * params::dt  <<  " | ";
 		for (int l = 0; l < params::Nsublat; l++){
 			for (int m = 0; m < 3; m++){
 				std::cout << std::fixed << std::setprecision(6) << M(l,m) / params::NmomentsSubLat << "\t"; 
@@ -265,7 +265,7 @@ namespace util {
 
 	void OutputMagToFile(int i){
 
-		magfile << i << " ";
+		magfile << i * params::dt << " ";
 
 		//Output sublattice magnetisation
 		for (int l = 0; l < params::Nsublat; l++){

@@ -43,7 +43,7 @@ namespace cuheun {
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_angle), &params::angle, sizeof(double)));
 	}
 
-	__global__ void cuFixSpins(int N, int *dlw, int *drw, double *dSx1d, double *dSy1d, double *dSz1d){
+	__global__ void cuFixSpins1(int N, int *dlw, int *drw, double *dSx1d, double *dSy1d, double *dSz1d){
 
 		const int a = blockDim.x * blockIdx.x + threadIdx.x;
 
@@ -56,6 +56,23 @@ namespace cuheun {
 			dSx1d[drw[a]] = -1.0;
 			dSy1d[drw[a]] =  0.0;
 			dSz1d[drw[a]] =  0.0;
+		}
+
+	}
+
+	__global__ void cuFixSpins2(int N, int *dlw, int *drw, double *Sdashnx, double *Sdashny, double *Sdashnz){
+
+		const int a = blockDim.x * blockIdx.x + threadIdx.x;
+
+		if (a < N){
+
+			Sdashnx[dlw[a]] =  1.0;
+			Sdashny[dlw[a]] =  0.0;
+			Sdashnz[dlw[a]] =  0.0;
+
+			Sdashnx[drw[a]] = -1.0;
+			Sdashny[drw[a]] =  0.0;
+			Sdashnz[drw[a]] =  0.0;
 		}
 
 	}

@@ -41,7 +41,7 @@ namespace cufields {
 		if (i < N){
 
 			double gauss;
-			gauss = height * exp(-1 * (((i - centre_pos) * (i - centre_pos))/(2 * std_dev * std_dev)));
+			gauss = height * exp(-1 * (((time - centre_pos) * (time - centre_pos))/(2 * std_dev * std_dev)));
 
 			Hapx[i] = gauss;
 			Hapy[i] = 0.0;
@@ -52,7 +52,7 @@ namespace cufields {
 
 	}
 
-	void testing(){
+	void testing(int i){
 
 		Array<double> testingx;
 		Array<double> testingy, testingz;
@@ -64,7 +64,7 @@ namespace cufields {
 		CUDA_CALL(cudaMemcpy(testingy.ptr(), cuglob::Hapy, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
 		CUDA_CALL(cudaMemcpy(testingz.ptr(), cuglob::Hapz, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
 
-		std::cout << testingx(0) << " " << testingy(0) << " " << testingz(0) << std::endl;	
+		std::cout << i << " " << testingx(0) << " " << testingy(0) << " " << testingz(0) << std::endl;	
 	}
 
 }

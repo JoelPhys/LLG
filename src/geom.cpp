@@ -156,20 +156,20 @@ namespace geom {
 						Sz4(x,y,z,q) = params::initm[q][2];
 
                         // testing domain walls
-                        if (x < params::Lx/2){
-                            Sx4(x,y,z,q) = params::initm[q][0];
-                            Sy4(x,y,z,q) = params::initm[q][1];
-                            Sz4(x,y,z,q) = params::initm[q][2];                       
-                        }
-                        else if (x > params::Lx/2){
-                            Sx4(x,y,z,q) = -1 * params::initm[q][0];
-                            Sy4(x,y,z,q) = -1 * params::initm[q][1];
-                            Sz4(x,y,z,q) = -1 * params::initm[q][2];                         
-                        }
-                        else if (x == params::Lx/2){
-                            Sx4(x,y,z,q) = 0.0;
-                            Sz4(x,y,z,q) = 1.0;                        
-                        }
+                        // if (x < params::Lx/2){
+                        //     Sx4(x,y,z,q) = params::initm[q][0];
+                        //     Sy4(x,y,z,q) = params::initm[q][1];
+                        //     Sz4(x,y,z,q) = params::initm[q][2];                       
+                        // }
+                        // else if (x > params::Lx/2){
+                        //     Sx4(x,y,z,q) = -1 * params::initm[q][0];
+                        //     Sy4(x,y,z,q) = -1 * params::initm[q][1];
+                        //     Sz4(x,y,z,q) = -1 * params::initm[q][2];                         
+                        // }
+                        // else if (x == params::Lx/2){
+                        //     Sx4(x,y,z,q) = 0.0;
+                        //     Sz4(x,y,z,q) = 1.0;                        
+                        // }
 
 						neigh::Sx1d(count1d + q) = Sx4(x,y,z,q);
 						neigh::Sy1d(count1d + q) = Sy4(x,y,z,q);
@@ -218,8 +218,8 @@ namespace geom {
     void InitDomainWall(){
 
 
-		lw.resize(params::Ly*params::Lz);
-		rw.resize(params::Ly*params::Lz);
+		lw.resize(params::Ly*params::Lz*params::Nq);
+		rw.resize(params::Ly*params::Lz*params::Nq);
 		lw.IFill(0);
 		rw.IFill(0);
     
@@ -228,9 +228,21 @@ namespace geom {
 		// find all sites when x is 0
 		for (int j = 0; j < params::Ly; j++){
 			for (int k = 0; k < params::Lz; k++){
-                lw(inc) = geom::LatCount(0,j,k,2);
-                rw(inc) = geom::LatCount(params::Lx-1,j,k,2);
-                inc++;
+                for (int q = 0; q < params::Nq; q++){
+                    if ((q == 0) || (q == 2)){
+                        lw(inc) = geom::LatCount(0,j,k,q);
+                        rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                    }
+                    else if ((q == 1) || (q == 3)){
+                        rw(inc) = geom::LatCount(0,j,k,q);
+                        lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                    }
+                    else {
+                        std::cout << "ERROR: Unable to assign domain wall \n";
+                        exit(0);
+                    }
+                    inc++;   
+                }
 			}
 		}
 

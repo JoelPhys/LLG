@@ -181,6 +181,10 @@ namespace neigh {
             }
             std::cout << "Jij input file has been read" << std::endl;
         }
+	else {
+		std::cout << "ERROR: Unknown exchange file type " << std::endl;
+		exit(0);
+	}
 
         length = Jijx.size();
         
@@ -254,7 +258,7 @@ namespace neigh {
 
         // Find inverse of lattice vectors
         Inverse3x3(params::Plat, params::PlatINV);
-
+	
         // Convert to unit cell vector
         for (int i = 0; i < length; i++){
             
@@ -267,8 +271,8 @@ namespace neigh {
             NzP[i] = nearbyint((params::PlatINV[2][0] * vecX) + (params::PlatINV[2][1] * vecY) + (params::PlatINV[2][2] * vecZ));
 
         }
-
-        int xval;
+        
+	int xval;
         int yval;
         int zval;
         int qval;

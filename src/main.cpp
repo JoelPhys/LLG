@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
 	geom::CreateLattice();
 	geom::CountDistinct();
 	geom::CreateIntLattice();
-	geom::InitDomainWall();
+	// geom::InitDomainWall();
 	neigh::ReadFile();
 	neigh::InteractionMatrix();
 	neigh::IntialisePointersNL();
@@ -81,7 +81,7 @@ int main(int argc, char* argv[]){
 		cuheun::allocate_heun_consts();
 		cuglob::copy_spins_to_device();
 		cuglob::copy_field_to_device();
-		cuglob::copy_dw_to_device();
+		//cuglob::copy_dw_to_device();
 		cuglob::copy_jij_to_device();
 		cufuncs::init_device_vars();
 		cuglob::copy_thermal_to_device(thermal_fluct);
@@ -144,7 +144,7 @@ int main(int argc, char* argv[]){
 		c = params::dt_spinwaves / params::dt;
 
 		util::InitMagFile(Temp);
-		util::InitDWFile(Temp);
+		// util::InitDWFile(Temp);
 		
 		// ========== LOOP THROUGH TIMESTEPS ================================================================ //
 		for (int i = 0; i < params::Nt; i++){
@@ -165,10 +165,10 @@ int main(int argc, char* argv[]){
 				util::MagLength();
 				util::OutputMagToTerm(i);
 				util::OutputMagToFile(i);
-				util::OutputDWtoFile(i);
+				// util::OutputDWtoFile(i);
 				// if ((i >= params::start)){
-			    // 	spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
-			    // 	spinwaves::FFTspace();      
+			    // 		spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
+			    // 		spinwaves::FFTspace();      
 				// }
 			}
 
@@ -176,10 +176,10 @@ int main(int argc, char* argv[]){
 			tau = tau + params::dtau;
 
 			#ifdef CUDA
-			// cufuncs::cuSquarePulse(static_cast<double>(i));
+			//cufuncs::cuGaussPulse(static_cast<double>(i));
 			cuthermal::gen_thermal_noise();
 			cufuncs::integration(static_cast<double>(i));
-			cufuncs::cuDomainWall();
+			// cufuncs::cuDomainWall();
 			#else
 			neigh::Heun(thermal_fluct);
 			#endif
