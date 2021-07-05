@@ -36,12 +36,28 @@ namespace cufields {
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
-
+		double gauss;
+		gauss = height * exp(-1 * (((time - centre_pos) * (time - centre_pos))/(2 * std_dev * std_dev)));
 
 		if (i < N){
 
-			double gauss;
-			gauss = height * exp(-1 * (((time - centre_pos) * (time - centre_pos))/(2 * std_dev * std_dev)));
+			Hapx[i] = gauss;
+			Hapy[i] = 0.0;
+			Hapz[i] = 0.0; 
+
+		}
+
+
+	}
+
+		__global__ void multi_cycle_pulse(int N, double time, double height, double std_dev, double centre_pos, double freq, double *Hapx, double *Hapy, double *Hapz){
+
+		const int i = blockDim.x*blockIdx.x + threadIdx.x;
+
+		double gauss;
+		gauss = height * exp(-1 * (((time - centre_pos) * (time - centre_pos))/(2 * std_dev * std_dev))) * sin(2*M_PI*freq*(time - centre_pos));
+
+		if (i < N){
 
 			Hapx[i] = gauss;
 			Hapy[i] = 0.0;

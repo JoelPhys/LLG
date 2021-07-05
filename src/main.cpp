@@ -163,8 +163,8 @@ int main(int argc, char* argv[]){
 				util::ResetMag();
 				util::SortSublat();
 				util::MagLength();
-				util::OutputMagToTerm(i);
-				util::OutputMagToFile(i);
+				// util::OutputMagToTerm(i);
+				// util::OutputMagToFile(i);
 				// util::OutputDWtoFile(i);
 				// if ((i >= params::start)){
 			    // 		spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
@@ -176,7 +176,8 @@ int main(int argc, char* argv[]){
 			tau = tau + params::dtau;
 
 			#ifdef CUDA
-			//cufuncs::cuGaussPulse(static_cast<double>(i));
+			cufuncs::cuMultiPulse(static_cast<double>(i));
+			cufields::testing(i);
 			cuthermal::gen_thermal_noise();
 			cufuncs::integration(static_cast<double>(i));
 			// cufuncs::cuDomainWall();

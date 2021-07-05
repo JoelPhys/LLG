@@ -28,6 +28,7 @@ namespace fields {
 	double start_time;
 	double end_time;
 	double height;
+	double freq;
 
 	double std_dev;
 	double centre_pos;
@@ -88,6 +89,17 @@ namespace fields {
 			std::cout << "Central Position of Pulse = " << start_time << " timesteps \n";
 			std::cout << "Standard Deviation of Pulse = " << end_time << " timesteps \n";
 			std::cout << "Magniture of pulse = " << height << " (T) \n";
+		}
+		else if (Type == "Multi_Cycle_Pulse"){
+			std::cout << "Field type = " << Type << std::endl;
+			height = params::cfg.lookup("ExternalField.height");
+			centre_pos = params::cfg.lookup("ExternalField.centre");
+			std_dev = params::cfg.lookup("ExternalField.std_dev");
+			freq = params::cfg.lookup("ExternalField.frequency");
+			std::cout << "Central Position of Pulse = " << start_time << " timesteps \n";
+			std::cout << "Standard Deviation of Pulse = " << end_time << " timesteps \n";
+			std::cout << "Magniture of pulse = " << height << " (T) \n";
+			std::cout << "Frequency of pulse = " << height << " (Hz) \n";
 		}
 		else {	
 			std::cout << "ERROR: Unknown Field Type." << std::endl;
