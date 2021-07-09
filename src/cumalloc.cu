@@ -28,9 +28,15 @@ namespace cuglob {
 		cudaGetDevice(&device);
 		struct cudaDeviceProp properties;
 		cudaGetDeviceProperties(&properties, device);
-		std::cout << "using " << properties.multiProcessorCount << " multiprocessors" << std::endl;
-		std::cout << "max threads per processor " << properties.maxThreadsPerMultiProcessor << std::endl;
-		std::cout << "max threads per block " << properties.maxThreadsPerBlock << std::endl;	
+		std::cout << "======== CUDA DEVICE PROPERTIES =========" << std::endl;
+		std::cout << "Device name: " << properties.name << std::endl;
+		std::cout << "Memory Clock Rate (KHz): " << properties.memoryClockRate << std::endl;
+    	std::cout << "Memory Bus Width (bits): " << properties.memoryBusWidth << std::endl;
+    	std::cout << "Peak Memory Bandwidth (GB/s): " << 2.0*properties.memoryClockRate*(properties.memoryBusWidth/8)/1.0e6 << std::endl;
+		std::cout << "multiprocessors: " << properties.multiProcessorCount << std::endl;
+		std::cout << "max threads per processor: " << properties.maxThreadsPerMultiProcessor << std::endl;
+		std::cout << "max threads per block: " << properties.maxThreadsPerBlock << std::endl;	
+		std::cout << "=========================================" << std::endl;
 	}
 
 	void clear_memory(){

@@ -81,7 +81,7 @@ int main(int argc, char* argv[]){
 		cuheun::allocate_heun_consts();
 		cuglob::copy_spins_to_device();
 		cuglob::copy_field_to_device();
-		//cuglob::copy_dw_to_device();
+		// cuglob::copy_dw_to_device();
 		cuglob::copy_jij_to_device();
 		cufuncs::init_device_vars();
 		cuglob::copy_thermal_to_device(thermal_fluct);
@@ -156,14 +156,14 @@ int main(int argc, char* argv[]){
 			// }
 			#endif
 
-			if (i % 30 == 0){
+			if (i % 50 == 0){
 				#ifdef CUDA
 				cuglob::copy_spins_to_host();
 				#endif	
 				util::ResetMag();
 				util::SortSublat();
 				util::MagLength();
-				// util::OutputMagToTerm(i);
+				util::OutputMagToTerm(i);
 				// util::OutputMagToFile(i);
 				// util::OutputDWtoFile(i);
 				// if ((i >= params::start)){
@@ -176,32 +176,15 @@ int main(int argc, char* argv[]){
 			tau = tau + params::dtau;
 
 			#ifdef CUDA
-			cufuncs::cuMultiPulse(static_cast<double>(i));
-			cufields::testing(i);
+			// cufuncs::cuMultiPulse(static_cast<double>(i));
+			// cufields::testing(i);
 			cuthermal::gen_thermal_noise();
 			cufuncs::integration(static_cast<double>(i));
 			// cufuncs::cuDomainWall();
 			#else
 			neigh::Heun(thermal_fluct);
 			#endif
-
-
-
-
-
-			// SPINWAVES ===================================================================================== //
-			// flip a random spin for spinwaves
-			// if (i >= params::start) {
-			//     neigh::Sx1d(0) = 1;
-			//     neigh::Sy1d(0) = 0;
-			//     neigh::Sz1d(0) = 0;
-			// }
-
-			//if ((i >= params::start) && (i % c == 0)){
-			//    spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
-			//    spinwaves::FFTspace();      
-			//}
-			// ================================================================================================ //
+			
 		}
 		// ==================================================================================================== //
 

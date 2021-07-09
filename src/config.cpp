@@ -180,6 +180,7 @@ namespace params {
 		xbound = cfg.lookup("Geom.BoundaryConditionsX").c_str(); 
 		ybound = cfg.lookup("Geom.BoundaryConditionsY").c_str(); 
 		zbound = cfg.lookup("Geom.BoundaryConditionsZ").c_str(); 
+		std::cout << "Boundary Conditions: [" << xbound << " , " << ybound << " , " << zbound << "]" << std::endl;
 
 		//Read Site positions ==============================================================================
 		sites.resize(Nq);
