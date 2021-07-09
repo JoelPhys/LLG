@@ -117,8 +117,8 @@ namespace params {
 		lambda = cfg.lookup("MaterialConsts.lambda");
 		mu_s = cfg.lookup("MaterialConsts.mu_s");
 		a1 = cfg.lookup("MaterialConsts.a");
-                mu_s *= mu_b;
-                INVmu_s = 1 / mu_s;
+    	mu_s *= mu_b;
+    	INVmu_s = 1 / mu_s;
 
 		// Uniaxial Anisotropy
 		dxu = cfg.lookup("Uniaxial_Anisotropy.d_x");
@@ -136,6 +136,7 @@ namespace params {
 		dycp = 2 * ( dyc / mu_s );	
 		dzcp = 2 * ( dzc / mu_s );
 
+		// Thermal parameters
 		thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
 		lambdaPrime = 1 / (1+(lambda*lambda));
 
@@ -165,7 +166,7 @@ namespace params {
 		angle = cfg.lookup("angle");
 		angle *= M_PI / 180.0;
 		
-
+		// System geometry
 		Nspins = Nq*Lx*Ly*Lz;
 		Nmoments = (Nq*Lx*Ly*Lz); 
 		NmomentsSubLat = Nspins / Nsublat;
@@ -258,7 +259,8 @@ namespace params {
 		format = cfg.lookup("Exchange.Format").c_str();  
 		filepath = cfg.lookup("Util.filepath").c_str();        
 		dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");
-		Jij_filename = cfg.lookup("Exchange.InputFile").c_str();        
+		Jij_filename = cfg.lookup("Exchange.InputFile").c_str();
+		std::cout << "Exchange filename: " << params::Jij_filename << std::endl;        
 		Jij_units = cfg.lookup("Exchange.Units").c_str();   
 		JijCutoff = cfg.lookup("Exchange.Cutoff");    
 		std::cout << "Exhchange Cutoff = " << JijCutoff << std::endl;
