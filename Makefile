@@ -7,22 +7,8 @@ NVCC = nvcc
 #########################################################################################
 # Options are SERIAL, OMP, OMPGPU or GPU
 #some compiler definitions to sort out
-    CPUCOMP='"GNU C++ Compiler $(shell g++ --version | head -n 1 | cut -b 5-)"'
-ifeq ($(BUILD_TYPE),GPU)
-    GPUCOMP='"NVIDIA C++ Compiler $(shell nvcc --version | tail -n 2 | head -n 1)"'
-    EXECUTABLE=GPULLB
-    endif
-ifeq ($(BUILD_TYPE),OMP)
-    EXECUTABLE=OMPLLB
-    endif
-ifeq ($(BUILD_TYPE),OMPGPU)
-    GPUCOMP='"NVIDIA C++ Compiler $(shell nvcc --version | tail -n 2 | head -n 1)"'
-    EXECUTABLE=GPUOMPLLB
-    endif
-ifeq ($(BUILD_TYPE),SERIAL)
-    EXECUTABLE=LLB
-    endif
-
+CPUCOMP='"GNU C++ Compiler $(shell g++ --version | head -n 1 | cut -b 5-)"'
+GPUCOMP='"NVIDIA C++ Compiler $(shell nvcc --version | tail -n 2 | head -n 1)"'
 GITINFO='"$(shell git rev-parse HEAD)"'
 GITDIRTY='"$(shell git status -s | grep -v ? | grep -e 'src\/' -e 'inc\/' | wc -l)"'
 HOSTNAME='"$(shell hostname)"'
@@ -49,10 +35,10 @@ obj/cuheun.o \
 obj/cufuncs.o
 
 obj/%.o: src/%.cpp
-	$(GCC) $(OPT) -c -o $@ $< -DCPUCOMP=$(CPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
+	$(GCC) $(OPT) -c -o $@ $< -DCPUCOMP=$(CPUCOMP) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
 
 obj/%.o: src/%.cu
-	$(NVCC) -O3 -DCUDA -G -c -o $@ $< -DCPUCOMP=$(CPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
+	$(NVCC) -O3 -DCUDA -G -c -o $@ $< -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
 
 
 # ASD: $(OBJ)

@@ -71,6 +71,24 @@ namespace params {
 	//Intialise Config File ====================================================================================================================================//
 	void intitialiseConfig(const char* cfg_filename){
 
+		std::cout << "##################################################################################################################################" << std::endl;
+		std::cout << "CPU Compiler: " << CPUCOMP << std::endl;
+		std::cout << "NVCC Compiler: " << GPUCOMP << std::endl;
+		std::cout << "Compile Date and Time: " << __DATE__ << " " << __TIME__ << std::endl;
+		std::cout << "Compiled on Machine: " << HOSTNAME << std::endl;
+		if(GITDIRTY!="0")
+        {
+            std::cerr << __FILE__ << " "  << __LINE__ << std::endl;
+            std::cerr << "Warning: Your git build is dirty, you should not use this code for production. " << std::endl;
+        	std::cerr << "Please commit changes and recompile with Git SHA: " << GIT_SHA1 << ", Dirty" << std::endl;
+        }
+        else
+        {
+            std::cout << "Git SHA: " << GIT_SHA1 << ", Clean" << std::endl;
+        }
+		std::cout << "##################################################################################################################################" << std::endl;
+
+
 		if(!cfg_filename)
 		{
 			error::Info(__FILE__,__LINE__);
