@@ -172,8 +172,9 @@ int main(int argc, char* argv[]){
 				if (params::OutputToTerminal == true){
 					util::OutputMagToTerm(i);
 				}
-
-				// util::OutputMagToFile(i);
+				util::OutputMagToFile(i);
+				
+				
 				// util::OutputDWtoFile(i);
 				// if ((i >= params::start)){
 			    // 		spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
