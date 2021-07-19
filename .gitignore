@@ -4,5 +4,4 @@ ASD
 lswt/output/*
 .DS_Store
 susceptability/read_files
-cfg/config.cfg
 script.sh
