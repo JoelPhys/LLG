@@ -67,6 +67,10 @@
         extern std::vector< std::vector<double> > Isites; // For integer lattice
         extern std::vector< std::vector<double> > initm; // For integer lattice
 
+        // Temperature
+        extern std::string temptype;
+        extern double ttm_start;
+
         extern double PlatINV[3][3];
 
         extern libconfig::Config cfg;

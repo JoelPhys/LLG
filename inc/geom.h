@@ -16,6 +16,7 @@
         extern Array4D<int> LatCount;
         extern Array<int> lw;
         extern Array<int> rw;
+        extern Array<int> zlayer;
 
         extern int Ix, Iy, Iz, IzC;
         extern int latXsize, latYsize, latZsize, latZsizeS;

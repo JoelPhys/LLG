@@ -79,12 +79,13 @@ int main(int argc, char* argv[]){
 		cuglob::device_info();
 		cuglob::allocate_heun_memory();
 		cuheun::allocate_heun_consts();
+		cuthermal::init_cuthermal(Temp);
+		cuglob::copy_temp_to_device(Temp);
 		cuglob::copy_spins_to_device();
 		cuglob::copy_field_to_device();
 		// cuglob::copy_dw_to_device();
 		cuglob::copy_jij_to_device();
 		cufuncs::init_device_vars();
-		cuglob::copy_thermal_to_device(thermal_fluct);
 		cuthermal::curand_generator();
 		#endif            
 		// ================================================================================================== //
@@ -156,13 +157,14 @@ int main(int argc, char* argv[]){
 			// }
 			#endif
 
-			if (i % 50 == 0){
+			if (i % 100 == 0){
 				#ifdef CUDA
 				cuglob::copy_spins_to_host();
 				#endif	
 				util::ResetMag();
 				util::SortSublat();
 				util::MagLength();
+				cuthermal::testing(static_cast<double>(i));
 				util::OutputMagToTerm(i);
 				// util::OutputMagToFile(i);
 				// util::OutputDWtoFile(i);
@@ -176,8 +178,8 @@ int main(int argc, char* argv[]){
 			tau = tau + params::dtau;
 
 			#ifdef CUDA
+			cufuncs::cuTemperature(params::temptype, static_cast<double>(i) * params::dt, params::ttm_start);
 			// cufuncs::cuMultiPulse(static_cast<double>(i));
-			// cufields::testing(i);
 			cuthermal::gen_thermal_noise();
 			cufuncs::integration(static_cast<double>(i));
 			// cufuncs::cuDomainWall();

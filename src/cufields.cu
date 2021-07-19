@@ -68,19 +68,4 @@ namespace cufields {
 
 	}
 
-	void testing(int i){
-
-		Array<double> testingx;
-		Array<double> testingy, testingz;
-		testingx.resize(params::Nspins);
-		testingy.resize(params::Nspins);
-		testingz.resize(params::Nspins);
-
-		CUDA_CALL(cudaMemcpy(testingx.ptr(), cuglob::Hapx, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
-		CUDA_CALL(cudaMemcpy(testingy.ptr(), cuglob::Hapy, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
-		CUDA_CALL(cudaMemcpy(testingz.ptr(), cuglob::Hapz, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
-
-		std::cout << i << " " << testingx(0) << " " << testingy(0) << " " << testingz(0) << std::endl;	
-	}
-
 }

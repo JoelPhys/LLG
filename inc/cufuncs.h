@@ -4,6 +4,7 @@
 #include <cuda.h> 
 #include <curand.h>
 #include <cuda_runtime.h>
+#include <sstream>
 
 namespace cufuncs {
 
@@ -14,6 +15,7 @@ namespace cufuncs {
 	void cuSquarePulse(double time);
 	void cuGaussPulse(double time);
 	void cuMultiPulse(double time);
+	void cuTemperature(std::string type, double time, double ttm_start);
 	void init_device_vars();
 	void integration(double time);
 }

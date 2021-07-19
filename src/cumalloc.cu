@@ -18,7 +18,6 @@ namespace cuglob {
 	double *dJx, *dJy, *dJz;
 	int *dlw, *drw;
 	int *dx_adj, *dadjncy;
-	double *dtfa;
 	Array<double> pJx, pJy, pJz;
 	Array<int> px_adj, padjncy;
 
@@ -63,6 +62,9 @@ namespace cuglob {
 		CUDA_CALL(cudaFree(cuthermal::gvalsx));
 		CUDA_CALL(cudaFree(cuthermal::gvalsy));
 		CUDA_CALL(cudaFree(cuthermal::gvalsz));
+		CUDA_CALL(cudaFree(cuthermal::Te));
+		CUDA_CALL(cudaFree(cuthermal::P_it));
+		CUDA_CALL(cudaFree(cuthermal::Tp));
 		CUDA_CALL(cudaFree(dlw));
 		CUDA_CALL(cudaFree(drw));
 		std::cout << "memory deallocated on device" << std::endl;
@@ -114,10 +116,6 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(cuthermal::gvalsy, 0.0, sizeof(float) * params::Nspins));
 		CUDA_CALL(cudaMemset(cuthermal::gvalsz, 0.0, sizeof(float) * params::Nspins));
 
-		//thermal array
-		CUDA_CALL(cudaMalloc((void**)&dtfa, sizeof(double)* params::Nspins));
-		CUDA_CALL(cudaMemset(dtfa, 0.0, sizeof(double) * params::Nspins));
-
 		// Jij matrices
 		CUDA_CALL(cudaMalloc((void**)&dJx, sizeof(double)*neigh::Jijx_prime.size()));
 		CUDA_CALL(cudaMalloc((void**)&dJy, sizeof(double)*neigh::Jijx_prime.size()));
@@ -131,9 +129,38 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(dlw, 0.0, sizeof(int) * geom::lw.size()));
 		CUDA_CALL(cudaMemset(drw, 0.0, sizeof(int) * geom::rw.size()));
 
+		// Temperature arrays
+		CUDA_CALL(cudaMalloc((void**)&cuthermal::Te, sizeof(double)*params::Lz));
+		CUDA_CALL(cudaMalloc((void**)&cuthermal::Tp, sizeof(double)*params::Lz));
+		CUDA_CALL(cudaMalloc((void**)&cuthermal::P_it, sizeof(double)*params::Lz));
+		CUDA_CALL(cudaMalloc((void**)&cuthermal::dzlayer, sizeof(int)*geom::zlayer.size()));
+
+		CUDA_CALL(cudaMemset(cuthermal::Te, 0.0, sizeof(double)*params::Lz));
+		CUDA_CALL(cudaMemset(cuthermal::Tp, 0.0, sizeof(double)*params::Lz));
+		CUDA_CALL(cudaMemset(cuthermal::P_it, 0.0, sizeof(double)*params::Lz));
+		CUDA_CALL(cudaMalloc((void**)&cuthermal::dtfa, sizeof(double)* params::Nspins));
+		CUDA_CALL(cudaMemset(cuthermal::dtfa, 0.0, sizeof(double) * params::Nspins)); 
+
 
 		// clear memory at exit of program
 		atexit(clear_memory);
+
+	}
+
+	void copy_temp_to_device(double equilibium_temp){
+		Array<double> rTe; 
+		Array<double> rTp;
+
+		rTe.resize(params::Lz);
+		rTp.resize(params::Lz);
+		for (int i = 0; i < params::Lz; i++){
+			rTe[i] = equilibium_temp;
+			rTp[i] = equilibium_temp;
+		}
+
+		CUDA_CALL(cudaMemcpy(cuthermal::Te, rTe.ptr(), sizeof(double) * params::Lz, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(cuthermal::Tp, rTp.ptr(), sizeof(double) * params::Lz, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(geom::zlayer.ptr(), cuthermal::dzlayer, sizeof(int) * params::Nspins, cudaMemcpyDeviceToHost));
 
 	}
 
@@ -141,16 +168,6 @@ namespace cuglob {
 		CUDA_CALL(cudaMemcpy(Hapx, fields::H_appx.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(Hapy, fields::H_appy.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(Hapz, fields::H_appz.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
-	}
-
-	void copy_thermal_to_device(double Thermal_Fluct){
-		Array<double> tfa;
-		tfa.resize(params::Nspins);
-		for (int a = 0; a < params::Nspins; a++){
-			tfa(a) = Thermal_Fluct;
-		}
-
-		CUDA_CALL(cudaMemcpy(dtfa, tfa.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));    
 	}	
 
 	void copy_jij_to_device(){

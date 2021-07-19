@@ -68,6 +68,10 @@ namespace params {
 	std::vector< std::vector<double> > Isites;
 	std::vector< std::vector<double> > initm;
 
+	//Temperature
+	std::string temptype;
+	double ttm_start;
+
 	//Intialise Config File ====================================================================================================================================//
 	void intitialiseConfig(const char* cfg_filename){
 
@@ -200,6 +204,11 @@ namespace params {
 		ybound = cfg.lookup("Geom.BoundaryConditionsY").c_str(); 
 		zbound = cfg.lookup("Geom.BoundaryConditionsZ").c_str(); 
 		std::cout << "Boundary Conditions: [" << xbound << " , " << ybound << " , " << zbound << "]" << std::endl;
+
+		//Temparature
+		temptype = cfg.lookup("Temperature.method").c_str();
+		ttm_start = cfg.lookup("Temperature.ttm_start");
+		
 
 		//Read Site positions ==============================================================================
 		sites.resize(Nq);

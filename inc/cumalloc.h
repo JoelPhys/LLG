@@ -10,21 +10,20 @@ namespace cuglob {
 	extern double *dJx, *dJy, *dJz;
 	extern int *dx_adj, *dadjncy;
 	extern int *dlw, *drw;
-	extern double *dtfa;
 	extern Array<double> pJx, pJy, pJz;
 	extern Array<int> px_adj, padjncy;
 
 	void device_info();
 	void allocate_heun_memory();
-	void copy_field_to_device();
 	void allocate_Jij_memory();
-	void copy_jij_to_device();
 	void allocate_device_consts();
+	void copy_temp_to_device(double equilibium_temp);
+	void copy_field_to_device();
 	void copy_spins_to_device();
 	void copy_spins_to_host();
+	void copy_jij_to_device();
 	void copy_dw_to_device();
 	void clear_memory();
-	void copy_thermal_to_device(double Thermal_Fluct);
 
 
 	inline void check_cuda_errors(const char *filename, const int line_number)
