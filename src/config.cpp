@@ -22,7 +22,8 @@ namespace params {
 	double k_B, mu_b, gamma;
 	double dt, Nt, dtau, half_dtau;   
 	double lambda, lambdaPrime, mu_s, INVmu_s, thermal_const;
-	
+	int relaxtime, outputstep;
+
 
 	// Uniaxial Anisotropy
 	double dxu, dyu, dzu;
@@ -39,7 +40,6 @@ namespace params {
 	double dt_spinwaves;
 	double angle;
 
-	int relaxtime;
 
 	//Boundary Conditions
 	std::string xbound;
@@ -50,6 +50,7 @@ namespace params {
 	std::string afmflag;
 	std::string format;
 	std::string filepath;
+	bool OutputToTerminal;
 
 	// Jij SETTINGS
 	std::string Jij_filename;
@@ -130,6 +131,7 @@ namespace params {
 		dt = cfg.lookup("Time.SizeOfStep");
 		Nt = cfg.lookup("Time.NumberOfSteps");
 		relaxtime = cfg.lookup("Time.RelaxationTime");
+		outputstep = cfg.lookup("Time.OutputStep");
 		
 		// Reduced Time variables
 		dtau = gamma * dt;
@@ -168,6 +170,10 @@ namespace params {
 		std::cout << "Uniaxial Anisotropy = [" << dxu << " , " << dyu << " , " << dzu << "] (J)" << std::endl;
 		std::cout << "Cubic Anisotropy = [" << dxc << " , " << dyc << " , " << dzc << "] (J)" << std::endl;
 		std::cout << "Lattice Parameter = "<< a1 << " (m)" << std::endl;
+		std::cout << "Timestep = " << dt << " (s)" << std::endl;
+		std::cout << "Number of timesteps = " << Nt << std::endl;
+		std::cout << "Outputting every " << outputstep << "timesteps" << std::endl;
+		std::cout << "Outputting to terminal: " << OutputToTerminal << std::endl;
 
 		// system dimensions
 		Lx = cfg.lookup("Geom.UnitCellsInX");
@@ -208,6 +214,8 @@ namespace params {
 		//Temparature
 		temptype = cfg.lookup("Temperature.method").c_str();
 		ttm_start = cfg.lookup("Temperature.ttm_start");
+		std::cout << "Temperature method: " << temptype << std::endl;
+		std::cout << "two temperature model start time: " << ttm_start << std::endl; 
 		
 
 		//Read Site positions ==============================================================================
@@ -281,6 +289,7 @@ namespace params {
 		}
 		//=======================================================================================================
 
+		OutputToTerminal = cfg.lookup("Util.OutputToTerminal");
 		start = cfg.lookup("Spinwaves.StartTime");
 		afmflag = cfg.lookup("Util.afmflag").c_str();  
 		format = cfg.lookup("Exchange.Format").c_str();  

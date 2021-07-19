@@ -37,6 +37,8 @@
 #define IMAG 1
 #define REAL 0
 
+
+
 int main(int argc, char* argv[]){
 
 	// functions ============================================================================================== //
@@ -53,6 +55,7 @@ int main(int argc, char* argv[]){
 	util::InitUtil();
 	IdentityMatrix();
 	// spinwaves::initialiseFFT();
+	#define TERM params::term;
 	// ======================================================================================================== //
 
 	// ======= Temperature ==================================================================================== //
@@ -157,7 +160,7 @@ int main(int argc, char* argv[]){
 			// }
 			#endif
 
-			if (i % 100 == 0){
+			if (i % params::outputstep == 0){
 				#ifdef CUDA
 				cuglob::copy_spins_to_host();
 				#endif	
@@ -165,7 +168,11 @@ int main(int argc, char* argv[]){
 				util::SortSublat();
 				util::MagLength();
 				cuthermal::testing(static_cast<double>(i));
-				util::OutputMagToTerm(i);
+
+				if (params::OutputToTerminal == true){
+					util::OutputMagToTerm(i);
+				}
+
 				// util::OutputMagToFile(i);
 				// util::OutputDWtoFile(i);
 				// if ((i >= params::start)){

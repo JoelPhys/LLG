@@ -16,7 +16,7 @@
         extern double k_B, mu_b, gamma;
 
         extern double dt, Nt, dtau, half_dtau;   
-        extern int relaxtime;
+        extern int relaxtime, outputstep;
 
         extern double lambda, lambdaPrime, mu_s, INVmu_s, thermal_const;
 	
@@ -70,6 +70,8 @@
         // Temperature
         extern std::string temptype;
         extern double ttm_start;
+
+        extern bool OutputToTerminal;
 
         extern double PlatINV[3][3];
 
