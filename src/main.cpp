@@ -42,7 +42,7 @@
 int main(int argc, char* argv[]){
 
 	// functions ============================================================================================== //
-	for (int height = 10; height <= 90; height++){
+	for (int endtime = 201000; endtime <= 210000; endtime+= 100){
 		params::intitialiseConfig(argv[1]); 
 		params::readparams();
 		fields::readfields();
@@ -148,7 +148,7 @@ int main(int argc, char* argv[]){
 			int c;
 			c = params::dt_spinwaves / params::dt;
 
-			util::InitMagFile(Temp, atof(argv[4]), atof(argv[5]), height);
+			util::InitMagFile(Temp, atof(argv[4]), endtime, atof(argv[5]));
 			// util::InitDWFile(Temp);
 			
 			// ========== LOOP THROUGH TIMESTEPS ================================================================ //
@@ -188,7 +188,7 @@ int main(int argc, char* argv[]){
 
 				#ifdef CUDA
 				cufuncs::cuTemperature(params::temptype, static_cast<double>(i) * params::dt, params::ttm_start);
-				cufuncs::cuSquarePulse(static_cast<double>(i), atof(argv[4]), atof(argv[5]), height);
+				cufuncs::cuSquarePulse(static_cast<double>(i), atof(argv[4]), endtime, atof(argv[5]));
 				cuthermal::gen_thermal_noise();
 				cufuncs::integration(static_cast<double>(i));
 				// cufuncs::cuDomainWall();
