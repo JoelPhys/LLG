@@ -12,7 +12,7 @@ namespace cufuncs {
 	extern int bpg;
 	void cuRotation();
 	void cuDomainWall();
-	void cuSquarePulse(double time);
+	void cuSquarePulse(double time, double start_time, double end_time, double height);
 	void cuGaussPulse(double time);
 	void cuMultiPulse(double time);
 	void cuTemperature(std::string type, double time, double ttm_start);

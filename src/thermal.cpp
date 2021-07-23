@@ -31,7 +31,7 @@ namespace thermal {
 		// Read file
         if (!input){
 			//Output Error if file can't be read. Quit program.
-            std::cerr << "ERROR: Could not open file " << params::temp_filename << std::endl;
+            std::cout << "ERROR: Could not open file " << params::temp_filename << std::endl;
             exit(0);
         }
 		else {

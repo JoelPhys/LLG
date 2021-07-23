@@ -28,8 +28,8 @@ namespace cufuncs {
 		cuheun::cuFixSpins1<<<bpg,threadsperblock>>>(nspinsdw, cuglob::dlw, cuglob::drw, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d);
 	}
 
-	void cuSquarePulse(double time){
-		cufields::square_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::start_time, fields::end_time, fields::height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+	void cuSquarePulse(double time, double start_time, double end_time, double height){
+		cufields::square_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 	}
 
 	void cuGaussPulse(double time){

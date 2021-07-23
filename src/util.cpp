@@ -41,9 +41,10 @@ namespace util {
 		sumz.resize(params::Lx);
 	}
 
-	void InitMagFile(double temp){
+	void InitMagFile(double temp, double Hstart, double Hend, double Hheight){
 		std::stringstream sstr;
-		sstr << params::filepath << "mag_tsteps_" << params::Nt << "_T_" << temp << ".dat";
+		// sstr << params::filepath << "mag_tsteps_" << params::Nt << "_T_" << temp << ".dat";
+		sstr << params::filepath << "mag_tsteps_" << params::Nt << "_T_" << temp << "_s_" << Hstart << "_e_" << Hend << "_h_" << Hheight << ".dat";
 		magfile.open(sstr.str());
 	}
 
@@ -195,7 +196,7 @@ namespace util {
 			}
 		}
 		else {
-			std::cerr << "ERROR: Unassigned afmflag" << std::endl;
+			std::cout << "ERROR: Unassigned afmflag" << std::endl;
 			exit(0);
 		}
 	}

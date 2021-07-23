@@ -83,9 +83,9 @@ namespace params {
 		std::cout << "Compiled on Machine: " << HOSTNAME << std::endl;
 		if(GITDIRTY!="0")
         {
-            std::cerr << __FILE__ << " "  << __LINE__ << std::endl;
-            std::cerr << "Warning: Your git build is dirty, you should not use this code for production. " << std::endl;
-        	std::cerr << "Please commit changes and recompile with Git SHA: " << GIT_SHA1 << ", Dirty" << std::endl;
+            std::cout << __FILE__ << " "  << __LINE__ << std::endl;
+            std::cout << "Warning: Your git build is dirty, you should not use this code for production. " << std::endl;
+        	std::cout << "Please commit changes and recompile with Git SHA: " << GIT_SHA1 << ", Dirty" << std::endl;
         }
         else
         {
