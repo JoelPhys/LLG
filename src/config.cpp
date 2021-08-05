@@ -123,6 +123,7 @@ namespace params {
 
 
 		// Global Constants
+		std::cout << __LINE__ << std::endl;
 		k_B = cfg.lookup("PhysicalConsts.BoltzmannConstant");
 		mu_b = cfg.lookup("PhysicalConsts.BohrMagneton");
 		gamma = cfg.lookup("PhysicalConsts.GyromagneticRatio");

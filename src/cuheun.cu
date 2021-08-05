@@ -43,36 +43,36 @@ namespace cuheun {
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_angle), &params::angle, sizeof(double)));
 	}
 
-	__global__ void cuFixSpins1(int N, int *dlw, int *drw, double *dSx1d, double *dSy1d, double *dSz1d){
+	__global__ void cuFixSpins1(int N, int *dlw, int *drw,  double *dsurfx, double *dsurfy, double *dsurfz, double *dSx1d, double *dSy1d, double *dSz1d){
 
 		const int a = blockDim.x * blockIdx.x + threadIdx.x;
 
 		if (a < N){
 
-			dSx1d[dlw[a]] =  1.0;
-			dSy1d[dlw[a]] =  0.0;
-			dSz1d[dlw[a]] =  0.0;
+			dSx1d[dlw[a]] =  dsurfx[a];
+			dSy1d[dlw[a]] =  dsurfy[a];
+			dSz1d[dlw[a]] =  dsurfz[a];
 
-			dSx1d[drw[a]] = -1.0;
-			dSy1d[drw[a]] =  0.0;
-			dSz1d[drw[a]] =  0.0;
+			// dSx1d[drw[a]] = -1.0;
+			// dSy1d[drw[a]] =  0.0;
+			// dSz1d[drw[a]] =  0.0;
 		}
 
 	}
 
-	__global__ void cuFixSpins2(int N, int *dlw, int *drw, double *Sdashnx, double *Sdashny, double *Sdashnz){
+	__global__ void cuFixSpins2(int N, int *dlw, int *drw, double *dsurfx, double *dsurfy, double *dsurfz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
 		const int a = blockDim.x * blockIdx.x + threadIdx.x;
 
 		if (a < N){
 
-			Sdashnx[dlw[a]] =  1.0;
-			Sdashny[dlw[a]] =  0.0;
-			Sdashnz[dlw[a]] =  0.0;
+			Sdashnx[dlw[a]] =  dsurfx[a];
+			Sdashny[dlw[a]] =  dsurfy[a];
+			Sdashnz[dlw[a]] =  dsurfz[a];
 
-			Sdashnx[drw[a]] = -1.0;
-			Sdashny[drw[a]] =  0.0;
-			Sdashnz[drw[a]] =  0.0;
+			// Sdashnx[drw[a]] = -1.0;
+			// Sdashny[drw[a]] =  0.0;
+			// Sdashnz[drw[a]] =  0.0;
 		}
 
 	}
@@ -229,6 +229,26 @@ namespace cuheun {
 			// }
 		}
 	}
+
+	// void testing(int i){
+
+	// 	Array<double> testingx;
+	// 	Array<double> testingy, testingz;
+	// 	testingx.resize(params::Nspins);
+	// 	// testingy.resize(params::Nspins);
+	// 	// testingz.resize(params::Nspins);
+
+	// 	CUDA_CALL(cudaMemcpy(testingx.ptr(), Te, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
+	// 	// CUDA_CALL(cudaMemcpy(testingy.ptr(), Hapy, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
+	// 	// CUDA_CALL(cudaMemcpy(testingz.ptr(), Hapz, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
+
+    //     // std::cout << "STEP: " << i << std::endl;
+    //     for (int a = 0; a < 1; a++){
+	// 	    std::cout << testingx(a) << " ";	
+    //     }
+    //     // std::cout << std::endl;
+	// }
+
 
 
 

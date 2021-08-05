@@ -13,6 +13,12 @@ namespace geom {
 
     Array<int> lw;
     Array<int> rw;
+
+    // Testing for hedgehog
+    Array<double> surfx;
+    Array<double> surfy;
+    Array<double> surfz;
+
     Array4D<double> latticeX;
     Array4D<double> latticeY;
     Array4D<double> latticeZ;
@@ -222,32 +228,53 @@ namespace geom {
     void InitDomainWall(){
 
 
-		lw.resize(params::Ly*params::Lz*params::Nq);
+		// lw.resize(params::Ly*params::Lz*params::Nq);
+        
+        // testing for hedgehogs - points on surface of cubic lattice 
+        int nsurface = (2*(params::Lx*params::Ly) + 2*(params::Lx*(params::Ly-2)) + 2*((params::Lx-2)*(params::Ly-2)))*params::Nq;
+
+        lw.resize(nsurface);
+        surfx.resize(nsurface);
+        surfy.resize(nsurface);
+        surfz.resize(nsurface);
+
 		rw.resize(params::Ly*params::Lz*params::Nq);
 		lw.IFill(0);
 		rw.IFill(0);
     
         int inc = 0;
+        int test = 1;
 
 		// find all sites when x is 0
-		for (int j = 0; j < params::Ly; j++){
-			for (int k = 0; k < params::Lz; k++){
-                for (int q = 0; q < params::Nq; q++){
-                    if ((q == 0) || (q == 2)){
-                        lw(inc) = geom::LatCount(0,j,k,q);
-                        rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+        for (int i = 0; i < params::Lx; i++){
+            for (int j = 0; j < params::Ly; j++){
+                for (int k = 0; k < params::Lz; k++){
+                    for (int q = 0; q < params::Nq; q++){
+                        // if ((q == 0) || (q == 2)){
+                        //     lw(inc) = geom::LatCount(0,j,k,q);
+                        //     rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                        // }
+                        // else if ((q == 1) || (q == 3)){
+                        //     rw(inc) = geom::LatCount(0,j,k,q);
+                        //     lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                        // }
+                        // else {
+                        //     std::cout << "ERROR: Unable to assign domain wall \n";
+                        //     exit(0);
+                        // }
+
+                        //testing for hedgehogs
+                        if ((i == 0) || (j == 0) || (k == 0) || (i == params::Lx-1) || (j == params::Ly-1) || (k == params::Lz-1)){
+                            lw(inc) = geom::LatCount(i,j,k,q); 
+                            surfx(inc) = neigh::Sx1d(geom::LatCount(i,j,k,q));
+                            surfy(inc) = neigh::Sy1d(geom::LatCount(i,j,k,q));
+                            surfz(inc) = neigh::Sz1d(geom::LatCount(i,j,k,q));
+                            inc++;
+                            // std::cout << geom::LatCount(i,j,k,q) << std::endl;
+                        }
                     }
-                    else if ((q == 1) || (q == 3)){
-                        rw(inc) = geom::LatCount(0,j,k,q);
-                        lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
-                    }
-                    else {
-                        std::cout << "ERROR: Unable to assign domain wall \n";
-                        exit(0);
-                    }
-                    inc++;   
                 }
-			}
+            }
 		}
 
         std::cout << "Initialised Domain Wall \n";

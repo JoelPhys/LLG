@@ -13,6 +13,10 @@ namespace cuglob {
 	extern Array<double> pJx, pJy, pJz;
 	extern Array<int> px_adj, padjncy;
 
+
+	//testing for hedgehog;
+	extern double *dsurfx, *dsurfy, *dsurfz;
+
 	void device_info();
 	void allocate_heun_memory();
 	void allocate_Jij_memory();

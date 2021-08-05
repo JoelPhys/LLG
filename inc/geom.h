@@ -18,6 +18,11 @@
         extern Array<int> rw;
         extern Array<int> zlayer;
 
+        //testing for hedgehog
+        extern Array<double> surfx;
+        extern Array<double> surfy;
+        extern Array<double> surfz;
+
         extern int Ix, Iy, Iz, IzC;
         extern int latXsize, latYsize, latZsize, latZsizeS;
 

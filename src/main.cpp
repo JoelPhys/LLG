@@ -48,7 +48,6 @@ int main(int argc, char* argv[]){
 	geom::CreateLattice();
 	geom::CountDistinct();
 	geom::CreateIntLattice();
-	// geom::InitDomainWall();
 	neigh::ReadFile();
 	neigh::InteractionMatrix();
 	neigh::IntialisePointersNL();
@@ -71,28 +70,11 @@ int main(int argc, char* argv[]){
 	begin = clock();
 	// ========================================================================================================= //
 
-	if ((std::string(argv[3]) == "1") || (std::string(argv[3]) == "3")){
+	// ======= Initiliase Spin Position ======================================================================== //
+	geom::InitSpins();
 
-		// ======= Initiliase Spin Position ======================================================================== //
-		geom::InitSpins();
+	// ========================================================================================================= //
 
-
-		#ifdef CUDA
-		std::cout << "CUDA Simulation" << std::endl;
-		cuglob::device_info();
-		cuglob::allocate_heun_memory();
-		cuheun::allocate_heun_consts();
-		cuthermal::init_cuthermal(Temp);
-		cuglob::copy_temp_to_device(Temp);
-		cuglob::copy_spins_to_device();
-		cuglob::copy_field_to_device();
-		// cuglob::copy_dw_to_device();
-		cuglob::copy_jij_to_device();
-		cufuncs::init_device_vars();
-		cuthermal::curand_generator();
-		#endif            
-		// ================================================================================================== //
-	}
 	if (std::string(argv[3]) == "1"){
 		// Relax to equilibrium magnetisation (10 ps) ======================================================= //
 		std::stringstream sstr_eq;
@@ -120,7 +102,7 @@ int main(int argc, char* argv[]){
 
 		// Read in equilibrium spin values ================================================================== //
 		std::stringstream sstr_eq;
-		sstr_eq << "output/magnetisation/equilibrium_T_" << Temp << ".txt";
+		sstr_eq << "equilibrium_T_" << Temp << ".txt";
 		std::ifstream equilibrationfile(sstr_eq.str());
 
 		if (!equilibrationfile){
@@ -129,17 +111,40 @@ int main(int argc, char* argv[]){
 		}
 
 		double sx, sy, sz;
-		int i = 0;
-		while (equilibrationfile >> sx >> sy >> sz){
-			neigh::Sx1d[i] = sx;
-			neigh::Sy1d[i] = sy;
-			neigh::Sz1d[i] = sz;
-			i++;
+		int posx, posy, posz;
+		while (equilibrationfile >> posx >> posy >> posz >> sx >> sy >> sz){
+			for (int q = 0; q < params::Nq; q++){
+				neigh::Sx1d(geom::LatCount(posx,posy,posz,q)) = sx;
+				neigh::Sy1d(geom::LatCount(posx,posy,posz,q)) = sy;
+				neigh::Sz1d(geom::LatCount(posx,posy,posz,q)) = sz;
+			}
 		}
+		std::cout << "TESTING INPUT FILE " << neigh::Sx1d(geom::LatCount(41,41,41,0)) << std::endl;
 		equilibrationfile.close();
 		// ================================================================================================== //
 	}
 	if ((std::string(argv[3]) == "2") || (std::string(argv[3]) == "3")){
+
+
+		// testing for hedgehog
+		geom::InitDomainWall();
+		
+		#ifdef CUDA
+		std::cout << "CUDA Simulation" << std::endl;
+		cuglob::device_info();
+		cuglob::allocate_heun_memory();
+		cuheun::allocate_heun_consts();
+		cuthermal::init_cuthermal(Temp);
+		cuglob::copy_temp_to_device(Temp);
+		cuglob::copy_spins_to_device();
+		cuglob::copy_field_to_device();
+		cuglob::copy_dw_to_device();
+		cuglob::copy_jij_to_device();
+		cufuncs::init_device_vars();
+		cuthermal::curand_generator();
+		#endif    
+
+
 		// Initialise some variables ======================================================================== // 
 		double t = 0;
 		double tau = 0;
@@ -147,7 +152,7 @@ int main(int argc, char* argv[]){
 		int c;
 		c = params::dt_spinwaves / params::dt;
 
-		util::InitMagFile(Temp, atof(argv[4]), atof(argv[5]), atof(argv[6]));
+		// util::InitMagFile(Temp, atof(argv[4]), atof(argv[5]), atof(argv[6]));
 		// util::InitDWFile(Temp);
 		
 		// ========== LOOP THROUGH TIMESTEPS ================================================================ //
@@ -174,7 +179,6 @@ int main(int argc, char* argv[]){
 				}
 				util::OutputMagToFile(i);
 				
-				
 				// util::OutputDWtoFile(i);
 				// if ((i >= params::start)){
 				// 		spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
@@ -187,10 +191,10 @@ int main(int argc, char* argv[]){
 
 			#ifdef CUDA
 			cufuncs::cuTemperature(params::temptype, static_cast<double>(i) * params::dt, params::ttm_start);
-			cufuncs::cuSquarePulse(static_cast<double>(i), atof(argv[4]), atof(argv[5]), atof(argv[6]));
+			// cufuncs::cuSquarePulse(static_cast<double>(i), atof(argv[4]), atof(argv[5]), atof(argv[6]));
 			cuthermal::gen_thermal_noise();
 			cufuncs::integration(static_cast<double>(i));
-			// cufuncs::cuDomainWall();
+			cufuncs::cuDomainWall();
 			#else
 			neigh::Heun(thermal_fluct);
 			#endif
@@ -203,6 +207,25 @@ int main(int argc, char* argv[]){
 
 		// output sum of magnetisation
 		// util::OutputSumMag();
+
+		// Output Final Lattice 
+		for (int i = 0; i < params::Lx; i++){
+            for (int j = 0; j < params::Ly; j++){
+                for (int k = 0; k < params::Lz; k++){
+                    for (int q = 0; q < params::Nq; q++){
+
+						std::cout << geom::latticeX(i,j,k,q) << " ";
+						std::cout << geom::latticeY(i,j,k,q) << " ";
+						std::cout << geom::latticeZ(i,j,k,q) << " ";
+						std::cout << neigh::Sx1d(geom::LatCount(i,j,k,q)) << " ";
+						std::cout << neigh::Sy1d(geom::LatCount(i,j,k,q)) << " ";
+						std::cout << neigh::Sz1d(geom::LatCount(i,j,k,q)) << std::endl;
+					}
+				}
+			}
+		}
+						 
+
 
 		end = clock();
 		std::cout << std::setprecision(10) << "Simulation Time = " << (double)(end - begin) / CLOCKS_PER_SEC << std::endl; 

@@ -21,6 +21,9 @@ namespace cuglob {
 	Array<double> pJx, pJy, pJz;
 	Array<int> px_adj, padjncy;
 
+	//testing for hedgehog
+	double *dsurfx, *dsurfy, *dsurfz;
+
 	int device = 0;
 
 	void device_info(){
@@ -129,6 +132,14 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(dlw, 0.0, sizeof(int) * geom::lw.size()));
 		CUDA_CALL(cudaMemset(drw, 0.0, sizeof(int) * geom::rw.size()));
 
+		//testing for hedgehog
+		CUDA_CALL(cudaMalloc((void**)&dsurfx, sizeof(double)*geom::surfx.size()));
+		CUDA_CALL(cudaMalloc((void**)&dsurfy, sizeof(double)*geom::surfy.size()));
+		CUDA_CALL(cudaMalloc((void**)&dsurfz, sizeof(double)*geom::surfz.size()));
+		CUDA_CALL(cudaMemset(dsurfx, 0.0, sizeof(double) * geom::surfx.size()));
+		CUDA_CALL(cudaMemset(dsurfy, 0.0, sizeof(double) * geom::surfy.size()));
+		CUDA_CALL(cudaMemset(dsurfz, 0.0, sizeof(double) * geom::surfz.size()));
+
 		// Temperature arrays
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::Te, sizeof(double)*params::Lz));
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::Tp, sizeof(double)*params::Lz));
@@ -211,6 +222,11 @@ namespace cuglob {
 	void copy_dw_to_device(){
 		CUDA_CALL(cudaMemcpy(dlw, geom::lw.ptr(), sizeof(int) * geom::lw.size(), cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(drw, geom::rw.ptr(), sizeof(int) * geom::rw.size(), cudaMemcpyHostToDevice));
+
+		//testing for hedgehog
+		CUDA_CALL(cudaMemcpy(dsurfx, geom::surfx.ptr(), sizeof(double) * geom::surfx.size(), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dsurfy, geom::surfy.ptr(), sizeof(double) * geom::surfy.size(), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dsurfz, geom::surfz.ptr(), sizeof(double) * geom::surfz.size(), cudaMemcpyHostToDevice));
 	}
 
 	void copy_spins_to_host(){

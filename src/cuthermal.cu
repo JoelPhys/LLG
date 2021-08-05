@@ -153,23 +153,5 @@ namespace cuthermal {
         }
     }
 
-    void testing(int i){
-
-		Array<double> testingx;
-		Array<double> testingy, testingz;
-		testingx.resize(params::Lz);
-		// testingy.resize(params::Nspins);
-		// testingz.resize(params::Nspins);
-
-		CUDA_CALL(cudaMemcpy(testingx.ptr(), Te, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
-		// CUDA_CALL(cudaMemcpy(testingy.ptr(), Hapy, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
-		// CUDA_CALL(cudaMemcpy(testingz.ptr(), Hapz, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
-
-        // std::cout << "STEP: " << i << std::endl;
-        for (int a = 0; a < 1; a++){
-		    std::cout << testingx(a) << " ";	
-        }
-        // std::cout << std::endl;
-	}
-
+    
 }
