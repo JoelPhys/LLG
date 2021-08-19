@@ -1,8 +1,9 @@
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/array4d.h"
 #include "../inc/array3d.h"
 #include "../inc/array.h"
 #include "../inc/geom.h"
+#include "../inc/spins.h"
 #include "../inc/NeighbourList.h"
 #include "../inc/mathfuncs.h"
 #include <vector>
@@ -14,22 +15,21 @@ namespace geom {
     Array<int> lw;
     Array<int> rw;
 
-    // Testing for hedgehog
-    Array<double> surfx;
-    Array<double> surfy;
-    Array<double> surfz;
-
+   
+    Array3D<double> Sx, Sy, Sz;
     Array4D<double> latticeX;
     Array4D<double> latticeY;
     Array4D<double> latticeZ;
     Array4D<int> LatCount;
-    Array3D<double> Sx;
-    Array3D<double> Sy; 
-    Array3D<double> Sz;
     Array3D<int> Scount;
     Array<int> zlayer;
 
     int Ix, Iy, Iz, IzC;
+
+    //testing for hedgehog
+    Array<double> surfx;
+    Array<double> surfy;
+    Array<double> surfz;
 
     int latXsize, latYsize, latZsize, latZsizeS;
 
@@ -131,102 +131,10 @@ namespace geom {
                 }
             }
         }
-
-        // for (int l = 0; l < 8; l++){
-        //     for (int m = 0; m < 24; m++){
-
-        //         std::cout << Sz(1,l,m) <<  " ";
-        //     }
-        //     std::cout << std::endl;
-        // }
-
     }
 
-    void InitSpins(){
 
-        Array4D<double> Sx4, Sy4, Sz4;
-		Sx4.resize(params::Lx, params::Ly, params::Lz, params::Nq);
-		Sy4.resize(params::Lx, params::Ly, params::Lz, params::Nq);
-		Sz4.resize(params::Lx, params::Ly, params::Lz, params::Nq);
-
-		Sx4.IFill(0);
-		Sy4.IFill(0);
-		Sz4.IFill(0);
-
-
-		int count1d = 0;
-
-		if (params::afmflag != "NiO"){
-		for (int x = 0; x < params::Lx; x++){
-			for (int y = 0; y < params::Ly; y++){
-				for (int z = 0; z < params::Lz; z++){
-					for (int q = 0; q < params::Nq; q++){
-						Sx4(x,y,z,q) = params::initm[q][0];
-						Sy4(x,y,z,q) = params::initm[q][1];
-						Sz4(x,y,z,q) = params::initm[q][2];
-
-                        // testing domain walls
-                        // if (x < params::Lx/2){
-                        //     Sx4(x,y,z,q) = params::initm[q][0];
-                        //     Sy4(x,y,z,q) = params::initm[q][1];
-                        //     Sz4(x,y,z,q) = params::initm[q][2];                       
-                        // }
-                        // else if (x > params::Lx/2){
-                        //     Sx4(x,y,z,q) = -1 * params::initm[q][0];
-                        //     Sy4(x,y,z,q) = -1 * params::initm[q][1];
-                        //     Sz4(x,y,z,q) = -1 * params::initm[q][2];                         
-                        // }
-                        // else if (x == params::Lx/2){
-                        //     Sx4(x,y,z,q) = 0.0;
-                        //     Sz4(x,y,z,q) = 1.0;                        
-                        // }
-
-						neigh::Sx1d(count1d + q) = Sx4(x,y,z,q);
-						neigh::Sy1d(count1d + q) = Sy4(x,y,z,q);
-						neigh::Sz1d(count1d + q) = Sz4(x,y,z,q);
-
-
-
-
-					}	
-					count1d += params::Nq; 
-				}
-			}
-		}
-		}
-		else {
-		for (int a = 0; a < params::Nspins; a++){
-			if (a / params::Nq % 2 == 0){
-				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 1) || (modfunc(params::Nq,a) == 3)) {
-					neigh::Sz1d(a) = 1.0; 
-				}
-				else if (modfunc(params::Nq,a) == 2) {
-					neigh::Sz1d(a) = -1.0;
-				}
-				else {
-					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
-					exit(0);
-				}
-			}
-			else if (a / params::Nq % 2 == 1) {
-				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 1) || (modfunc(params::Nq,a) == 3)) {
-					neigh::Sz1d(a) = -1.0; 
-				}
-				else if (modfunc(params::Nq,a) == 2) {
-					neigh::Sz1d(a) = 1.0;
-				}
-				else {
-					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
-					exit(0);
-				}
-			}
-		}
-		}
-
-    }
-
-    void InitDomainWall(){
-
+void initdw(){
 
 		// lw.resize(params::Ly*params::Lz*params::Nq);
         
@@ -266,9 +174,9 @@ namespace geom {
                         //testing for hedgehogs
                         if ((i == 0) || (j == 0) || (k == 0) || (i == params::Lx-1) || (j == params::Ly-1) || (k == params::Lz-1)){
                             lw(inc) = geom::LatCount(i,j,k,q); 
-                            surfx(inc) = neigh::Sx1d(geom::LatCount(i,j,k,q));
-                            surfy(inc) = neigh::Sy1d(geom::LatCount(i,j,k,q));
-                            surfz(inc) = neigh::Sz1d(geom::LatCount(i,j,k,q));
+                            surfx(inc) = spins::sx1d(geom::LatCount(i,j,k,q));
+                            surfy(inc) = spins::sy1d(geom::LatCount(i,j,k,q));
+                            surfz(inc) = spins::sz1d(geom::LatCount(i,j,k,q));
                             inc++;
                             // std::cout << geom::LatCount(i,j,k,q) << std::endl;
                         }

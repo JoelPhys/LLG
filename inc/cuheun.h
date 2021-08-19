@@ -4,7 +4,7 @@
 #include <cuda.h>
 #include <curand.h>
 #include <cuda_runtime.h>
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/cumalloc.h"
 
 

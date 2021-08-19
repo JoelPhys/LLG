@@ -1,12 +1,13 @@
 #include <cmath>
 #include <fstream>
 #include "../inc/util.h"
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/NeighbourList.h"
 #include "../inc/array.h"
 #include "../inc/array2d.h"
 #include "../inc/mathfuncs.h"
 #include "../inc/geom.h"
+#include "../inc/spins.h"
 
 
 
@@ -28,7 +29,7 @@ namespace util {
 	std::ofstream magfile;
 	std::ofstream dwfile;
 
-	void InitUtil(){
+	void init(){
 		Mt.resize(3);
 		M.resize(params::Nsublat,3);
 		Mmag.resize(params::Nsublat);
@@ -77,56 +78,56 @@ namespace util {
 			for (int a = 0; a < params::Nspins; a++){   
 
 				// Total Magnetisation
-				Mt(0) += neigh::Sx1d(a);			
-				Mt(1) += neigh::Sy1d(a);
-				Mt(2) += neigh::Sz1d(a);
+				Mt(0) += spins::sx1d(a);			
+				Mt(1) += spins::sy1d(a);
+				Mt(2) += spins::sz1d(a);
 
 				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 3) || (modfunc(params::Nq,a) == 5) || (modfunc(params::Nq,a) == 6)) {
-					M(0,0) += neigh::Sx1d(a);
-					M(0,1) += neigh::Sy1d(a);
-					M(0,2) += neigh::Sz1d(a); 
+					M(0,0) += spins::sx1d(a);
+					M(0,1) += spins::sy1d(a);
+					M(0,2) += spins::sz1d(a); 
 				}
 				else {
-					M(1,0) += neigh::Sx1d(a);
-					M(1,1) += neigh::Sy1d(a);
-					M(1,2) += neigh::Sz1d(a); 
+					M(1,0) += spins::sx1d(a);
+					M(1,1) += spins::sy1d(a);
+					M(1,2) += spins::sz1d(a); 
 				}
 			}
 		}
 		else if (params::afmflag == "N"){
 			for (int a = 0; a < params::Nspins; a++){   
-				M(0,0) += neigh::Sx1d(a);
-				M(0,1) += neigh::Sy1d(a);
-				M(0,2) += neigh::Sz1d(a); 
+				M(0,0) += spins::sx1d(a);
+				M(0,1) += spins::sy1d(a);
+				M(0,2) += spins::sz1d(a); 
 			}
 		}
 		else if (params::afmflag == "Mn2Au"){
 			for (int a = 0; a < params::Nspins; a++){   
 
 				// Total Magnetisation
-				Mt(0) += neigh::Sx1d(a);			
-				Mt(1) += neigh::Sy1d(a);
-				Mt(2) += neigh::Sz1d(a);
+				Mt(0) += spins::sx1d(a);			
+				Mt(1) += spins::sy1d(a);
+				Mt(2) += spins::sz1d(a);
 
 				if (modfunc(params::Nq,a) == 0){
-					M(0,0) += neigh::Sx1d(a);
-					M(0,1) += neigh::Sy1d(a);
-					M(0,2) += neigh::Sz1d(a); 
+					M(0,0) += spins::sx1d(a);
+					M(0,1) += spins::sy1d(a);
+					M(0,2) += spins::sz1d(a); 
 				}
 				else if (modfunc(params::Nq,a) == 1) {
-					M(1,0) += neigh::Sx1d(a);
-					M(1,1) += neigh::Sy1d(a);
-					M(1,2) += neigh::Sz1d(a); 
+					M(1,0) += spins::sx1d(a);
+					M(1,1) += spins::sy1d(a);
+					M(1,2) += spins::sz1d(a); 
 				}
 				else if (modfunc(params::Nq,a) == 2) {
-					M(0,0) += neigh::Sx1d(a);
-					M(0,1) += neigh::Sy1d(a);
-					M(0,2) += neigh::Sz1d(a);
+					M(0,0) += spins::sx1d(a);
+					M(0,1) += spins::sy1d(a);
+					M(0,2) += spins::sz1d(a);
 				}
 				else if (modfunc(params::Nq,a) == 3) {
-					M(1,0) += neigh::Sx1d(a);
-					M(1,1) += neigh::Sy1d(a);
-					M(1,2) += neigh::Sz1d(a); 
+					M(1,0) += spins::sx1d(a);
+					M(1,1) += spins::sy1d(a);
+					M(1,2) += spins::sz1d(a); 
 				}
 				else {
 					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
@@ -138,30 +139,30 @@ namespace util {
 			for (int a = 0; a < params::Nspins; a++){   
 
 				// Total Magnetisation
-				Mt(0) += neigh::Sx1d(a);			
-				Mt(1) += neigh::Sy1d(a);
-				Mt(2) += neigh::Sz1d(a);
+				Mt(0) += spins::sx1d(a);			
+				Mt(1) += spins::sy1d(a);
+				Mt(2) += spins::sz1d(a);
 
 				if (a / params::Nq % 2 == 0){
 					if (modfunc(params::Nq,a) == 0){
-						M(1,0) += neigh::Sx1d(a);
-						M(1,1) += neigh::Sy1d(a);
-						M(1,2) += neigh::Sz1d(a); 
+						M(1,0) += spins::sx1d(a);
+						M(1,1) += spins::sy1d(a);
+						M(1,2) += spins::sz1d(a); 
 					}
 					else if (modfunc(params::Nq,a) == 1) {
-						M(1,0) += neigh::Sx1d(a);
-						M(1,1) += neigh::Sy1d(a);
-						M(1,2) += neigh::Sz1d(a); 
+						M(1,0) += spins::sx1d(a);
+						M(1,1) += spins::sy1d(a);
+						M(1,2) += spins::sz1d(a); 
 					}
 					else if (modfunc(params::Nq,a) == 2) {
-						M(0,0) += neigh::Sx1d(a);
-						M(0,1) += neigh::Sy1d(a);
-						M(0,2) += neigh::Sz1d(a);
+						M(0,0) += spins::sx1d(a);
+						M(0,1) += spins::sy1d(a);
+						M(0,2) += spins::sz1d(a);
 					}
 					else if (modfunc(params::Nq,a) == 3) {
-						M(1,0) += neigh::Sx1d(a);
-						M(1,1) += neigh::Sy1d(a);
-						M(1,2) += neigh::Sz1d(a); 
+						M(1,0) += spins::sx1d(a);
+						M(1,1) += spins::sy1d(a);
+						M(1,2) += spins::sz1d(a); 
 					}
 					else {
 						std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
@@ -170,24 +171,24 @@ namespace util {
 				}
 				else if (a / params::Nq % 2 == 1) {
 					if (modfunc(params::Nq,a) == 0){
-						M(0,0) += neigh::Sx1d(a);
-						M(0,1) += neigh::Sy1d(a);
-						M(0,2) += neigh::Sz1d(a); 
+						M(0,0) += spins::sx1d(a);
+						M(0,1) += spins::sy1d(a);
+						M(0,2) += spins::sz1d(a); 
 					}
 					else if (modfunc(params::Nq,a) == 1) {
-						M(0,0) += neigh::Sx1d(a);
-						M(0,1) += neigh::Sy1d(a);
-						M(0,2) += neigh::Sz1d(a); 
+						M(0,0) += spins::sx1d(a);
+						M(0,1) += spins::sy1d(a);
+						M(0,2) += spins::sz1d(a); 
 					}
 					else if (modfunc(params::Nq,a) == 2) {
-						M(1,0) += neigh::Sx1d(a);
-						M(1,1) += neigh::Sy1d(a);
-						M(1,2) += neigh::Sz1d(a);
+						M(1,0) += spins::sx1d(a);
+						M(1,1) += spins::sy1d(a);
+						M(1,2) += spins::sz1d(a);
 					}
 					else if (modfunc(params::Nq,a) == 3) {
-						M(0,0) += neigh::Sx1d(a);
-						M(0,1) += neigh::Sy1d(a);
-						M(0,2) += neigh::Sz1d(a); 
+						M(0,0) += spins::sx1d(a);
+						M(0,1) += spins::sy1d(a);
+						M(0,2) += spins::sz1d(a); 
 					}
 					else {
 						std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
@@ -301,9 +302,9 @@ namespace util {
 			for (int j =0; j < params::Ly; j++){
 				for (int k =0; k < params::Lz; k++){
 					lc = geom::LatCount(h,j,k,2);
-					sumx(h) += neigh::Sx1d(lc);
-					sumy(h) += neigh::Sy1d(lc);
-					sumz(h) += neigh::Sz1d(lc);
+					sumx(h) += spins::sx1d(lc);
+					sumy(h) += spins::sy1d(lc);
+					sumz(h) += spins::sz1d(lc);
 				}
 			}
 			sumx(h) /= params::Ly*params::Lz;

@@ -7,8 +7,8 @@
 #include <random>
 #include <algorithm>
 #include "../inc/fftw3.h"
-// #include "params.h"
-#include "../inc/params1.h"
+#include "../inc/spins.h"
+#include "../inc/config.h"
 #include "../inc/array.h"
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
@@ -51,7 +51,7 @@ namespace spinwaves {
 
 	int lval, mval, nval;
 
-	void initialiseFFT(){
+	void init(){
 		Npoints  = ceil((params::Nt - params::start) / (params::dt_spinwaves / params::dt));
 		norm = 1 / (geom::Ix * geom::Iy * geom::Iz * Npoints);
 
@@ -99,7 +99,7 @@ namespace spinwaves {
 						lval = l + params::Isites[q][0];
 						mval = m + params::Isites[q][1];
 						nval = n + params::Isites[q][2];
-						stcf(lval,mval,nval) = neigh::Sy1d(geom::Scount(lval,mval,nval)) * neigh::Sy1d(geom::Scount(lval,mval,nval)) + neigh::Sz1d(geom::Scount(lval,mval,nval)) * neigh::Sz1d(geom::Scount(lval,mval,nval));
+						stcf(lval,mval,nval) = spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval)) + spins::sz1d(geom::Scount(lval,mval,nval)) * spins::sz1d(geom::Scount(lval,mval,nval));
 					}
 				}
 			}
@@ -110,7 +110,7 @@ namespace spinwaves {
 
 		// //TESTING WITH MN2AU DELETE IF NOT USING
 		// for (int l = 0; l < params::Lx; l++){
-		//     stcf1d(l) = neigh::Sy1d(geom::LatCount(l,1,1,2)) * neigh::Sy1d(geom::LatCount(l,1,1,2)) + neigh::Sz1d(geom::LatCount(l,1,1,2)) * neigh::Sz1d(geom::LatCount(l,1,1,2));
+		//     stcf1d(l) = spins::sy1d(geom::LatCount(l,1,1,2)) * spins::sy1d(geom::LatCount(l,1,1,2)) + spins::sz1d(geom::LatCount(l,1,1,2)) * spins::sz1d(geom::LatCount(l,1,1,2));
 		// }
 
 		// // testing for Mn2Au

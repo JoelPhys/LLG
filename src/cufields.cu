@@ -3,7 +3,7 @@
 #include <curand.h>
 #include "../inc/array.h"
 #include "../inc/NeighbourList.h"
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/cuheun.h"
 #include "../inc/cuthermal.h"
 #include "../inc/cudefine.h"

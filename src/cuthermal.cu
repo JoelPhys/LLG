@@ -2,7 +2,7 @@
 #include <cuda.h>
 #include <curand_kernel.h>
 #include "../inc/cudefine.h"
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include <iostream>
 #include <ctime>
 

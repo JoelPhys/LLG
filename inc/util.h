@@ -1,6 +1,6 @@
 #include <cmath>
 #include <fstream>
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/NeighbourList.h"
 #include "../inc/array.h"
 #include "../inc/array2d.h"
@@ -17,7 +17,7 @@ namespace util {
     extern Array2D<double> MsumSQR;
 
     void SortSublat();
-    void InitUtil();
+    void init();
     void ResetMag();
     void MagLength();
     void OutputMagToFile(int i);

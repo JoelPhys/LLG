@@ -1,7 +1,7 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/libconfig.h++"
 #include "../inc/util.h"
 

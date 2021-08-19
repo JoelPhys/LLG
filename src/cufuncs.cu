@@ -2,7 +2,7 @@
 #include <curand.h>
 #include <cuda_runtime.h>
 #include <sstream>
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/cumalloc.h"
 #include "../inc/cuheun.h"
 #include "../inc/cuthermal.h"

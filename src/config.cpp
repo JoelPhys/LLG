@@ -12,7 +12,7 @@
 #include "../inc/mathfuncs.h"
 #include "../inc/array2d.h"
 #include "../inc/array.h"
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/error.h"
 
 namespace params {
@@ -77,19 +77,18 @@ namespace params {
 	void intitialiseConfig(const char* cfg_filename){
 
 		std::cout << "##################################################################################################################################" << std::endl;
-		std::cout << "CPU Compiler: " << CPUCOMP << std::endl;
-		std::cout << "NVCC Compiler: " << GPUCOMP << std::endl;
-		std::cout << "Compile Date and Time: " << __DATE__ << " " << __TIME__ << std::endl;
-		std::cout << "Compiled on Machine: " << HOSTNAME << std::endl;
+		std::cout.width(75); std::cout << std::left << "CPU Compiler: "; std::cout <<CPUCOMP << std::endl;
+		std::cout.width(75); std::cout << std::left << "NVCC Compiler: "; std::cout <<GPUCOMP << std::endl;
+		std::cout.width(75); std::cout << std::left << "Compile Date and Time: "; std::cout <<__DATE__ << " " << __TIME__ << std::endl;
+		std::cout.width(75); std::cout << std::left << "Compiled on Machine: "; std::cout <<HOSTNAME << std::endl;
 		if(GITDIRTY!="0")
         {
-            std::cout << __FILE__ << " "  << __LINE__ << std::endl;
-            std::cout << "Warning: Your git build is dirty, you should not use this code for production. " << std::endl;
-        	std::cout << "Please commit changes and recompile with Git SHA: " << GIT_SHA1 << ", Dirty" << std::endl;
+            std::cout.width(75); std::cout << std::left << "WARNING: Your git build is dirty, you should not use this code for production. "; std::cout <<std::endl;
+        	std::cout.width(75); std::cout << std::left << "Please commit changes and recompile with Git SHA: "; std::cout << GIT_SHA1 << ", Dirty" << std::endl;
         }
         else
         {
-            std::cout << "Git SHA: " << GIT_SHA1 << ", Clean" << std::endl;
+            std::cout.width(75); std::cout << std::left << "Git SHA: "; std::cout <<GIT_SHA1 << ", Clean" << std::endl;
         }
 		std::cout << "##################################################################################################################################" << std::endl;
 
@@ -123,7 +122,6 @@ namespace params {
 
 
 		// Global Constants
-		std::cout << __LINE__ << std::endl;
 		k_B = cfg.lookup("PhysicalConsts.BoltzmannConstant");
 		mu_b = cfg.lookup("PhysicalConsts.BohrMagneton");
 		gamma = cfg.lookup("PhysicalConsts.GyromagneticRatio");
@@ -165,16 +163,6 @@ namespace params {
 		thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
 		lambdaPrime = 1 / (1+(lambda*lambda));
 
-		// Print key parameters to log file
-		std::cout << "Damping constant = " << lambda << std::endl;
-		std::cout << "Magnetic Moment = "<< mu_s << " (mu_b)" << std::endl;
-		std::cout << "Uniaxial Anisotropy = [" << dxu << " , " << dyu << " , " << dzu << "] (J)" << std::endl;
-		std::cout << "Cubic Anisotropy = [" << dxc << " , " << dyc << " , " << dzc << "] (J)" << std::endl;
-		std::cout << "Lattice Parameter = "<< a1 << " (m)" << std::endl;
-		std::cout << "Timestep = " << dt << " (s)" << std::endl;
-		std::cout << "Number of timesteps = " << Nt << std::endl;
-		std::cout << "Outputting every " << outputstep << "timesteps" << std::endl;
-		std::cout << "Outputting to terminal: " << OutputToTerminal << std::endl;
 
 		// system dimensions
 		Lx = cfg.lookup("Geom.UnitCellsInX");
@@ -185,11 +173,6 @@ namespace params {
 		ax = 2;
 		ay = 2;
 		az = 2;
-
-		// Print system parameters to log file
-		std::cout << "Number of unit cells = " << Lx << "x" << Ly << "x" << Lz << std::endl;
-		std::cout << "Number of sites in unit cell = " << Nq << std::endl;
-		std::cout << "Number of sublattices = " << Nsublat << std::endl;
 
 		// Angle of sublattice rotation
 		angle = cfg.lookup("angle");
@@ -210,13 +193,27 @@ namespace params {
 		xbound = cfg.lookup("Geom.BoundaryConditionsX").c_str(); 
 		ybound = cfg.lookup("Geom.BoundaryConditionsY").c_str(); 
 		zbound = cfg.lookup("Geom.BoundaryConditionsZ").c_str(); 
-		std::cout << "Boundary Conditions: [" << xbound << " , " << ybound << " , " << zbound << "]" << std::endl;
 
 		//Temparature
 		temptype = cfg.lookup("Temperature.method").c_str();
 		ttm_start = cfg.lookup("Temperature.ttm_start");
-		std::cout << "Temperature method: " << temptype << std::endl;
-		std::cout << "two temperature model start time: " << ttm_start << std::endl; 
+
+		// Print key parameters to log file
+		std::cout.width(75); std::cout << std::left << "Damping constant:"; std::cout <<lambda << std::endl;
+		std::cout.width(75); std::cout << std::left << "Magnetic Moment:"<< mu_s << " (mu_b)"; std::cout <<std::endl;
+		std::cout.width(75); std::cout << std::left << "Uniaxial Anisotropy:"; std::cout << "[" << dxu << " , " << dyu << " , " << dzu << "] (J)" << std::endl;
+		std::cout.width(75); std::cout << std::left << "Cubic Anisotropy:"; std::cout << "[" << dxc << " , " << dyc << " , " << dzc << "] (J)" << std::endl;
+		std::cout.width(75); std::cout << std::left << "Lattice Parameter:"; std::cout << a1 << " (m)" << std::endl;
+		std::cout.width(75); std::cout << std::left << "Timestep:"; std::cout << dt << " (s)" << std::endl;
+		std::cout.width(75); std::cout << std::left << "Number of timesteps:"; std::cout << Nt << std::endl;
+		std::cout.width(75); std::cout << std::left << "Outputting every "; std::cout << outputstep << " timesteps" << std::endl;
+		std::cout.width(75); std::cout << std::left << "Outputting to terminal: "; std::cout << OutputToTerminal << std::endl;
+		std::cout.width(75); std::cout << std::left << "Number of unit cells:"; std::cout << Lx << "x" << Ly << "x" << Lz << std::endl;
+		std::cout.width(75); std::cout << std::left << "Number of sites in unit cell:"; std::cout << Nq << std::endl;
+		std::cout.width(75); std::cout << std::left << "Number of sublattices:"; std::cout << Nsublat << std::endl;
+		std::cout.width(75); std::cout << std::left << "Boundary Conditions:"; std::cout << "[" << xbound << " , " << ybound << " , " << zbound << "]" << std::endl;
+		std::cout.width(75); std::cout << std::left << "Temperature method: "; std::cout << temptype << std::endl;
+		std::cout.width(75); std::cout << std::left << "two temperature model start time: "; std::cout << ttm_start << std::endl; 
 		
 
 		//Read Site positions ==============================================================================
@@ -257,7 +254,6 @@ namespace params {
 		//=======================================================================================================
 
 		// Read Lattice Vectors =================================================================================
-		std::cout << "Lattice Vectors = " << std::endl;
 		for (int v = 0; v < 3; v++){
 
 			std::stringstream sstr1;
@@ -268,15 +264,16 @@ namespace params {
 			Plat[v][0] = setting[str1.c_str()][0];
 			Plat[v][1] = setting[str1.c_str()][1];
 			Plat[v][2] = setting[str1.c_str()][2];
+			std::cout.width(75); std::cout << std::left << "Lattice Vectors:";
 			std::cout << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2] << std::endl;
 		}
 		//=======================================================================================================
 
 		// Read Initial Magnetisation Vectors ===================================================================
 		initm.resize(Nq);
-		std::cout << " Initial Magnestaion Vectors = " << std::endl;
+		
 		for (int v = 0; v < Nq; v++){
-			
+			std::cout.width(75); std::cout << std::left << "Initial Magnestaion Vectors:";
 			initm[v].resize(3);
 			std::stringstream sstr2;
 			sstr2 << "initm" << v;
@@ -297,15 +294,17 @@ namespace params {
 		filepath = cfg.lookup("Util.filepath").c_str();        
 		dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");
 		Jij_filename = cfg.lookup("Exchange.InputFile").c_str();
-		std::cout << "Exchange filename: " << params::Jij_filename << std::endl;        
 		Jij_units = cfg.lookup("Exchange.Units").c_str();   
 		JijCutoff = cfg.lookup("Exchange.Cutoff");    
-		std::cout << "Exhchange Cutoff = " << JijCutoff << std::endl;
 		changesign = cfg.lookup("Exchange.ChangeSign").c_str();  
 		Jijhalf = cfg.lookup("Exchange.Double_Jij");    
 		Jij_min = cfg.lookup("Exchange.CutoffEnergy");    
-		std::cout << "Exhchange Energy Minimum = " << Jij_min << " (" << Jij_units << ")" << std::endl;
-		ibtoq = cfg.lookup("Exchange.ibtoq");    
+		ibtoq = cfg.lookup("Exchange.ibtoq");  
+
+		std::cout.width(75); std::cout << std::left << "Exchange filename: "; std::cout <<params::Jij_filename << std::endl;        
+		std::cout.width(75); std::cout << std::left << "Exhchange Cutoff:"; std::cout <<JijCutoff << std::endl;
+		std::cout.width(75); std::cout << std::left << "Exhchange Energy Minimum:"; std::cout <<Jij_min << " (" << Jij_units << ")" << std::endl;
+ 
 
 	}
 	//========================================================================================================================================//

@@ -9,7 +9,7 @@
 #include "fftw3.h"
 #include "../inc/FFT.h"
 #include "../inc/geom.h"
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
 #include "../inc/array4d.h"

@@ -1,11 +1,13 @@
+
+// cpp libraries
 #include <cmath>
 #include <fstream>
-#include "../inc/mathfuncs.h"
-#include "../inc/params1.h"
-#include "../inc/util.h"
-#include "../inc/NeighbourList.h"
+
+// user libraries
 #include "../inc/array.h"
 #include "../inc/array2d.h"
+#include "../inc/mathfuncs.h"
+
 
 int modfunc(int L, int x){
 	int y = ((x % L) + L) % L;
@@ -76,38 +78,32 @@ void IdentityMatrix(){
 }
 
 
-void Rotation(){
 
-	double x,y,z;
-	//loop through all spins
-	for (int i = 0; i < params::Nspins; i++){
+// void Rotation(){
 
-		//Find spins in the second sublattice
-		if ((modfunc(params::Nq,i) == 0) || (modfunc(params::Nq,i) == 3) || (modfunc(params::Nq,i) == 5) || (modfunc(params::Nq,i) == 6)) {
+// 	double x,y,z;
+// 	//loop through all spins
+// 	for (int i = 0; i < params::Nspins; i++){
+
+// 		//Find spins in the second sublattice
+// 		if ((modfunc(params::Nq,i) == 0) || (modfunc(params::Nq,i) == 3) || (modfunc(params::Nq,i) == 5) || (modfunc(params::Nq,i) == 6)) {
 			
-			// Asign to temporary variables to avoid overwriting each component
-			x = neigh::Sx1d[i]; 
-			y = neigh::Sy1d[i] * cos(params::angle) - neigh::Sz1d[i] * sin(params::angle);
-			z = neigh::Sy1d[i] * sin(params::angle) + neigh::Sz1d[i] * cos(params::angle);
+// 			// Asign to temporary variables to avoid overwriting each component
+// 			x = spins::sx1d[i]; 
+// 			y = spins::sy1d[i] * cos(params::angle) - spins::sz1d[i] * sin(params::angle);
+// 			z = spins::sy1d[i] * sin(params::angle) + spins::sz1d[i] * cos(params::angle);
 
-			// assign each component to the magnetisation vector
-			neigh::Sx1d[i] = x;
-			neigh::Sy1d[i] = y;
-			neigh::Sz1d[i] = z;
+// 			// assign each component to the magnetisation vector
+// 			spins::sx1d[i] = x;
+// 			spins::sy1d[i] = y;
+// 			spins::sz1d[i] = z;
 
-		}
+// 		}
 
-	}
-
-
-}
+// 	}
 
 
-
-
-
-
-
+// }
 
 // void Rotation(){
 
@@ -161,13 +157,13 @@ void Rotation(){
 //             }
 
 //             for (int a = 0; a < params::Nspins; a++){     
-//                     Stest[0] = R(0,0) * neigh::Sx1d[a] + R(0,1) * neigh::Sy1d[a] + R(0,2) * neigh::Sz1d[a];
-//                     Stest[1] = R(1,0) * neigh::Sx1d[a] + R(1,1) * neigh::Sy1d[a] + R(1,2) * neigh::Sz1d[a];
-//                     Stest[2] = R(2,0) * neigh::Sx1d[a] + R(2,1) * neigh::Sy1d[a] + R(2,2) * neigh::Sz1d[a];
+//                     Stest[0] = R(0,0) * spins::sx1d[a] + R(0,1) * spins::sy1d[a] + R(0,2) * spins::sz1d[a];
+//                     Stest[1] = R(1,0) * spins::sx1d[a] + R(1,1) * spins::sy1d[a] + R(1,2) * spins::sz1d[a];
+//                     Stest[2] = R(2,0) * spins::sx1d[a] + R(2,1) * spins::sy1d[a] + R(2,2) * spins::sz1d[a];
 
-//                     neigh::Sx1d[a] = Stest[0];
-//                     neigh::Sy1d[a] = Stest[1];
-//                     neigh::Sz1d[a] = Stest[2];
+//                     spins::sx1d[a] = Stest[0];
+//                     spins::sy1d[a] = Stest[1];
+//                     spins::sz1d[a] = Stest[2];
 
 //             }
 

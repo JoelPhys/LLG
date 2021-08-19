@@ -5,7 +5,7 @@
 #include "../inc/cumalloc.h"
 #include "../inc/cudefine.h"
 #include "../inc/cuthermal.h"
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/NeighbourList.h"
 #include "../inc/mathfuncs.h"
 

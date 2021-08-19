@@ -19,7 +19,7 @@
        
 
         //intiialise arrays
-        void initialiseFFT();
+        void init();
         void FFTspace();
         void FFTtime();
 

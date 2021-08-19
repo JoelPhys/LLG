@@ -3,12 +3,13 @@
 #include <curand.h>
 #include "../inc/array.h"
 #include "../inc/NeighbourList.h"
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/cuheun.h"
 #include "../inc/cuthermal.h"
 #include "../inc/cudefine.h"
 #include "../inc/fields.h"
 #include "../inc/geom.h"
+#include "../inc/spins.h"
 
 
 namespace cuglob {
@@ -30,15 +31,15 @@ namespace cuglob {
 		cudaGetDevice(&device);
 		struct cudaDeviceProp properties;
 		cudaGetDeviceProperties(&properties, device);
-		std::cout << "======== CUDA DEVICE PROPERTIES =========" << std::endl;
-		std::cout << "Device name: " << properties.name << std::endl;
-		std::cout << "Memory Clock Rate (KHz): " << properties.memoryClockRate << std::endl;
-    	std::cout << "Memory Bus Width (bits): " << properties.memoryBusWidth << std::endl;
-    	std::cout << "Peak Memory Bandwidth (GB/s): " << 2.0*properties.memoryClockRate*(properties.memoryBusWidth/8)/1.0e6 << std::endl;
-		std::cout << "multiprocessors: " << properties.multiProcessorCount << std::endl;
-		std::cout << "max threads per processor: " << properties.maxThreadsPerMultiProcessor << std::endl;
-		std::cout << "max threads per block: " << properties.maxThreadsPerBlock << std::endl;	
-		std::cout << "=========================================" << std::endl;
+		std::cout.width(75); std::cout << std::left << "================================= CUDA DEVICE PROPERTIES ==================================" << std::endl;
+		std::cout.width(75); std::cout << std::left << "Device name:"; std::cout << properties.name << std::endl;
+		std::cout.width(75); std::cout << std::left << "Memory Clock Rate (KHz):"; std::cout << properties.memoryClockRate << std::endl;
+    	std::cout.width(75); std::cout << std::left << "Memory Bus Width (bits):"; std::cout << properties.memoryBusWidth << std::endl;
+    	std::cout.width(75); std::cout << std::left << "Peak Memory Bandwidth (GB/s):"; std::cout << 2.0*properties.memoryClockRate*(properties.memoryBusWidth/8)/1.0e6 << std::endl;
+		std::cout.width(75); std::cout << std::left << "multiprocessors:"; std::cout << properties.multiProcessorCount << std::endl;
+		std::cout.width(75); std::cout << std::left << "max threads per processor:"; std::cout << properties.maxThreadsPerMultiProcessor << std::endl;
+		std::cout.width(75); std::cout << std::left << "max threads per block:"; std::cout << properties.maxThreadsPerBlock << std::endl;	
+		std::cout << "==========================================================================================" << std::endl;
 	}
 
 	void clear_memory(){
@@ -214,9 +215,9 @@ namespace cuglob {
 	}
 
 	void copy_spins_to_device(){
-		CUDA_CALL(cudaMemcpy(dSx1d, neigh::Sx1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
-		CUDA_CALL(cudaMemcpy(dSy1d, neigh::Sy1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
-		CUDA_CALL(cudaMemcpy(dSz1d, neigh::Sz1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dSx1d, spins::sx1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dSy1d, spins::sy1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dSz1d, spins::sz1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
 	}
 
 	void copy_dw_to_device(){
@@ -230,9 +231,9 @@ namespace cuglob {
 	}
 
 	void copy_spins_to_host(){
-		CUDA_CALL(cudaMemcpy(neigh::Sx1d.ptr(), dSx1d, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
-		CUDA_CALL(cudaMemcpy(neigh::Sy1d.ptr(), dSy1d, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
-		CUDA_CALL(cudaMemcpy(neigh::Sz1d.ptr(), dSz1d, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(spins::sx1d.ptr(), dSx1d, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(spins::sy1d.ptr(), dSy1d, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(spins::sz1d.ptr(), dSz1d, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
 	}
 
 

@@ -17,7 +17,7 @@ HOSTNAME='"$(shell hostname)"'
 
 
 OBJ = \
-obj/main.o \
+obj/spins.o \
 obj/NeighbourList.o \
 obj/mathfuncs.o \
 obj/config.o \
@@ -25,7 +25,9 @@ obj/fields.o \
 obj/geom.o \
 obj/error.o \
 obj/spinwaves.o \
-obj/util.o
+obj/util.o \
+obj/heun.o \
+obj/main.o
 
 OBJNVCC = \
 obj/cumalloc.o \
@@ -54,7 +56,7 @@ obj/%.o: src/%.cu
 # CULIBS = -lcurand
 
 # OBJ = \
-# obj/main.o \
+# obj/spins.o \
 # obj/NeighbourList.o \
 # obj/mathfuncs.o \
 # obj/config.o \
@@ -62,7 +64,9 @@ obj/%.o: src/%.cu
 # obj/geom.o \
 # obj/error.o \
 # obj/spinwaves.o \
-# obj/util.o
+# obj/util.o \
+# obj/heun.o \
+# obj/main.o 
 
 # OBJNVCC = \
 # obj/cumalloc.o \

@@ -1,5 +1,7 @@
 #ifndef __GEOM_H__
 #define __GEOM_H__
+
+#include "array.h"
 #include "array4d.h"
 #include "array3d.h"
 
@@ -29,8 +31,7 @@
         void CreateLattice();     
         void CountDistinct(); 
         void CreateIntLattice();           
-        void InitSpins();
-        void InitDomainWall();
+        void initdw();
     }
 
 #endif

@@ -7,13 +7,15 @@
 #include <random>
 #include <algorithm>
 #include <time.h>
+#include "../inc/heun.h"
+#include "../inc/spins.h"
 #include "../inc/fftw3.h"
 #include "../inc/array.h"
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
 #include "../inc/array4d.h"
 #include "../inc/mathfuncs.h"
-#include "../inc/params1.h"
+#include "../inc/config.h"
 #include "../inc/fields.h"
 #include "../inc/geom.h"
 #include "../inc/NeighbourList.h"
@@ -44,16 +46,16 @@ int main(int argc, char* argv[]){
 	// functions ============================================================================================== //
 	params::intitialiseConfig(argv[1]); 
 	params::readparams();
+	spins::init();
 	fields::readfields();
 	geom::CreateLattice();
 	geom::CountDistinct();
 	geom::CreateIntLattice();
 	neigh::ReadFile();
 	neigh::InteractionMatrix();
-	neigh::IntialisePointersNL();
-	util::InitUtil();
+	util::init();
 	IdentityMatrix();
-	// spinwaves::initialiseFFT();
+	// spinwaves::init();
 	#define TERM params::term;
 	// ======================================================================================================== //
 
@@ -71,7 +73,7 @@ int main(int argc, char* argv[]){
 	// ========================================================================================================= //
 
 	// ======= Initiliase Spin Position ======================================================================== //
-	geom::InitSpins();
+	spins::populate();
 
 	// ========================================================================================================= //
 
@@ -84,11 +86,11 @@ int main(int argc, char* argv[]){
 
 
 		for (int i = 0; i < params::relaxtime; i++){
-			neigh::Heun(thermal_fluct);
+			heun::integration(thermal_fluct);
 		}
 
 		for (int j = 0; j < params::Nmoments; j++){
-			equilfile << neigh::Sx1d[j] << " " << neigh::Sy1d[j] << " " << neigh::Sz1d[j] << std::endl;
+			equilfile << spins::sx1d[j] << " " << spins::sy1d[j] << " " << spins::sz1d[j] << std::endl;
 		}
 
 		equilfile << std::flush;
@@ -114,12 +116,11 @@ int main(int argc, char* argv[]){
 		int posx, posy, posz;
 		while (equilibrationfile >> posx >> posy >> posz >> sx >> sy >> sz){
 			for (int q = 0; q < params::Nq; q++){
-				neigh::Sx1d(geom::LatCount(posx,posy,posz,q)) = sx;
-				neigh::Sy1d(geom::LatCount(posx,posy,posz,q)) = sy;
-				neigh::Sz1d(geom::LatCount(posx,posy,posz,q)) = sz;
+				spins::sx1d(geom::LatCount(posx,posy,posz,q)) = sx;
+				spins::sy1d(geom::LatCount(posx,posy,posz,q)) = sy;
+				spins::sz1d(geom::LatCount(posx,posy,posz,q)) = sz;
 			}
 		}
-		std::cout << "TESTING INPUT FILE " << neigh::Sx1d(geom::LatCount(41,41,41,0)) << std::endl;
 		equilibrationfile.close();
 		// ================================================================================================== //
 	}
@@ -127,7 +128,7 @@ int main(int argc, char* argv[]){
 
 
 		// testing for hedgehog
-		geom::InitDomainWall();
+		geom::initdw();
 		
 		#ifdef CUDA
 		std::cout << "CUDA Simulation" << std::endl;
@@ -154,6 +155,8 @@ int main(int argc, char* argv[]){
 
 		// util::InitMagFile(Temp, atof(argv[4]), atof(argv[5]), atof(argv[6]));
 		// util::InitDWFile(Temp);
+
+		std::cout << spins::sx1d.size() << std::endl;
 		
 		// ========== LOOP THROUGH TIMESTEPS ================================================================ //
 		for (int i = 0; i < params::Nt; i++){
@@ -196,7 +199,7 @@ int main(int argc, char* argv[]){
 			cufuncs::integration(static_cast<double>(i));
 			cufuncs::cuDomainWall();
 			#else
-			neigh::Heun(thermal_fluct);
+			heun::integration(thermal_fluct);
 			#endif
 			
 		}
@@ -209,21 +212,21 @@ int main(int argc, char* argv[]){
 		// util::OutputSumMag();
 
 		// Output Final Lattice 
-		for (int i = 0; i < params::Lx; i++){
-            for (int j = 0; j < params::Ly; j++){
-                for (int k = 0; k < params::Lz; k++){
-                    for (int q = 0; q < params::Nq; q++){
+		// for (int i = 0; i < params::Lx; i++){
+        //     for (int j = 0; j < params::Ly; j++){
+        //         for (int k = 0; k < params::Lz; k++){
+        //             for (int q = 0; q < params::Nq; q++){
 
-						std::cout << geom::latticeX(i,j,k,q) << " ";
-						std::cout << geom::latticeY(i,j,k,q) << " ";
-						std::cout << geom::latticeZ(i,j,k,q) << " ";
-						std::cout << neigh::Sx1d(geom::LatCount(i,j,k,q)) << " ";
-						std::cout << neigh::Sy1d(geom::LatCount(i,j,k,q)) << " ";
-						std::cout << neigh::Sz1d(geom::LatCount(i,j,k,q)) << std::endl;
-					}
-				}
-			}
-		}
+		// 				std::cout << geom::latticeX(i,j,k,q) << " ";
+		// 				std::cout << geom::latticeY(i,j,k,q) << " ";
+		// 				std::cout << geom::latticeZ(i,j,k,q) << " ";
+		// 				std::cout << spins::sx1d(geom::LatCount(i,j,k,q)) << " ";
+		// 				std::cout << spins::sy1d(geom::LatCount(i,j,k,q)) << " ";
+		// 				std::cout << spins::sz1d(geom::LatCount(i,j,k,q)) << std::endl;
+		// 			}
+		// 		}
+		// 	}
+		// }
 						 
 
 
