@@ -8,12 +8,14 @@
 #include <cstdio>
 #include <iomanip>
 #include <string>
+#include <cstring>
 #include <sstream>
 #include "../inc/mathfuncs.h"
 #include "../inc/array2d.h"
 #include "../inc/array.h"
 #include "../inc/config.h"
 #include "../inc/error.h"
+#include "../inc/defines.h"
 
 namespace params {
 
@@ -76,22 +78,19 @@ namespace params {
 	//Intialise Config File ====================================================================================================================================//
 	void intitialiseConfig(const char* cfg_filename){
 
-		std::cout << "##################################################################################################################################" << std::endl;
+		TITLE("COMPILATION INFO");
 		std::cout.width(75); std::cout << std::left << "CPU Compiler: "; std::cout <<CPUCOMP << std::endl;
 		std::cout.width(75); std::cout << std::left << "NVCC Compiler: "; std::cout <<GPUCOMP << std::endl;
 		std::cout.width(75); std::cout << std::left << "Compile Date and Time: "; std::cout <<__DATE__ << " " << __TIME__ << std::endl;
 		std::cout.width(75); std::cout << std::left << "Compiled on Machine: "; std::cout <<HOSTNAME << std::endl;
 		if(GITDIRTY!="0")
         {
-            std::cout.width(75); std::cout << std::left << "WARNING: Your git build is dirty, you should not use this code for production. "; std::cout <<std::endl;
-        	std::cout.width(75); std::cout << std::left << "Please commit changes and recompile with Git SHA: "; std::cout << GIT_SHA1 << ", Dirty" << std::endl;
+            std::cout.width(75); std::cout << std::left << "WARNING: Your git build is dirty. Recompile with Git SHA:"; std::cout << GIT_SHA1 << ", Dirty" << std::endl;
         }
         else
         {
             std::cout.width(75); std::cout << std::left << "Git SHA: "; std::cout <<GIT_SHA1 << ", Clean" << std::endl;
         }
-		std::cout << "##################################################################################################################################" << std::endl;
-
 
 		if(!cfg_filename)
 		{
@@ -199,6 +198,7 @@ namespace params {
 		ttm_start = cfg.lookup("Temperature.ttm_start");
 
 		// Print key parameters to log file
+		TITLE("MATERIAL CONSTANTS");
 		std::cout.width(75); std::cout << std::left << "Damping constant:"; std::cout <<lambda << std::endl;
 		std::cout.width(75); std::cout << std::left << "Magnetic Moment:"<< mu_s << " (mu_b)"; std::cout <<std::endl;
 		std::cout.width(75); std::cout << std::left << "Uniaxial Anisotropy:"; std::cout << "[" << dxu << " , " << dyu << " , " << dzu << "] (J)" << std::endl;
@@ -265,7 +265,7 @@ namespace params {
 			Plat[v][1] = setting[str1.c_str()][1];
 			Plat[v][2] = setting[str1.c_str()][2];
 			std::cout.width(75); std::cout << std::left << "Lattice Vectors:";
-			std::cout << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2] << std::endl;
+			std::cout << std::fixed << std::setprecision(5) << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2] << std::endl;
 		}
 		//=======================================================================================================
 
@@ -283,9 +283,10 @@ namespace params {
 			initm[v][0] = setting[str2.c_str()][0];
 			initm[v][1] = setting[str2.c_str()][1];
 			initm[v][2] = setting[str2.c_str()][2];
-			std::cout << initm[v][0] << " " << initm[v][1] << " " << initm[v][2] << std::endl;
+			std::cout << std::fixed << std::setprecision(5) << initm[v][0] << " " << initm[v][1] << " " << initm[v][2] << std::endl;
 		}
 		//=======================================================================================================
+
 
 		OutputToTerminal = cfg.lookup("Util.OutputToTerminal");
 		start = cfg.lookup("Spinwaves.StartTime");
@@ -301,9 +302,12 @@ namespace params {
 		Jij_min = cfg.lookup("Exchange.CutoffEnergy");    
 		ibtoq = cfg.lookup("Exchange.ibtoq");  
 
+		TITLE("EXCHANGE FILE INFO");
 		std::cout.width(75); std::cout << std::left << "Exchange filename: "; std::cout <<params::Jij_filename << std::endl;        
 		std::cout.width(75); std::cout << std::left << "Exhchange Cutoff:"; std::cout <<JijCutoff << std::endl;
 		std::cout.width(75); std::cout << std::left << "Exhchange Energy Minimum:"; std::cout <<Jij_min << " (" << Jij_units << ")" << std::endl;
+		if (Jijhalf == true) {std::cout.width(75); std::cout << std::left << "Have Jij values been doubled"; std::cout << "Yes" << std::endl;}
+		else if (Jijhalf == false) {std::cout.width(75); std::cout << std::left << "Have Jij values been doubled"; std::cout << "No" << std::endl;}
  
 
 	}

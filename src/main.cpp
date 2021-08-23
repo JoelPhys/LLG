@@ -7,6 +7,7 @@
 #include <random>
 #include <algorithm>
 #include <time.h>
+#include <cstring>
 #include "../inc/heun.h"
 #include "../inc/spins.h"
 #include "../inc/fftw3.h"
@@ -22,6 +23,7 @@
 #include "../inc/util.h"
 // #include "inc/FFT.h"
 #include "../inc/spinwaves.h"
+#include "../inc/defines.h"
 
 //Cuda Header files
 #ifdef CUDA
@@ -156,7 +158,7 @@ int main(int argc, char* argv[]){
 		// util::InitMagFile(Temp, atof(argv[4]), atof(argv[5]), atof(argv[6]));
 		// util::InitDWFile(Temp);
 
-		std::cout << spins::sx1d.size() << std::endl;
+		TITLE("SIMULATION STARTING");
 		
 		// ========== LOOP THROUGH TIMESTEPS ================================================================ //
 		for (int i = 0; i < params::Nt; i++){
@@ -228,7 +230,7 @@ int main(int argc, char* argv[]){
 		// 	}
 		// }
 						 
-
+		TITLE("FINISHED");
 
 		end = clock();
 		std::cout << std::setprecision(10) << "Simulation Time = " << (double)(end - begin) / CLOCKS_PER_SEC << std::endl; 
@@ -240,6 +242,8 @@ int main(int argc, char* argv[]){
 		#ifdef CUDA 
 		cuthermal::destroy_generator();
 		#endif
+
+
 	}
 
 	return 0;

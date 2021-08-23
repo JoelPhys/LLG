@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <random>
 #include <algorithm>
+#include <cstring>
+#include "../inc/defines.h"
 #include "../inc/spins.h"
 #include "../inc/mathfuncs.h"
 #include "../inc/fields.h"
@@ -37,6 +39,8 @@ namespace neigh {
     std::vector<double> Jijz;
 
     void ReadFile(){
+
+        TITLE("READING IN EXCHANGE FILE");
 
         std::ifstream input(params::Jij_filename);
         if (!input){
@@ -82,7 +86,7 @@ namespace neigh {
                     std::cout << "WARNING: Unasigned Jij cutoff flag" << std::endl;
                 }
             }
-            std::cout << "Jij input file has been read" << std::endl;
+            std::cout << "Jij input file has been read in successfully" << std::endl;
         }
         else if (params::format == "diag"){
             double a, b, c, d, e, f, g, h;
@@ -144,13 +148,6 @@ namespace neigh {
         else {
             std::cout << "WARNING: Unasigned Jij double flag" << std::endl;
         }
-
-        for (int i = 0; i < length; i++){
-            sum1 += std::abs(Jijx[i]);
-        }
-
-        std::cout << "Sum of Jij = " << sum1 << std::endl;
-        input.close();
     }
 
     void InteractionMatrix() {
@@ -350,11 +347,11 @@ namespace neigh {
             Jijsize += (Jijx[i]);
         }
 
-        std::cout << "length of x_adj = " << x_adj.size() << std::endl;
-        std::cout << "length of adjncy = " << adjncy.size() << std::endl;
-        std::cout << "average number of neighbours = " << adjncy.size() / (x_adj.size()-1) << std::endl;
-        std::cout << "length of Jij = " << Jijz_prime.size() << std::endl;
-        std::cout << "sum of neighbouring Jijs = " << Jijsize << " (J)" << std::endl;
+        std::cout.width(75); std::cout << std::left << "length of x_adj:"; std::cout << x_adj.size() << std::endl;
+        std::cout.width(75); std::cout << std::left << "length of adjncy:"; std::cout << adjncy.size() << std::endl;
+        std::cout.width(75); std::cout << std::left << "average number of neighbours:"; std::cout << adjncy.size() / (x_adj.size()-1) << std::endl;
+        std::cout.width(75); std::cout << std::left << "length of Jij:"; std::cout << Jijz_prime.size() << std::endl;
+        std::cout.width(75); std::cout << std::left << "sum of neighbouring Jijs:"; std::cout << Jijsize << " (J)" << std::endl;
     }
 
     

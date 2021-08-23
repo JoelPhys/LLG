@@ -1,0 +1,1 @@
+#define TITLE(a) std::cout << std::string(122, '-') << std::endl; std::cout << std::string(60 - std::strlen(a)/2, '-') << " " << a << " " << std::string(60 - std::strlen(a)/2, '-') << std::endl; std::cout << std::string(122, '-') << std::endl;

@@ -10,6 +10,8 @@
 #include "../inc/fields.h"
 #include "../inc/geom.h"
 #include "../inc/spins.h"
+#include "../inc/defines.h"
+#include <cstring> 
 
 
 namespace cuglob {
@@ -31,7 +33,7 @@ namespace cuglob {
 		cudaGetDevice(&device);
 		struct cudaDeviceProp properties;
 		cudaGetDeviceProperties(&properties, device);
-		std::cout.width(75); std::cout << std::left << "================================= CUDA DEVICE PROPERTIES ==================================" << std::endl;
+		TITLE("CUDA DEVICE PROPERTIES");
 		std::cout.width(75); std::cout << std::left << "Device name:"; std::cout << properties.name << std::endl;
 		std::cout.width(75); std::cout << std::left << "Memory Clock Rate (KHz):"; std::cout << properties.memoryClockRate << std::endl;
     	std::cout.width(75); std::cout << std::left << "Memory Bus Width (bits):"; std::cout << properties.memoryBusWidth << std::endl;
@@ -39,7 +41,6 @@ namespace cuglob {
 		std::cout.width(75); std::cout << std::left << "multiprocessors:"; std::cout << properties.multiProcessorCount << std::endl;
 		std::cout.width(75); std::cout << std::left << "max threads per processor:"; std::cout << properties.maxThreadsPerMultiProcessor << std::endl;
 		std::cout.width(75); std::cout << std::left << "max threads per block:"; std::cout << properties.maxThreadsPerBlock << std::endl;	
-		std::cout << "==========================================================================================" << std::endl;
 	}
 
 	void clear_memory(){
