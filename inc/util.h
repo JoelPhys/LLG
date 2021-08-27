@@ -1,7 +1,7 @@
 #include <cmath>
 #include <fstream>
 #include "../inc/config.h"
-#include "../inc/NeighbourList.h"
+#include "../inc/neighbourlist.h"
 #include "../inc/array.h"
 #include "../inc/array2d.h"
 

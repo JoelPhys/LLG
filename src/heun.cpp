@@ -18,7 +18,7 @@
 #include "../inc/array3d.h"
 #include "../inc/mathfuncs.h"
 #include "../inc/libconfig.h++"
-#include "../inc/NeighbourList.h"
+#include "../inc/neighbourlist.h"
 
 namespace heun {
 

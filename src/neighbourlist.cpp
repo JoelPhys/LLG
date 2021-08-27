@@ -18,7 +18,7 @@
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
 #include "../inc/libconfig.h++"
-#include "../inc/NeighbourList.h"
+#include "../inc/neighbourlist.h"
 
 namespace neigh {
 
@@ -339,8 +339,6 @@ namespace neigh {
             std::cout << "ERROR: Unknown Jij units" << std::endl;
             exit(0);
         }
-
-        std::cout << x_adj[0] << " " << x_adj[1] << " " << x_adj[2] <<  std::endl;
 
         double Jijsize = 0;
         for (int i = 0; i < adjncy.size() / (x_adj.size()-1); i++){

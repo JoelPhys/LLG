@@ -18,7 +18,7 @@ HOSTNAME='"$(shell hostname)"'
 
 OBJ = \
 obj/spins.o \
-obj/NeighbourList.o \
+obj/neighbourlist.o \
 obj/mathfuncs.o \
 obj/config.o \
 obj/fields.o \
@@ -57,7 +57,7 @@ obj/%.o: src/%.cu
 
 # OBJ = \
 # obj/spins.o \
-# obj/NeighbourList.o \
+# obj/neighbourlist.o \
 # obj/mathfuncs.o \
 # obj/config.o \
 # obj/fields.o \

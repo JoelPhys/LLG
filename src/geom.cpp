@@ -4,7 +4,7 @@
 #include "../inc/array.h"
 #include "../inc/geom.h"
 #include "../inc/spins.h"
-#include "../inc/NeighbourList.h"
+#include "../inc/neighbourlist.h"
 #include "../inc/mathfuncs.h"
 #include <vector>
 #include <iostream>

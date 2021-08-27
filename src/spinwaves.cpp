@@ -16,7 +16,7 @@
 #include "../inc/mathfuncs.h"
 #include "../inc/geom.h"
 #include "../inc/spinwaves.h"
-#include "../inc/NeighbourList.h"
+#include "../inc/neighbourlist.h"
 
 namespace spinwaves {
 

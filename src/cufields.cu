@@ -2,7 +2,7 @@
 #include <cuda_runtime.h>
 #include <curand.h>
 #include "../inc/array.h"
-#include "../inc/NeighbourList.h"
+#include "../inc/neighbourlist.h"
 #include "../inc/config.h"
 #include "../inc/cuheun.h"
 #include "../inc/cuthermal.h"

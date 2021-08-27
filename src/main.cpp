@@ -19,7 +19,7 @@
 #include "../inc/config.h"
 #include "../inc/fields.h"
 #include "../inc/geom.h"
-#include "../inc/NeighbourList.h"
+#include "../inc/neighbourlist.h"
 #include "../inc/util.h"
 // #include "inc/FFT.h"
 #include "../inc/spinwaves.h"
