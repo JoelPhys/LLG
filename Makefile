@@ -1,4 +1,4 @@
-include MakeInclude/Make.inc.local
+include includeargs/Make.inc.local
 
 #########################################################################################
 # Options are SERIAL, OMP, OMPGPU or GPU
@@ -32,10 +32,10 @@ obj/cuheun.o \
 obj/cufuncs.o
 
 obj/%.o: src/%.cpp
-	$(GCC) $(OPT) -DCUDA -c -o $@ $< -DCPUCOMP=$(CPUCOMP) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
+	$(GCC) $(OPT) -DCUDA -c -o $@ $< $(CONFIGINC) $(FFTW3INC) -DCPUCOMP=$(CPUCOMP) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
 
 obj/%.o: src/%.cu
-	$(NVCC) -O3 -DCUDA -G -c -o $@ $< -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
+	$(NVCC) -O3 -DCUDA -G -c -o $@ $< $(CONFIGINC) $(FFTW3INC) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
 
 
 # ASD: $(OBJ)
