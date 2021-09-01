@@ -1,0 +1,11 @@
+GCC = g++
+NVCC = nvcc
+OPT = -O3
+CULIBS = -lcurand
+
+CONFIGLIB = /home/b6033256/libs/libconfig-1.5/lib/libconfig++.a
+FFTW3LIB = /cm/shared/apps/fftw/openmpi/gcc/64/3.3.4/lib/libfftw3.a
+
+CONFIGINC = -I/home/b6033256/libs/libconfig-1.5/include/
+FFTW3INC = -I/cm/shared/apps/fftw/openmpi/gcc/64/3.3.4/include/
+

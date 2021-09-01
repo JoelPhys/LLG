@@ -1,8 +1,4 @@
-GCC = g++
-OPT = -O3
-LIBS = -lconfig++ -lfftw3
-CULIBS = -lcurand
-NVCC = nvcc
+include MakeInclude/Make.inc.local
 
 #########################################################################################
 # Options are SERIAL, OMP, OMPGPU or GPU
@@ -12,7 +8,6 @@ GPUCOMP='"NVIDIA C++ Compiler $(shell nvcc --version | tail -n 2 | head -n 1)"'
 GITINFO='"$(shell git rev-parse HEAD)"'
 GITDIRTY='"$(shell git status -s | grep -v ? | grep -e 'src\/' -e 'inc\/' | wc -l)"'
 HOSTNAME='"$(shell hostname)"'
-
 #########################################################################################
 
 
@@ -90,7 +85,7 @@ obj/%.o: src/%.cu
 # 	$(GCC) $(OPT) -o $@ $^ $(LIBS)
 
 ASDcu: $(OBJ) $(OBJNVCC)
-	$(NVCC) -DCUDA -O3 -G -o $@ $^ $(LIBS) $(CULIBS)
+	$(NVCC) -DCUDA -O3 -G -o $@ $^ $(CONFIGLIB) $(FFTW3LIB) $(CULIBS)
 
 
 clean:

@@ -1,0 +1,10 @@
+GCC = g++
+NVCC = nvcc
+OPT = -O3
+CULIBS = -lcurand
+
+CONFIGLIB = /home/cs-hirs1/LLG/libs/libconfig++.a
+FFTW3LIB =  /home/cs-hirs1/LLG/libs/libfftw3.a
+
+CONFIGINC = -I/home/cs-hirs1/LLG/libs/
+FFTW3INC = -I/home/cs-hirs1/LLG/libs/

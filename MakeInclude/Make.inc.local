@@ -1,0 +1,7 @@
+GCC = g++
+OPT = -O3
+CULIBS = -lcurand
+NVCC = nvcc
+
+CONFIGLIB = -lconfig++
+FFTW3LIB = -lfftw3
