@@ -57,8 +57,10 @@ int main(int argc, char* argv[]){
 	neigh::InteractionMatrix();
 	util::init();
 	IdentityMatrix();
-	// spinwaves::init();
-	#define TERM params::term;
+
+	if (params::simtype == "spinwaves"){
+		spinwaves::init();
+	}
 	// ======================================================================================================== //
 
 	// ======= Temperature ==================================================================================== //
@@ -130,8 +132,10 @@ int main(int argc, char* argv[]){
 
 
 		// testing for hedgehog
-		geom::initdw();
-		
+		if (params::simtype == "DW"){
+			geom::initdw();
+		}
+
 		#ifdef CUDA
 		std::cout << "CUDA Simulation" << std::endl;
 		cuglob::device_info();
@@ -141,7 +145,9 @@ int main(int argc, char* argv[]){
 		cuglob::copy_temp_to_device(Temp);
 		cuglob::copy_spins_to_device();
 		cuglob::copy_field_to_device();
-		cuglob::copy_dw_to_device();
+		if (params::simtype == "DW"){
+			cuglob::copy_dw_to_device();
+		}
 		cuglob::copy_jij_to_device();
 		cufuncs::init_device_vars();
 		cuthermal::curand_generator();
@@ -177,38 +183,50 @@ int main(int argc, char* argv[]){
 				util::ResetMag();
 				util::SortSublat();
 				util::MagLength();
-				// cuthermal::testing(static_cast<double>(i));
 
 				if (params::OutputToTerminal == true){
 					util::OutputMagToTerm(i);
 				}
 				util::OutputMagToFile(i);
 				
-				// util::OutputDWtoFile(i);
-				// if ((i >= params::start)){
-				// 		spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
-				// 		spinwaves::FFTspace();      
-				// }
+				if (params::simtype == "DW"){		
+					// util::OutputDWtoFile(i);
+				}
+				if (params::simtype == "spinwaves"){
+					if ((i >= params::start)){
+						spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
+						spinwaves::FFTspace();      
+					}
+				}
 			}
 
 			t = t + params::dt;
 			tau = tau + params::dtau;
 
 			#ifdef CUDA
-			cufuncs::cuTemperature(params::temptype, static_cast<double>(i) * params::dt, params::ttm_start);
-			// cufuncs::cuSquarePulse(static_cast<double>(i), atof(argv[4]), atof(argv[5]), atof(argv[6]));
-			cuthermal::gen_thermal_noise();
-			cufuncs::integration(static_cast<double>(i));
-			cufuncs::cuDomainWall();
-			#else
-			heun::integration(thermal_fluct);
+				cufuncs::cuTemperature(params::temptype, static_cast<double>(i) * params::dt, params::ttm_start);
+				// cufuncs::cuSquarePulse(static_cast<double>(i), atof(argv[4]), atof(argv[5]), atof(argv[6]));
+				cuthermal::gen_thermal_noise();
+				if (params::simtype != "DW"){
+				cufuncs::integration(static_cast<double>(i));
+				}
+				else if (params::simtype == "DW"){
+					cufuncs::integrationDW(static_cast<double>(i));
+					// cufuncs::cuDomainWall();
+				}
+			#else	
+				if (params::simtype != "DW"){
+					heun::integration(thermal_fluct);
+				}
 			#endif
 			
 		}
 		// ==================================================================================================== //
 
 		// Carry out time FFT once simulation is complete
-		// spinwaves::FFTtime();
+		if (params::simtype == "spinwaves"){
+		spinwaves::FFTtime();
+		}
 
 		// output sum of magnetisation
 		// util::OutputSumMag();

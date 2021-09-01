@@ -13,6 +13,8 @@
 
     namespace params {
 
+        extern std::string simtype;
+
         extern double k_B, mu_b, gamma;
 
         extern double dt, Nt, dtau, half_dtau;   

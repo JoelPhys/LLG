@@ -21,6 +21,8 @@ namespace params {
 
 	libconfig::Config cfg;
 
+	std::string simtype;
+
 	double k_B, mu_b, gamma;
 	double dt, Nt, dtau, half_dtau;   
 	double lambda, lambdaPrime, mu_s, INVmu_s, thermal_const;
@@ -119,6 +121,8 @@ namespace params {
 	// Read Parameters ==========================================================================================================================================//
 	void readparams(){
 
+		// Simulation Type
+		simtype = cfg.lookup("SimulationType").c_str();
 
 		// Global Constants
 		k_B = cfg.lookup("PhysicalConsts.BoltzmannConstant");
