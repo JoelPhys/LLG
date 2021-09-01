@@ -6,5 +6,5 @@ CULIBS = -lcurand
 CONFIGLIB = /home/cs-hirs1/lib/libconfig-1.7.3/lib/.libs/libconfig++.a
 FFTW3LIB =  /home/cs-hirs1/LLG/libs/libfftw3.a
 
-CONFIGINC = -I/home/cs-hirs1/lib/libconfig-1.7.3/lib/.libs
+CONFIGINC = -I/home/cs-hirs1/lib/libconfig-1.7.3/lib/
 FFTW3INC = -I/home/cs-hirs1/LLG/libs/
