@@ -18,8 +18,6 @@ namespace cuheun {
 	__constant__ double c_dxup;	
 	__constant__ double c_dyup;
 	__constant__ double c_dzup;
-	__constant__ double c_dxcp;
-	__constant__ double c_dycp;
 	__constant__ double c_dzcp;
 	__constant__ double c_dtau; 
 	__constant__ double c_hdtau; 
@@ -35,8 +33,6 @@ namespace cuheun {
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dxup), &params::dxup, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dyup), &params::dyup, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dzup), &params::dzup, sizeof(double)));
-		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dxcp), &params::dxcp, sizeof(double)));
-		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dycp), &params::dycp, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dzcp), &params::dzcp, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_hdtau), &params::half_dtau, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nq), &params::Nq, sizeof(int)));
@@ -113,8 +109,8 @@ namespace cuheun {
 			Huni[2] = c_dzup * dSz1d[a]; 
 
 			double Hcub[3];
-			Hcub[0] = c_dxcp * dSx1d[a] * dSx1d[a] * dSx1d[a]; 
-			Hcub[1] = c_dycp * dSy1d[a] * dSy1d[a] * dSy1d[a]; 
+			Hcub[0] = c_dzcp * dSx1d[a] * dSx1d[a] * dSx1d[a]; 
+			Hcub[1] = c_dzcp * dSy1d[a] * dSy1d[a] * dSy1d[a]; 
 			Hcub[2] = c_dzcp * dSz1d[a] * dSz1d[a] * dSz1d[a];
 
 			double Hex[3] = {0.0, 0.0, 0.0};
@@ -171,8 +167,8 @@ namespace cuheun {
 			Huni_dash[2]=  c_dzup * Sdashnz[a];
 
 			double Hcub_dash[3];
-			Hcub_dash[0] = c_dxcp * Sdashnx[a] * Sdashnx[a] * Sdashnx[a];
-			Hcub_dash[1] = c_dycp * Sdashny[a] * Sdashny[a] * Sdashny[a];
+			Hcub_dash[0] = c_dzcp * Sdashnx[a] * Sdashnx[a] * Sdashnx[a];
+			Hcub_dash[1] = c_dzcp * Sdashny[a] * Sdashny[a] * Sdashny[a];
 			Hcub_dash[2]=  c_dzcp * Sdashnz[a] * Sdashnz[a] * Sdashnz[a];
 
 			double Hex_dash[3] = {0.0, 0.0, 0.0};

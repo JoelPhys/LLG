@@ -27,8 +27,7 @@
         extern double dxup, dyup, dzup;
 
         // Uniaxial Anisotropy
-        extern double dxc, dyc, dzc;
-        extern double dxcp, dycp, dzcp;
+        extern double dzc, dzcp;
 
         extern int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
         extern int Idx, Idy, Idz; // For integer lattice

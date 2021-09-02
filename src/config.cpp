@@ -34,8 +34,7 @@ namespace params {
 	double dzup, dxup, dyup;
 	
 	//Cubic Anisotropy
-	double dxc, dyc, dzc;
-	double dzcp, dxcp, dycp;
+	double dzc, dzcp;
 
 	int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
 	int Idx, Idy, Idz; // For integer lattice
@@ -177,14 +176,8 @@ namespace params {
 		dzup = 2 * ( dzu / mu_s );
 
 		// Cubic Anisotropy
-		cfgmissing("Cubic_Anisotropy.d_x");				
-		cfgmissing("Cubic_Anisotropy.d_y");				
-		cfgmissing("Cubic_Anisotropy.d_z");	
-		dxc = cfg.lookup("Cubic_Anisotropy.d_x");
-		dyc = cfg.lookup("Cubic_Anisotropy.d_y");
-		dzc = cfg.lookup("Cubic_Anisotropy.d_z");			
-		dxcp = 2 * ( dxc / mu_s );
-		dycp = 2 * ( dyc / mu_s );	
+		cfgmissing("Cubic_Anisotropy.d_c");				
+		dzc = cfg.lookup("Cubic_Anisotropy.d_c");			
 		dzcp = 2 * ( dzc / mu_s );
 
 		// Thermal parameters
@@ -241,7 +234,7 @@ namespace params {
 		INFO_OUT("Damping constant:",lambda);
 		INFO_OUT("Magnetic Moment:", mu_s << " (mu_b)");
 		INFO_OUT("Uniaxial Anisotropy:", "[" << dxu << " , " << dyu << " , " << dzu << "] (J)");
-		INFO_OUT("Cubic Anisotropy:", "[" << dxc << " , " << dyc << " , " << dzc << "] (J)");
+		INFO_OUT("Cubic Anisotropy:", dzc << "(J)");
 		INFO_OUT("Lattice Parameter:", a1 << " (m)");
 		INFO_OUT("Timestep:", dt << " (s)");
 		INFO_OUT("Number of timesteps:", Nt);

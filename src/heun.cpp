@@ -84,8 +84,8 @@ namespace heun {
             H_uni[2] = params::dzup * spins::sz1d(a);
 
             // Cubic Anisotropy
-            H_cub[0] = params::dxcp * spins::sx1d(a) * spins::sx1d(a) * spins::sx1d(a);
-            H_cub[1] = params::dycp * spins::sy1d(a) * spins::sy1d(a) * spins::sy1d(a);
+            H_cub[0] = params::dzcp * spins::sx1d(a) * spins::sx1d(a) * spins::sx1d(a);
+            H_cub[1] = params::dzcp * spins::sy1d(a) * spins::sy1d(a) * spins::sy1d(a);
             H_cub[2] = params::dzcp * spins::sz1d(a) * spins::sz1d(a) * spins::sz1d(a);
 
             // Exchange interaction
@@ -135,8 +135,8 @@ namespace heun {
             H_uni_dash[2]= params::dzup * S_dash_normedz1d(a);
 
             // Cubic Ansisotropy
-            H_cub_dash[0]= params::dxcp * S_dash_normedx1d(a) * S_dash_normedx1d(a) * S_dash_normedx1d(a);
-            H_cub_dash[1]= params::dycp * S_dash_normedy1d(a) * S_dash_normedy1d(a) * S_dash_normedy1d(a);
+            H_cub_dash[0]= params::dzcp * S_dash_normedx1d(a) * S_dash_normedx1d(a) * S_dash_normedx1d(a);
+            H_cub_dash[1]= params::dzcp * S_dash_normedy1d(a) * S_dash_normedy1d(a) * S_dash_normedy1d(a);
             H_cub_dash[2]= params::dzcp * S_dash_normedz1d(a) * S_dash_normedz1d(a) * S_dash_normedz1d(a);
 
             H_exch_dash[0] = 0;
