@@ -1,4 +1,4 @@
-include includeargs/Make.inc.local
+include hostargs/Make.inc.local
 
 #########################################################################################
 # Options are SERIAL, OMP, OMPGPU or GPU

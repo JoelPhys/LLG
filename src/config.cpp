@@ -77,21 +77,29 @@ namespace params {
 	std::string temptype;
 	double ttm_start;
 
+	void cfgmissing(std::string in){
+		if (!cfg.exists(in)){
+			std::cout << "ERROR: Missing config file setting " << in << std::endl;
+			std::cout << "EXITING SIMULATION" << std::endl;
+			exit(0);
+		}
+	}
+
 	//Intialise Config File ====================================================================================================================================//
 	void intitialiseConfig(const char* cfg_filename){
 
 		TITLE("COMPILATION INFO");
-		std::cout.width(75); std::cout << std::left << "CPU Compiler: "; std::cout <<CPUCOMP << std::endl;
-		std::cout.width(75); std::cout << std::left << "NVCC Compiler: "; std::cout <<GPUCOMP << std::endl;
-		std::cout.width(75); std::cout << std::left << "Compile Date and Time: "; std::cout <<__DATE__ << " " << __TIME__ << std::endl;
-		std::cout.width(75); std::cout << std::left << "Compiled on Machine: "; std::cout <<HOSTNAME << std::endl;
+		INFO_OUT("CPU Compiler: ", CPUCOMP);
+		INFO_OUT("NVCC Compiler: ", GPUCOMP);
+		INFO_OUT("Compile Date and Time: ", __DATE__ << " " << __TIME__);
+		INFO_OUT("Compiled on Machine: ", HOSTNAME);
 		if(GITDIRTY!="0")
         {
-            std::cout.width(75); std::cout << std::left << "WARNING: Your git build is dirty. Recompile with Git SHA:"; std::cout << GIT_SHA1 << ", Dirty" << std::endl;
+            INFO_OUT("WARNING: Your git build is dirty. Recompile with Git SHA:", GIT_SHA1 << ", Dirty");
         }
         else
         {
-            std::cout.width(75); std::cout << std::left << "Git SHA: "; std::cout <<GIT_SHA1 << ", Clean" << std::endl;
+            INFO_OUT("Git SHA: ", GIT_SHA1 << ", Clean");
         }
 
 		if(!cfg_filename)
@@ -122,42 +130,59 @@ namespace params {
 	void readparams(){
 
 		// Simulation Type
+		cfgmissing("SimulationType");
 		simtype = cfg.lookup("SimulationType").c_str();
 
 		// Global Constants
+		cfgmissing("PhysicalConsts.BoltzmannConstant"); 
+		cfgmissing("PhysicalConsts.BohrMagneton");      
+		cfgmissing("PhysicalConsts.GyromagneticRatio"); 
 		k_B = cfg.lookup("PhysicalConsts.BoltzmannConstant");
 		mu_b = cfg.lookup("PhysicalConsts.BohrMagneton");
 		gamma = cfg.lookup("PhysicalConsts.GyromagneticRatio");
 
 		// Time parameters
+		cfgmissing("Time.SizeOfStep");					
+		cfgmissing("Time.NumberOfSteps");			    
+		cfgmissing("Time.RelaxationTime");			    
+		cfgmissing("Time.OutputStep");					
 		dt = cfg.lookup("Time.SizeOfStep");
 		Nt = cfg.lookup("Time.NumberOfSteps");
 		relaxtime = cfg.lookup("Time.RelaxationTime");
 		outputstep = cfg.lookup("Time.OutputStep");
-		
+
 		// Reduced Time variables
 		dtau = gamma * dt;
 		half_dtau = 0.5 * dtau;   
-
 		// Material Constants
+		cfgmissing("MaterialConsts.lambda");			
+		cfgmissing("MaterialConsts.mu_s");				
+		cfgmissing("MaterialConsts.a");					
 		lambda = cfg.lookup("MaterialConsts.lambda");
 		mu_s = cfg.lookup("MaterialConsts.mu_s");
 		a1 = cfg.lookup("MaterialConsts.a");
+
     	mu_s *= mu_b;
     	INVmu_s = 1 / mu_s;
 
 		// Uniaxial Anisotropy
+		cfgmissing("Uniaxial_Anisotropy.d_x");			
+		cfgmissing("Uniaxial_Anisotropy.d_y");			
+		cfgmissing("Uniaxial_Anisotropy.d_z");
 		dxu = cfg.lookup("Uniaxial_Anisotropy.d_x");
 		dyu = cfg.lookup("Uniaxial_Anisotropy.d_y");
-		dzu = cfg.lookup("Uniaxial_Anisotropy.d_z");
+		dzu = cfg.lookup("Uniaxial_Anisotropy.d_z");			
 		dxup = 2 * ( dxu / mu_s );
 		dyup = 2 * ( dyu / mu_s );	
 		dzup = 2 * ( dzu / mu_s );
 
 		// Cubic Anisotropy
+		cfgmissing("Cubic_Anisotropy.d_x");				
+		cfgmissing("Cubic_Anisotropy.d_y");				
+		cfgmissing("Cubic_Anisotropy.d_z");	
 		dxc = cfg.lookup("Cubic_Anisotropy.d_x");
 		dyc = cfg.lookup("Cubic_Anisotropy.d_y");
-		dzc = cfg.lookup("Cubic_Anisotropy.d_z");
+		dzc = cfg.lookup("Cubic_Anisotropy.d_z");			
 		dxcp = 2 * ( dxc / mu_s );
 		dycp = 2 * ( dyc / mu_s );	
 		dzcp = 2 * ( dzc / mu_s );
@@ -168,11 +193,16 @@ namespace params {
 
 
 		// system dimensions
+		cfgmissing("Geom.UnitCellsInX");				
+		cfgmissing("Geom.UnitCellsInY");				
+		cfgmissing("Geom.UnitCellsInZ");				
+		cfgmissing("Geom.NumberOfSites");				
+		cfgmissing("Geom.NumberOfSublat");
 		Lx = cfg.lookup("Geom.UnitCellsInX");
 		Ly = cfg.lookup("Geom.UnitCellsInY");
 		Lz = cfg.lookup("Geom.UnitCellsInZ");
 		Nq = cfg.lookup("Geom.NumberOfSites");
-		Nsublat = cfg.lookup("Geom.NumberOfSublat");
+		Nsublat = cfg.lookup("Geom.NumberOfSublat");				
 		ax = 2;
 		ay = 2;
 		az = 2;
@@ -180,7 +210,7 @@ namespace params {
 		// Angle of sublattice rotation
 		angle = cfg.lookup("angle");
 		angle *= M_PI / 180.0;
-		
+
 		// System geometry
 		Nspins = Nq*Lx*Ly*Lz;
 		Nmoments = (Nq*Lx*Ly*Lz); 
@@ -193,31 +223,36 @@ namespace params {
 		zdimC = zdim/2+1;
 
 		//Boundary Conditions
+		cfgmissing("Geom.BoundaryConditionsX");				
+		cfgmissing("Geom.BoundaryConditionsY");				
+		cfgmissing("Geom.BoundaryConditionsZ");				
 		xbound = cfg.lookup("Geom.BoundaryConditionsX").c_str(); 
 		ybound = cfg.lookup("Geom.BoundaryConditionsY").c_str(); 
 		zbound = cfg.lookup("Geom.BoundaryConditionsZ").c_str(); 
 
 		//Temparature
+		cfgmissing("Temperature.method");					
+		cfgmissing("Temperature.ttm_start");				
 		temptype = cfg.lookup("Temperature.method").c_str();
 		ttm_start = cfg.lookup("Temperature.ttm_start");
 
 		// Print key parameters to log file
 		TITLE("MATERIAL CONSTANTS");
-		std::cout.width(75); std::cout << std::left << "Damping constant:"; std::cout <<lambda << std::endl;
-		std::cout.width(75); std::cout << std::left << "Magnetic Moment:"<< mu_s << " (mu_b)"; std::cout <<std::endl;
-		std::cout.width(75); std::cout << std::left << "Uniaxial Anisotropy:"; std::cout << "[" << dxu << " , " << dyu << " , " << dzu << "] (J)" << std::endl;
-		std::cout.width(75); std::cout << std::left << "Cubic Anisotropy:"; std::cout << "[" << dxc << " , " << dyc << " , " << dzc << "] (J)" << std::endl;
-		std::cout.width(75); std::cout << std::left << "Lattice Parameter:"; std::cout << a1 << " (m)" << std::endl;
-		std::cout.width(75); std::cout << std::left << "Timestep:"; std::cout << dt << " (s)" << std::endl;
-		std::cout.width(75); std::cout << std::left << "Number of timesteps:"; std::cout << Nt << std::endl;
-		std::cout.width(75); std::cout << std::left << "Outputting every "; std::cout << outputstep << " timesteps" << std::endl;
-		std::cout.width(75); std::cout << std::left << "Outputting to terminal: "; std::cout << OutputToTerminal << std::endl;
-		std::cout.width(75); std::cout << std::left << "Number of unit cells:"; std::cout << Lx << "x" << Ly << "x" << Lz << std::endl;
-		std::cout.width(75); std::cout << std::left << "Number of sites in unit cell:"; std::cout << Nq << std::endl;
-		std::cout.width(75); std::cout << std::left << "Number of sublattices:"; std::cout << Nsublat << std::endl;
-		std::cout.width(75); std::cout << std::left << "Boundary Conditions:"; std::cout << "[" << xbound << " , " << ybound << " , " << zbound << "]" << std::endl;
-		std::cout.width(75); std::cout << std::left << "Temperature method: "; std::cout << temptype << std::endl;
-		std::cout.width(75); std::cout << std::left << "two temperature model start time: "; std::cout << ttm_start << std::endl; 
+		INFO_OUT("Damping constant:",lambda);
+		INFO_OUT("Magnetic Moment:", mu_s << " (mu_b)");
+		INFO_OUT("Uniaxial Anisotropy:", "[" << dxu << " , " << dyu << " , " << dzu << "] (J)");
+		INFO_OUT("Cubic Anisotropy:", "[" << dxc << " , " << dyc << " , " << dzc << "] (J)");
+		INFO_OUT("Lattice Parameter:", a1 << " (m)");
+		INFO_OUT("Timestep:", dt << " (s)");
+		INFO_OUT("Number of timesteps:", Nt);
+		INFO_OUT("Outputting every ", outputstep << " timesteps");
+		INFO_OUT("Outputting to terminal: ", OutputToTerminal);
+		INFO_OUT("Number of unit cells:", Lx << "x" << Ly << "x" << Lz);
+		INFO_OUT("Number of sites in unit cell:", Nq);
+		INFO_OUT("Number of sublattices:", Nsublat);
+		INFO_OUT("Boundary Conditions:", "[" << xbound << " , " << ybound << " , " << zbound << "]");
+		INFO_OUT("Temperature method: ", temptype);
+		INFO_OUT("two temperature model start time: ", ttm_start);
 		
 
 		//Read Site positions ==============================================================================
@@ -268,8 +303,7 @@ namespace params {
 			Plat[v][0] = setting[str1.c_str()][0];
 			Plat[v][1] = setting[str1.c_str()][1];
 			Plat[v][2] = setting[str1.c_str()][2];
-			std::cout.width(75); std::cout << std::left << "Lattice Vectors:";
-			std::cout << std::fixed << std::setprecision(5) << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2] << std::endl;
+			INFO_OUT("Lattice Vectors:", std::fixed << std::setprecision(5) << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2]);
 		}
 		//=======================================================================================================
 
@@ -277,7 +311,7 @@ namespace params {
 		initm.resize(Nq);
 		
 		for (int v = 0; v < Nq; v++){
-			std::cout.width(75); std::cout << std::left << "Initial Magnestaion Vectors:";
+			
 			initm[v].resize(3);
 			std::stringstream sstr2;
 			sstr2 << "initm" << v;
@@ -287,31 +321,44 @@ namespace params {
 			initm[v][0] = setting[str2.c_str()][0];
 			initm[v][1] = setting[str2.c_str()][1];
 			initm[v][2] = setting[str2.c_str()][2];
-			std::cout << std::fixed << std::setprecision(5) << initm[v][0] << " " << initm[v][1] << " " << initm[v][2] << std::endl;
+			INFO_OUT("Initial Magnestaion Vectors:", std::fixed << std::setprecision(5) << initm[v][0] << " " << initm[v][1] << " " << initm[v][2]);
 		}
 		//=======================================================================================================
 
 
+		cfgmissing("Util.OutputToTerminal");		
+		cfgmissing("Spinwaves.StartTime");			
+		cfgmissing("Util.afmflag");  				
+		cfgmissing("Exchange.Format");  			
+		cfgmissing("Util.filepath");        		
+		cfgmissing("Spinwaves.TimeStep");			
+		cfgmissing("Exchange.InputFile");			
+		cfgmissing("Exchange.Units");   			
+		cfgmissing("Exchange.Cutoff");    			
+		cfgmissing("Exchange.ChangeSign");  		
+		cfgmissing("Exchange.Double_Jij");    		
+		cfgmissing("Exchange.CutoffEnergy");    	
+		cfgmissing("Exchange.ibtoq");  	
 		OutputToTerminal = cfg.lookup("Util.OutputToTerminal");
-		start = cfg.lookup("Spinwaves.StartTime");
-		afmflag = cfg.lookup("Util.afmflag").c_str();  
-		format = cfg.lookup("Exchange.Format").c_str();  
+	 	start = cfg.lookup("Spinwaves.StartTime");
+ 		afmflag = cfg.lookup("Util.afmflag").c_str();  
+	 	format = cfg.lookup("Exchange.Format").c_str();  
 		filepath = cfg.lookup("Util.filepath").c_str();        
 		dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");
-		Jij_filename = cfg.lookup("Exchange.InputFile").c_str();
-		Jij_units = cfg.lookup("Exchange.Units").c_str();   
+	 	Jij_filename = cfg.lookup("Exchange.InputFile").c_str();
+	 	Jij_units = cfg.lookup("Exchange.Units").c_str();   
 		JijCutoff = cfg.lookup("Exchange.Cutoff");    
 		changesign = cfg.lookup("Exchange.ChangeSign").c_str();  
 		Jijhalf = cfg.lookup("Exchange.Double_Jij");    
 		Jij_min = cfg.lookup("Exchange.CutoffEnergy");    
-		ibtoq = cfg.lookup("Exchange.ibtoq");  
+ 		ibtoq = cfg.lookup("Exchange.ibtoq");  			
 
 		TITLE("EXCHANGE FILE INFO");
-		std::cout.width(75); std::cout << std::left << "Exchange filename: "; std::cout <<params::Jij_filename << std::endl;        
-		std::cout.width(75); std::cout << std::left << "Exhchange Cutoff:"; std::cout <<JijCutoff << std::endl;
-		std::cout.width(75); std::cout << std::left << "Exhchange Energy Minimum:"; std::cout <<Jij_min << " (" << Jij_units << ")" << std::endl;
-		if (Jijhalf == true) {std::cout.width(75); std::cout << std::left << "Have Jij values been doubled"; std::cout << "Yes" << std::endl;}
-		else if (Jijhalf == false) {std::cout.width(75); std::cout << std::left << "Have Jij values been doubled"; std::cout << "No" << std::endl;}
+		INFO_OUT("Exchange filename: ", params::Jij_filename);        
+		INFO_OUT("Exhchange Cutoff:", JijCutoff);
+		INFO_OUT("Exhchange Energy Minimum:", Jij_min << " (" << Jij_units << ")");
+		if (Jijhalf == true) {INFO_OUT("Have Jij values been doubled", "Yes");}
+		else if (Jijhalf == false) {INFO_OUT("Have Jij values been doubled", "No");}
  
 
 	}

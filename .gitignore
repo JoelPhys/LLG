@@ -6,3 +6,4 @@ lswt/output/*
 susceptability/read_files
 script.sh
 equilibrium_T_0.txt
+cfg/*
