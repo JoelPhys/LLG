@@ -161,7 +161,7 @@ int main(int argc, char* argv[]){
 		int c;
 		c = params::dt_spinwaves / params::dt;
 
-		// util::InitMagFile(Temp, atof(argv[4]), atof(argv[5]), atof(argv[6]));
+		util::InitMagFile(Temp);
 		// util::InitDWFile(Temp);
 
 		TITLE("SIMULATION STARTING");

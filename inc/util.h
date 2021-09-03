@@ -23,7 +23,7 @@ namespace util {
     void OutputMagToFile(int i);
     void OutputDWtoFile(int i);
     void OutputMagToTerm(int i);
-    void InitMagFile(double temp, double Hstart, double Hend, double Hheight);
+    void InitMagFile(double temp);
     void InitDWFile(double temp);
     void CloseMagFile();
     void SumMag(int i);
