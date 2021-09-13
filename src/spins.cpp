@@ -1,9 +1,9 @@
+//cpp header files
 #include <iostream>
-
-#include "../inc/mathfuncs.h"
 #include "../inc/array.h"
 #include "../inc/spins.h"
 #include "../inc/config.h"
+#include "../inc/mathfuncs.h"
 
 namespace spins {
 

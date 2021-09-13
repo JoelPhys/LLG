@@ -126,10 +126,10 @@ namespace neigh {
             }
             std::cout << "Jij input file has been read" << std::endl;
         }
-	else {
-		std::cout << "ERROR: Unknown exchange file type " << std::endl;
-		exit(0);
-	}
+        else {
+            std::cout << "ERROR: Unknown exchange file type " << std::endl;
+            exit(0);
+        }
 
         length = Jijx.size();
         

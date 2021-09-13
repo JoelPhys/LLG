@@ -1,20 +1,17 @@
+#ifndef _UTIL_H_
+#define _UTIL_H_
+
+// cpp header files
 #include <cmath>
 #include <fstream>
-#include "../inc/config.h"
-#include "../inc/neighbourlist.h"
-#include "../inc/array.h"
-#include "../inc/array2d.h"
 
+// my header files
+#include "../inc/array.h"
+#include "../inc/config.h"
+#include "../inc/array2d.h"
+#include "../inc/neighbourlist.h"
 
 namespace util {
-
-    extern Array2D<double> M;
-    extern Array<double> Mt;
-    extern Array<double> MmaG;
-    extern Array<double> MdivMs;
-    extern Array<double> MdivMsSum;
-    extern Array2D<double> Msum;
-    extern Array2D<double> MsumSQR;
 
     void SortSublat();
     void init();
@@ -28,6 +25,9 @@ namespace util {
     void CloseMagFile();
     void SumMag(int i);
     void OutputSumMag();
-    
-
+    void startclock();
+    void endclock();
+    void readexternalspins(std::string);
 }
+
+#endif

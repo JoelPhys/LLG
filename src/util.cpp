@@ -8,23 +8,30 @@
 #include "../inc/mathfuncs.h"
 #include "../inc/geom.h"
 #include "../inc/spins.h"
+#include "../inc/defines.h"
+#include <time.h>
 
 
 
 namespace util {
 
 
-	Array2D<double> M;
+
 	Array<double> Mt;
 	Array<double> Mmag;
 	Array<double> MdivMs;
 	Array<double> MdivMsSum;
+	Array<double> sumx, sumy, sumz;
+
+	Array2D<double> M;
 	Array2D<double> Msum;
 	Array2D<double> MsumSQR;
-	Array<double> sumx, sumy, sumz;
+
 	int lc;
 
 	int isum = 0;
+
+	clock_t begin, end;
 
 	std::ofstream magfile;
 	std::ofstream dwfile;
@@ -315,6 +322,48 @@ namespace util {
 		dwfile << "\n";
 	}
 
+	void startclock(){
+		double time_spent;
+		begin = clock();
+	}
+
+	void endclock(){
+		end = clock();
+		double endtime = (double)(end - begin) / CLOCKS_PER_SEC;
+		INFO_OUT("Simulation Time: ", std::setprecision(10) << endtime << std::endl); 
+	}
 
 
+	void readexternalspins(std::string cmdline){
+
+		if (cmdline == "2"){
+
+			// spicify filename
+			std::stringstream sstr_eq;
+			sstr_eq << "filename";
+			std::ifstream equilibrationfile(sstr_eq.str());
+
+			// Check if equilibrium file could be opened
+			if (!equilibrationfile){
+				std::cout << "ERROR: Could not open equilibrium file" << std::endl;
+				exit(0);
+			}
+
+			double sx, sy, sz;
+			int posx, posy, posz;
+
+			// Loop through file
+			while (equilibrationfile >> posx >> posy >> posz >> sx >> sy >> sz){
+				for (int q = 0; q < params::Nq; q++){
+					spins::sx1d(geom::LatCount(posx,posy,posz,q)) = sx;
+					spins::sy1d(geom::LatCount(posx,posy,posz,q)) = sy;
+					spins::sz1d(geom::LatCount(posx,posy,posz,q)) = sz;
+				}
+			}
+
+			// close file
+			equilibrationfile.close();
+			
+		}
+	}
 }

@@ -1,5 +1,5 @@
-#ifndef _neighbourlist_H_
-#define _neighbourlist_H_
+#ifndef _NEIGHBOURLIST_H_
+#define _NEIGHBOURLIST_H_
 
     #include <iostream>
     #include <sstream>

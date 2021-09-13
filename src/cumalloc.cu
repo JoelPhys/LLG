@@ -72,7 +72,7 @@ namespace cuglob {
 		CUDA_CALL(cudaFree(cuthermal::Tp));
 		CUDA_CALL(cudaFree(dlw));
 		CUDA_CALL(cudaFree(drw));
-		std::cout << "memory deallocated on device" << std::endl;
+		INFO_OUT("memory deallocated on GPU device: ", "success" << std::endl);
 	}
 
 
