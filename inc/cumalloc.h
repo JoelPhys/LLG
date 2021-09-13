@@ -12,7 +12,7 @@ namespace cuglob {
 	extern int *dlw, *drw;
 	extern Array<double> pJx, pJy, pJz;
 	extern Array<int> px_adj, padjncy;
-
+	extern int *dsimspin;
 
 	//testing for hedgehog;
 	extern double *dsurfx, *dsurfy, *dsurfz;

@@ -1,4 +1,4 @@
-
+// cpp header files
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -8,6 +8,8 @@
 #include <random>
 #include <algorithm>
 #include <cstring>
+
+// my header files
 #include "../inc/defines.h"
 #include "../inc/spins.h"
 #include "../inc/mathfuncs.h"
@@ -37,6 +39,9 @@ namespace neigh {
     std::vector<double> Jijx;
     std::vector<double> Jijy;
     std::vector<double> Jijz;
+    
+    std::vector<int> simspin;
+    int nsimspin;
 
     void ReadFile(){
 
@@ -210,7 +215,7 @@ namespace neigh {
 
         }
         
-	int xval;
+	    int xval;
         int yval;
         int zval;
         int qval;
@@ -224,54 +229,65 @@ namespace neigh {
                 for (int y = 0; y < params::Ly; ++y){            // Row
                     for (int z = 0; z < params::Lz; ++z){        // Column
                         for (int q = 0; q < params::Nq; ++q){    // Unit Cell
-                            for (int i = 0; i < length; i++){
 
-                                if (q == ib[i]+params::ibtoq){
+                            if ((params::xbound == "fixed") && ((x == 0) || (x == params::Lx-1))){
+                            }
+                            else if ((params::ybound == "fixed") && ((y == 0) || (y == params::Ly-1))){
+                            }
+                            else if ((params::zbound == "fixed")&& ((z == 0) || (z == params::Lz-1))){
+                            }
+                            else {
+                                simspin.push_back(geom::LatCount(x,y,z,q));
 
-                                    if (params::xbound == "periodic"){
-                                        xval = modfunc(params::Lx, NxP[i] + x);
-                                    }
-                                    else if (params::xbound == "open"){
-                                        xval = NxP[i] + x;
-                                    }
-                                    else {
-                                        std::cout << "ERROR: Unknown xbound " << std::endl;
-                                        exit(0);
-                                    }
-                                    if (params::ybound == "periodic"){
-                                        yval = modfunc(params::Ly, NyP[i] + y);
-                                    }
-                                    else if (params::ybound == "open"){
-                                        yval = NyP[i] + y; 
-                                    }
-                                    else {
-                                        std::cout << "ERROR: Unknown ybound " << std::endl;
-                                        exit(0);
-                                    }
-                                    if (params::zbound == "periodic"){
-                                        zval = modfunc(params::Lz, NzP[i] + z);
-                                    }
-                                    else if (params::zbound == "open"){
-                                        zval = NzP[i] + z; 
-                                    }
-                                    else {
-                                        std::cout << "ERROR: Unknown zbound " << std::endl;
-                                        exit(0);
-                                    }
+                                for (int i = 0; i < length; i++){
 
-                                    qval = jb[i]+params::ibtoq;
+                                    if (q == ib[i]+params::ibtoq){
 
-                                    if (((xval >= 0) && (yval >= 0) && (zval >= 0)) && ((xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz))) {
-                                        adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
-                                        adjcounter++;
+                                        if (params::xbound == "periodic"){
+                                            xval = modfunc(params::Lx, NxP[i] + x);
+                                        }
+                                        else if ((params::xbound == "open") || (params::xbound == "fixed")) {
+                                            xval = NxP[i] + x;
+                                        }
+                                        else {
+                                            std::cout << "ERROR: Unknown xbound " << std::endl;
+                                            exit(0);
+                                        }
+                                        if (params::ybound == "periodic"){
+                                            yval = modfunc(params::Ly, NyP[i] + y);
+                                        }
+                                        else if ((params::ybound == "open") || (params::ybound == "fixed")){
+                                            yval = NyP[i] + y; 
+                                        }
+                                        else {
+                                            std::cout << "ERROR: Unknown ybound " << std::endl;
+                                            exit(0);
+                                        }
+                                        if (params::zbound == "periodic"){
+                                            zval = modfunc(params::Lz, NzP[i] + z);
+                                        }
+                                        else if ((params::zbound == "open") || (params::zbound == "fixed")){
+                                            zval = NzP[i] + z; 
+                                        }
+                                        else {
+                                            std::cout << "ERROR: Unknown zbound " << std::endl;
+                                            exit(0);
+                                        }
 
-                                        Jijx_prime.push_back( ( Jijx[i]  * 2.179872e-21) / params::mu_s);
-                                        Jijy_prime.push_back( ( Jijy[i]  * 2.179872e-21) / params::mu_s);
-                                        Jijz_prime.push_back( ( Jijz[i]  * 2.179872e-21) / params::mu_s);
+                                        qval = jb[i]+params::ibtoq;
+
+                                        if (((xval >= 0) && (yval >= 0) && (zval >= 0)) && ((xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz))) {
+                                            adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
+                                            adjcounter++;
+
+                                            Jijx_prime.push_back( ( Jijx[i] * 2.179872e-21) / params::mu_s);
+                                            Jijy_prime.push_back( ( Jijy[i] * 2.179872e-21) / params::mu_s);
+                                            Jijz_prime.push_back( ( Jijz[i] * 2.179872e-21) / params::mu_s);
+                                        }
                                     }
                                 }
+                                x_adj.push_back(adjcounter);
                             }
-                            x_adj.push_back(adjcounter);
                         }
                     }
                 }
@@ -282,54 +298,65 @@ namespace neigh {
                 for (int y = 0; y < params::Ly; ++y){            // Row
                     for (int z = 0; z < params::Lz; ++z){        // Column
                         for (int q = 0; q < params::Nq; ++q){    // Unit Cell
-                            for (int i = 0; i < length; i++){
 
-                                if (q == ib[i]+params::ibtoq){
+                            if ((params::xbound == "fixed") && ((x == 0) || (x == params::Lx-1))){
+                            }
+                            else if ((params::ybound == "fixed") && ((y == 0) || (y == params::Ly-1))){
+                            }
+                            else if ((params::zbound == "fixed")&& ((z == 0) || (z == params::Lz-1))){
+                            }
+                            else {
+                                simspin.push_back(geom::LatCount(x,y,z,q));
 
-                                    if (params::xbound == "periodic"){
-                                        xval = modfunc(params::Lx, NxP[i] + x);
-                                    }
-                                    else if (params::xbound == "open"){
-                                        xval = NxP[i] + x;
-                                    }
-                                    else {
-                                        std::cout << "ERROR: Unknown xbound " << std::endl;
-                                        exit(0);
-                                    }
-                                    if (params::ybound == "periodic"){
-                                        yval = modfunc(params::Ly, NyP[i] + y);
-                                    }
-                                    else if (params::ybound == "open"){
-                                        yval = NyP[i] + y; 
-                                    }
-                                    else {
-                                        std::cout << "ERROR: Unknown ybound " << std::endl;
-                                        exit(0);
-                                    }
-                                    if (params::zbound == "periodic"){
-                                        zval = modfunc(params::Lz, NzP[i] + z);
-                                    }
-                                    else if (params::zbound == "open"){
-                                        zval = NzP[i] + z; 
-                                    }
-                                    else {
-                                        std::cout << "ERROR: Unknown zbound " << std::endl;
-                                        exit(0);
-                                    }
+                                for (int i = 0; i < length; i++){
 
-                                    qval = jb[i]+params::ibtoq;
+                                    if (q == ib[i]+params::ibtoq){
 
-                                    if (((xval >= 0) && (yval >= 0) && (zval >= 0)) && ((xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz))) {
-                                        adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
-                                        adjcounter++;
+                                        if (params::xbound == "periodic"){
+                                            xval = modfunc(params::Lx, NxP[i] + x);
+                                        }
+                                        else if ((params::xbound == "open") || (params::xbound == "fixed")) {
+                                            xval = NxP[i] + x;
+                                        }
+                                        else {
+                                            std::cout << "ERROR: Unknown xbound " << std::endl;
+                                            exit(0);
+                                        }
+                                        if (params::ybound == "periodic"){
+                                            yval = modfunc(params::Ly, NyP[i] + y);
+                                        }
+                                        else if ((params::ybound == "open") || (params::ybound == "fixed")){
+                                            yval = NyP[i] + y; 
+                                        }
+                                        else {
+                                            std::cout << "ERROR: Unknown ybound " << std::endl;
+                                            exit(0);
+                                        }
+                                        if (params::zbound == "periodic"){
+                                            zval = modfunc(params::Lz, NzP[i] + z);
+                                        }
+                                        else if ((params::zbound == "open") || (params::zbound == "fixed")){
+                                            zval = NzP[i] + z; 
+                                        }
+                                        else {
+                                            std::cout << "ERROR: Unknown zbound " << std::endl;
+                                            exit(0);
+                                        }
 
-                                        Jijx_prime.push_back( ( Jijx[i] ) / params::mu_s);
-                                        Jijy_prime.push_back( ( Jijy[i] ) / params::mu_s);
-                                        Jijz_prime.push_back( ( Jijz[i] ) / params::mu_s);
+                                        qval = jb[i]+params::ibtoq;
+
+                                        if (((xval >= 0) && (yval >= 0) && (zval >= 0)) && ((xval < params::Lx) && (yval < params::Ly) && (zval < params::Lz))) {
+                                            adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
+                                            adjcounter++;
+
+                                            Jijx_prime.push_back( (Jijx[i]) / params::mu_s);
+                                            Jijy_prime.push_back( (Jijy[i]) / params::mu_s);
+                                            Jijz_prime.push_back( (Jijz[i]) / params::mu_s);
+                                        }
                                     }
                                 }
+                                x_adj.push_back(adjcounter);
                             }
-                            x_adj.push_back(adjcounter);
                         }
                     }
                 }
@@ -340,16 +367,19 @@ namespace neigh {
             exit(0);
         }
 
+        // number of spins being simulated
+        nsimspin = simspin.size();
+
         double Jijsize = 0;
         for (int i = 0; i < adjncy.size() / (x_adj.size()-1); i++){
             Jijsize += (Jijx[i]);
         }
 
-        std::cout.width(75); std::cout << std::left << "length of x_adj:"; std::cout << x_adj.size() << std::endl;
-        std::cout.width(75); std::cout << std::left << "length of adjncy:"; std::cout << adjncy.size() << std::endl;
-        std::cout.width(75); std::cout << std::left << "average number of neighbours:"; std::cout << adjncy.size() / (x_adj.size()-1) << std::endl;
-        std::cout.width(75); std::cout << std::left << "length of Jij:"; std::cout << Jijz_prime.size() << std::endl;
-        std::cout.width(75); std::cout << std::left << "sum of neighbouring Jijs:"; std::cout << Jijsize << " (J)" << std::endl;
+        INFO_OUT("length of x_adj:", x_adj.size());
+        INFO_OUT("length of adjncy:", adjncy.size());
+        INFO_OUT("average number of neighbours:", adjncy.size() / (x_adj.size()-1));
+        INFO_OUT("length of Jij:", Jijz_prime.size());
+        INFO_OUT("sum of neighbouring Jijs:", Jijsize << " (J)");
     }
 
     

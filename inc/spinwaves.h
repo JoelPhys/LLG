@@ -3,13 +3,6 @@
 
     #include <iostream>
     #include <sstream>
-    #include <cmath>
-    #include <fstream>
-    #include <vector>
-    #include <iomanip>
-    #include <random>
-    #include <algorithm>
-    #include "fftw3.h"
 
     namespace spinwaves {
 

@@ -25,8 +25,15 @@ namespace cuheun {
 	__constant__ double c_lambdap;
 	__constant__ int c_Nq;
 	__constant__ double c_angle;
+	__constant__ int c_nsimspin;
+
+
+
+
 
 	void allocate_heun_consts(){
+
+		CUDA_CALL(cudaMemcpyToSymbol(*(&c_nsimspin), &neigh::nsimspin, sizeof(int)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambda), &params::lambda, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambdap), &params::lambdaPrime, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dtau), &params::dtau, sizeof(double)));
@@ -94,11 +101,14 @@ namespace cuheun {
 		}
 	}
 
-	__global__ void cuHeun1(int N,  double time, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx, double *dJy, double *dJz, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
+	__global__ void cuHeun1(int N, double time, int *dsimspin, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx, double *dJy, double *dJz, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
-		const int a = blockDim.x*blockIdx.x + threadIdx.x;
+		const int c = blockDim.x*blockIdx.x + threadIdx.x;
 
-		if (a < N){
+		if (c < N){
+
+			int a = dsimspin[c];
+
 			Htx[a] = static_cast<double>(gvalsx1[a]) * Thermal_Fluct[a];
 			Hty[a] = static_cast<double>(gvalsy1[a]) * Thermal_Fluct[a];
 			Htz[a] = static_cast<double>(gvalsz1[a]) * Thermal_Fluct[a];
@@ -114,9 +124,9 @@ namespace cuheun {
 			Hcub[2] = c_dzcp * dSz1d[a] * dSz1d[a] * dSz1d[a];
 
 			double Hex[3] = {0.0, 0.0, 0.0};
-			int counting = dx_adj1[a];
+			int counting = dx_adj1[c];
 
-			for (int b = dx_adj1[a]; b < dx_adj1[a+1]; b++){
+			for (int b = dx_adj1[c]; b < dx_adj1[c+1]; b++){
 				Hex[0] += dJx[counting] * (dSx1d[dadjncy1[b]]);
 				Hex[1] += dJy[counting] * (dSy1d[dadjncy1[b]]);
 				Hex[2] += dJz[counting] * (dSz1d[dadjncy1[b]]);
@@ -155,11 +165,13 @@ namespace cuheun {
 		} 
 	}
 
-	__global__ void cuHeun2(int N, double time, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx, double *dJy, double *dJz, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
+	__global__ void cuHeun2(int N, double time, int *dsimspin, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx, double *dJy, double *dJz, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
-		const int a = blockDim.x * blockIdx.x + threadIdx.x;
+		const int c = blockDim.x*blockIdx.x + threadIdx.x;
 
-		if (a < N){
+		if (c < N){
+
+			int a = dsimspin[c];
 
 			double Huni_dash[3];
 			Huni_dash[0] = c_dxup * Sdashnx[a];
@@ -172,10 +184,10 @@ namespace cuheun {
 			Hcub_dash[2]=  c_dzcp * Sdashnz[a] * Sdashnz[a] * Sdashnz[a];
 
 			double Hex_dash[3] = {0.0, 0.0, 0.0};
-			int counting = dx_adj1[a];
+			int counting = dx_adj1[c];
 
 			// Exchange interaction prime
-			for (int b = dx_adj1[a]; b < dx_adj1[a+1]; b++){
+			for (int b = dx_adj1[c]; b < dx_adj1[c+1]; b++){
 
 				Hex_dash[0] += dJx[counting] * (Sdashnx[dadjncy1[b]]);
 				Hex_dash[1] += dJy[counting] * (Sdashny[dadjncy1[b]]);

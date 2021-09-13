@@ -1,16 +1,21 @@
+// cpp header files
 #include <cmath>
+#include <time.h>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <iostream>
+
+// my header files
 #include "../inc/util.h"
-#include "../inc/config.h"
-#include "../inc/neighbourlist.h"
-#include "../inc/array.h"
-#include "../inc/array2d.h"
-#include "../inc/mathfuncs.h"
 #include "../inc/geom.h"
 #include "../inc/spins.h"
+#include "../inc/array.h"
+#include "../inc/config.h"
 #include "../inc/defines.h"
-#include <time.h>
-
+#include "../inc/array2d.h"
+#include "../inc/mathfuncs.h"
+#include "../inc/neighbourlist.h"
 
 
 namespace util {
@@ -330,9 +335,8 @@ namespace util {
 	void endclock(){
 		end = clock();
 		double endtime = (double)(end - begin) / CLOCKS_PER_SEC;
-		INFO_OUT("Simulation Time: ", std::setprecision(10) << endtime << std::endl); 
+		INFO_OUT("Simulation Time: ", std::setprecision(10) << endtime << " seconds"); 
 	}
-
 
 	void readexternalspins(std::string cmdline){
 

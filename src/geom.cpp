@@ -1,14 +1,16 @@
-#include "../inc/config.h"
-#include "../inc/array4d.h"
-#include "../inc/array3d.h"
-#include "../inc/array.h"
-#include "../inc/geom.h"
-#include "../inc/spins.h"
-#include "../inc/neighbourlist.h"
-#include "../inc/mathfuncs.h"
+// cpp header files
 #include <vector>
 #include <iostream>
 #include <unordered_set>
+
+// my header files
+#include "../inc/geom.h"
+#include "../inc/geom.h"
+#include "../inc/spins.h"
+#include "../inc/config.h"
+#include "../inc/array4d.h"
+#include "../inc/array3d.h"
+#include "../inc/mathfuncs.h"
 
 namespace geom {
 

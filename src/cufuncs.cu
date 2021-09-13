@@ -1,16 +1,22 @@
+// cpp header files
 #include <cuda.h>
-#include <curand.h>
-#include <cuda_runtime.h>
 #include <sstream>
+#include <curand.h>
+#include <iostream>
+#include <cuda_runtime.h>
+
+// my header files
+#include "../inc/geom.h"
+#include "../inc/neighbourlist.h"
+#include "../inc/fields.h"
 #include "../inc/config.h"
-#include "../inc/cumalloc.h"
 #include "../inc/cuheun.h"
-#include "../inc/cuthermal.h"
 #include "../inc/cufuncs.h"
 #include "../inc/cufields.h"
-#include "../inc/fields.h"
-#include "../inc/geom.h"
-#include <iostream>
+#include "../inc/cumalloc.h"
+#include "../inc/cuthermal.h"
+
+
 
 namespace cufuncs {
 
@@ -64,13 +70,8 @@ namespace cufuncs {
 	}
 
 	void integration(double time){
-		cuheun::cuHeun1<<<bpg,threadsperblock>>>(params::Nspins, time, cuthermal::dtfa, cuthermal::gvalsx, cuthermal::gvalsy, cuthermal::gvalsz, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx, cuglob::dJy, cuglob::dJz, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx,  cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
-		cuheun::cuHeun2<<<bpg,threadsperblock>>>(params::Nspins, time, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx, cuglob::dJy, cuglob::dJz, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx, cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
+		cuheun::cuHeun1<<<bpg,threadsperblock>>>(neigh::nsimspin, time, cuglob::dsimspin, cuthermal::dtfa, cuthermal::gvalsx, cuthermal::gvalsy, cuthermal::gvalsz, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx, cuglob::dJy, cuglob::dJz, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx,  cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
+		cuheun::cuHeun2<<<bpg,threadsperblock>>>(neigh::nsimspin, time, cuglob::dsimspin, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx, cuglob::dJy, cuglob::dJz, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx, cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
 	}
 
-		void integrationDW(double time){
-		cuheun::cuHeun1<<<bpg,threadsperblock>>>(params::Nspins, time, cuthermal::dtfa, cuthermal::gvalsx, cuthermal::gvalsy, cuthermal::gvalsz, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx, cuglob::dJy, cuglob::dJz, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx,  cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
-		cuheun::cuFixSpins2<<<bpg,threadsperblock>>>(nspinsdw, cuglob::dlw, cuglob::drw, cuglob::dsurfx, cuglob::dsurfy, cuglob::dsurfz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
-		cuheun::cuHeun2<<<bpg,threadsperblock>>>(params::Nspins, time, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx, cuglob::dJy, cuglob::dJz, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx, cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
-	}
 }

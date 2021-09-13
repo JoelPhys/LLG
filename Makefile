@@ -82,7 +82,7 @@ obj/%.o: src/%.cu
 
 
 # ASD: $(OBJ)
-# 	$(GCC) $(OPT) -o $@ $^ $(LIBS)
+# 	$(GCC) $(OPT) -o $@ $^ $(CONFIGLIB) $(FFTW3LIB) 
 
 ASDcu: $(OBJ) $(OBJNVCC)
 	$(NVCC) -DCUDA -O3 -G -o $@ $^ $(CONFIGLIB) $(FFTW3LIB) $(CULIBS)

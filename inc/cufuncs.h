@@ -1,9 +1,7 @@
 #ifndef _CUFUNCS_H_
 #define _CUFUNCS_H_
 
-#include <cuda.h> 
-#include <curand.h>
-#include <cuda_runtime.h>
+
 #include <sstream>
 
 namespace cufuncs {

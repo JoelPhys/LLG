@@ -1,3 +1,4 @@
+// cpp header files
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -8,22 +9,23 @@
 #include <algorithm>
 #include <time.h>
 #include <cstring>
+
+// my header files
+#include "../inc/util.h"
+#include "../inc/geom.h"
 #include "../inc/heun.h"
 #include "../inc/spins.h"
 #include "../inc/fftw3.h"
 #include "../inc/array.h"
+#include "../inc/config.h"
+#include "../inc/fields.h"
+#include "../inc/defines.h"
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
 #include "../inc/array4d.h"
-#include "../inc/mathfuncs.h"
-#include "../inc/config.h"
-#include "../inc/fields.h"
-#include "../inc/geom.h"
-#include "../inc/neighbourlist.h"
-#include "../inc/util.h"
-// #include "inc/FFT.h"
 #include "../inc/spinwaves.h"
-#include "../inc/defines.h"
+#include "../inc/mathfuncs.h"
+#include "../inc/neighbourlist.h"
 
 //Cuda Header files
 #ifdef CUDA
@@ -60,8 +62,8 @@ int main(int argc, char* argv[]){
 	// ======= Temperature ==================================================================================== //
 	const double Temp = (atof(argv[2]));
 	const double thermal_fluct = params::thermal_const * sqrt(Temp);
-	std::cout << "Temperature = " << Temp << "(K)" << std::endl;
-	std::cout << "Thermal Fluct = " << thermal_fluct << std::endl;
+	INFO_OUT("Temperature: ", Temp << "(K)");
+	INFO_OUT("Thermal Fluct: ", thermal_fluct);
 	// ========================================================================================================= //
 
 	// ======= Initiliase Spin Position ======================================================================== //
@@ -145,17 +147,9 @@ int main(int argc, char* argv[]){
 			cufuncs::cuTemperature(params::temptype, static_cast<double>(i) * params::dt, params::ttm_start);
 			// cufuncs::cuSquarePulse(static_cast<double>(i), atof(argv[4]), atof(argv[5]), atof(argv[6]));
 			cuthermal::gen_thermal_noise();
-			if (params::simtype != "DW"){
 			cufuncs::integration(static_cast<double>(i));
-			}
-			else if (params::simtype == "DW"){
-				cufuncs::integrationDW(static_cast<double>(i));
-				// cufuncs::cuDomainWall();
-			}
 		#else	
-			if (params::simtype != "DW"){
-				heun::integration(thermal_fluct);
-			}
+			heun::integration(thermal_fluct);
 		#endif
 		
 	}

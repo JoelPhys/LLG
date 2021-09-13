@@ -18,8 +18,8 @@ namespace cuheun {
 	extern __global__ void cuRotfun(int, double *, double *, double *);
 	extern __global__ void cuFixSpins1(int, int *, int *, double *, double *, double *, double *, double *, double *);
 	extern __global__ void cuFixSpins2(int, int *, int *, double *, double *, double *, double *, double *, double *);
-	extern __global__ void cuHeun1(int, double, double *, float *, float *, float *, int *, int *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *,  double *, double *, double *, double *, double *);
-	extern __global__ void cuHeun2(int , double, int *, int *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *,  double *, double *, double *, double *, double *);
+	extern __global__ void cuHeun1(int, double, int *, double *, float *, float *, float *, int *, int *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *,  double *, double *, double *, double *, double *);
+	extern __global__ void cuHeun2(int , double, int *, int *, int *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *, double *,  double *, double *, double *, double *, double *);
 	
 	//For Debug
 	void testing();

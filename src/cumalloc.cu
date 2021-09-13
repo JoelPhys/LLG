@@ -1,17 +1,21 @@
+// cpp header files
 #include <cuda.h>
-#include <cuda_runtime.h>
+#include <cstring>
 #include <curand.h>
+#include <iostream>
+#include <cuda_runtime.h>
+
+// my header files
+#include "../inc/geom.h"
 #include "../inc/array.h"
-#include "../inc/neighbourlist.h"
+#include "../inc/spins.h"
+#include "../inc/fields.h"
 #include "../inc/config.h"
 #include "../inc/cuheun.h"
-#include "../inc/cuthermal.h"
-#include "../inc/cudefine.h"
-#include "../inc/fields.h"
-#include "../inc/geom.h"
-#include "../inc/spins.h"
 #include "../inc/defines.h"
-#include <cstring> 
+#include "../inc/cudefine.h"
+#include "../inc/cuthermal.h"
+#include "../inc/neighbourlist.h"
 
 
 namespace cuglob {
@@ -21,8 +25,7 @@ namespace cuglob {
 	double *dJx, *dJy, *dJz;
 	int *dlw, *drw;
 	int *dx_adj, *dadjncy;
-	Array<double> pJx, pJy, pJz;
-	Array<int> px_adj, padjncy;
+	int *dsimspin;
 
 	//testing for hedgehog
 	double *dsurfx, *dsurfy, *dsurfz;
@@ -72,7 +75,7 @@ namespace cuglob {
 		CUDA_CALL(cudaFree(cuthermal::Tp));
 		CUDA_CALL(cudaFree(dlw));
 		CUDA_CALL(cudaFree(drw));
-		INFO_OUT("memory deallocated on GPU device: ", "success" << std::endl);
+		INFO_OUT("memory deallocated on GPU device: ", "success");
 	}
 
 
@@ -142,6 +145,9 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(dsurfy, 0.0, sizeof(double) * geom::surfy.size()));
 		CUDA_CALL(cudaMemset(dsurfz, 0.0, sizeof(double) * geom::surfz.size()));
 
+		CUDA_CALL(cudaMalloc((void**)&dsimspin, sizeof(int) * neigh::nsimspin));
+		CUDA_CALL(cudaMemset(dsimspin, 0.0, sizeof(int) * neigh::nsimspin));
+
 		// Temperature arrays
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::Te, sizeof(double)*params::Lz));
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::Tp, sizeof(double)*params::Lz));
@@ -153,7 +159,6 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(cuthermal::P_it, 0.0, sizeof(double)*params::Lz));
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::dtfa, sizeof(double)* params::Nspins));
 		CUDA_CALL(cudaMemset(cuthermal::dtfa, 0.0, sizeof(double) * params::Nspins)); 
-
 
 		// clear memory at exit of program
 		atexit(clear_memory);
@@ -185,33 +190,12 @@ namespace cuglob {
 
 	void copy_jij_to_device(){
 
-		//resize 1d arrays
-		pJx.resize(neigh::Jijx_prime.size());
-		pJy.resize(neigh::Jijy_prime.size());
-		pJz.resize(neigh::Jijz_prime.size());	
-
-		px_adj.resize(neigh::x_adj.size());
-		padjncy.resize(neigh::adjncy.size());
-		
-		for (int a = 0; a < neigh::Jijx_prime.size(); a++){
-			pJx(a) = neigh::Jijx_prime[a];
-			pJy(a) = neigh::Jijy_prime[a];
-			pJz(a) = neigh::Jijz_prime[a];
-		}
-
-		for (int a = 0; a < neigh::x_adj.size(); a++){
-			px_adj(a) = neigh::x_adj[a];
-		}
-
-		for (int a = 0; a < neigh::adjncy.size(); a++){
-			padjncy(a) = neigh::adjncy[a];
-		}		
-
-		CUDA_CALL(cudaMemcpy(dJx, pJx.ptr(), sizeof(double) * neigh::Jijx_prime.size(), cudaMemcpyHostToDevice));
-		CUDA_CALL(cudaMemcpy(dJy, pJy.ptr(), sizeof(double) * neigh::Jijy_prime.size(), cudaMemcpyHostToDevice));
-		CUDA_CALL(cudaMemcpy(dJz, pJz.ptr(), sizeof(double) * neigh::Jijz_prime.size(), cudaMemcpyHostToDevice));
-		CUDA_CALL(cudaMemcpy(dx_adj, px_adj.ptr(), sizeof(int) * (neigh::x_adj.size()), cudaMemcpyHostToDevice));
-		CUDA_CALL(cudaMemcpy(dadjncy, padjncy.ptr(), sizeof(int) * (neigh::adjncy.size()), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dx_adj, &neigh::x_adj[0], sizeof(int) * (neigh::x_adj.size()), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dadjncy, &neigh::adjncy[0], sizeof(int) * (neigh::adjncy.size()), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dJx, &neigh::Jijx_prime[0], sizeof(double) * neigh::Jijx_prime.size(), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dJy, &neigh::Jijy_prime[0], sizeof(double) * neigh::Jijy_prime.size(), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dJz, &neigh::Jijz_prime[0], sizeof(double) * neigh::Jijz_prime.size(), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dsimspin, &neigh::simspin[0], sizeof(int) * neigh::nsimspin, cudaMemcpyHostToDevice));	
 
 	}
 

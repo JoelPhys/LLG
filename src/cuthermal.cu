@@ -1,11 +1,14 @@
-#include <curand.h>
+// cpp header files
+#include <ctime>
 #include <cuda.h>
+#include <curand.h>
+#include <iostream>
 #include <curand_kernel.h>
-#include "../inc/cudefine.h"
+
+// my header files
 #include "../inc/config.h"
 #include "../inc/defines.h"
-#include <iostream>
-#include <ctime>
+#include "../inc/cudefine.h"
 
 namespace cuthermal {
 
@@ -88,7 +91,7 @@ namespace cuthermal {
 
     void destroy_generator(){
         curandDestroyGenerator(gen);
-        INFO_OUT("generator destroyed: ", "success" << std::endl);
+        INFO_OUT("generator destroyed: ", "success");
     }
 
     void curand_generator(){
