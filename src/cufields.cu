@@ -1,13 +1,16 @@
+// cpp header files
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <curand.h>
+
+// my header files
 #include "../inc/array.h"
-#include "../inc/neighbourlist.h"
 #include "../inc/config.h"
 #include "../inc/cuheun.h"
-#include "../inc/cuthermal.h"
 #include "../inc/cudefine.h"
 #include "../inc/cufields.h"
+#include "../inc/cuthermal.h"
+#include "../inc/neighbourlist.h"
 
 namespace cufields {
 

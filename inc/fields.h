@@ -1,6 +1,7 @@
 #ifndef _FIELDS_H_
 #define _FIELDS_H_
 
+// my header files
 #include "../inc/array.h"
 
 namespace fields {
@@ -17,6 +18,9 @@ namespace fields {
 	extern double freq;
 
 	void readfields();
+	void square_pulse(double time);
+	void gaussian_pulse(double time);
+	void multi_cycle_pulse(double time);
 
 }
 #endif

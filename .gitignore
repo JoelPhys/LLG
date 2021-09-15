@@ -2,6 +2,7 @@ output/magnetisation/*
 output/spinwaves/*
 ASD
 ASDcu
+obj/*
 lswt/output/*
 .DS_Store
 susceptability/read_files

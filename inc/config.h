@@ -2,12 +2,11 @@
 #ifndef _PARAMS1_H_
 #define _PARAMS1_H_
 
+    // cpp header files
     #include <vector>
     #include <string>
-    #include <cmath>
-    #include <string>
-    #include "array2d.h"
-    #include "array.h"
+
+    // my header files
     #include "libconfig.h++"
 
 

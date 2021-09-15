@@ -1,14 +1,9 @@
 
-#ifndef __THERMAL_H__
-#define __THERMAL_H__
+#ifndef _THERMAL_H_
+#define _THERMAL_H_
 
-#include <fstream>
+// cpp header files
 #include <vector>
-#include <iostream>
-#include "../inc/config.h"
-#include "../inc/libconfig.h++"
-#include "../inc/util.h"
-
 
 namespace thermal {
 

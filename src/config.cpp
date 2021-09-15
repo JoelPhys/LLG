@@ -89,7 +89,9 @@ namespace params {
 
 		TITLE("COMPILATION INFO");
 		INFO_OUT("CPU Compiler: ", CPUCOMP);
-		INFO_OUT("NVCC Compiler: ", GPUCOMP);
+		#ifdef CUDA 
+		INFO_OUT("NVCC Compiler: ", GPUCOMP); 
+		#endif
 		INFO_OUT("Compile Date and Time: ", __DATE__ << " " << __TIME__);
 		INFO_OUT("Compiled on Machine: ", HOSTNAME);
 		if(GITDIRTY!="0")
