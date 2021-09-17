@@ -76,6 +76,21 @@ namespace params {
 	std::string temptype;
 	double ttm_start;
 
+	void banner(){
+		std::cout << std::endl;
+		std::cout << "                                            ███    █████████    █████████  ██████████                     " << std::endl;
+		std::cout << "                                           ░░░    ███░░░░░███  ███░░░░░███░░███░░░░███                    " << std::endl;
+		std::cout << "                                           █████ ░███    ░███ ░███    ░░░  ░███   ░░███                   " << std::endl;
+		std::cout << "                                          ░░███  ░███████████ ░░█████████  ░███    ░███                   " << std::endl;
+		std::cout << "                                           ░███  ░███░░░░░███  ░░░░░░░░███ ░███    ░███                   " << std::endl;
+		std::cout << "                                           ░███  ░███    ░███  ███    ░███ ░███    ███                    " << std::endl;
+		std::cout << "                                           ░███  █████   █████░░█████████  ██████████                     " << std::endl;
+		std::cout << "                                           ░███ ░░░░░   ░░░░░  ░░░░░░░░░  ░░░░░░░░░░                      " << std::endl;
+		std::cout << "                                       ███ ░███                                                           " << std::endl;
+		std::cout << "                                      ░░██████                                                            " << std::endl;
+		std::cout << "                                       ░░░░░░                                                             " << std::endl;		
+	}
+
 	void cfgmissing(std::string in){
 		if (!cfg.exists(in)){
 			std::cout << "ERROR: Missing config file setting " << in << std::endl;

@@ -21,6 +21,6 @@ namespace fields {
 	void square_pulse(double time);
 	void gaussian_pulse(double time);
 	void multi_cycle_pulse(double time);
-
+	void calculate(double time);
 }
 #endif

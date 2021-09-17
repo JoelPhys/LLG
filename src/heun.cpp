@@ -14,6 +14,7 @@
 #include "../inc/array.h"
 #include "../inc/fields.h"
 #include "../inc/config.h"
+#include "../inc/defines.h"
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
 #include "../inc/mathfuncs.h"

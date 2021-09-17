@@ -43,6 +43,7 @@
 int main(int argc, char* argv[]){
 
 	// functions ============================================================================================== //
+	params::banner();
 	params::intitialiseConfig(argv[1]); 
 	params::readparams();
 	spins::init();
@@ -52,6 +53,7 @@ int main(int argc, char* argv[]){
 	geom::CreateIntLattice();
 	neigh::ReadFile();
 	neigh::InteractionMatrix();
+	heun::init();
 	util::init();
 
 	if (params::simtype == "spinwaves"){

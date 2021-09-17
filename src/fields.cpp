@@ -161,4 +161,22 @@ namespace fields {
 
 	}
 
+	void calculate(double time){
+		if (Type == "Uniform"){
+			(time);
+		}
+		else if (Type == "split"){
+			(time);
+		}
+		else if (Type == "Square_Pulse"){
+			square_pulse(time);
+		}
+		else if (Type == "Gaussian_Pulse"){
+			gaussian_pulse(time);
+		}
+		else if (Type == "Multi_Cycle_Pulse"){
+			multi_cycle_pulse(time);
+		}
+	}
+
 }

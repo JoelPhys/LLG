@@ -77,6 +77,7 @@
 
         extern libconfig::Config cfg;
 
+        void banner();
         void intitialiseConfig(const char* cfg_filename);
         void readparams();
 
