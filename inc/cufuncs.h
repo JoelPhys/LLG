@@ -10,9 +10,7 @@ namespace cufuncs {
 	extern int bpg;
 	void cuRotation();
 	void cuDomainWall();
-	void cuSquarePulse(double time, double start_time, double end_time, double height);
-	void cuGaussPulse(double time);
-	void cuMultiPulse(double time);
+	void cuFields(std::string type, double time, double start_time, double end_time, double height);
 	void cuTemperature(std::string type, double time, double ttm_start);
 	void init_device_vars();
 	void integration(double time);

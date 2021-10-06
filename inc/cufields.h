@@ -12,10 +12,16 @@ namespace cufields {
     extern double end_time;
     extern double height;
 
+    extern __global__ void uniform(int, double, double, double, double *, double *, double *);
+    extern __global__ void uniform_staggered(int, double, double, double, double *, double *, double *);
     extern __global__ void square_pulse(int, double, double, double, double, double *, double *, double *);
+    extern __global__ void square_pulse_staggered(int, double, double, double, double, double *, double *, double *);
     extern __global__ void gaussian_pulse(int, double, double, double, double,  double *, double *, double *);
+    extern __global__ void gaussian_pulse_staggered(int, double, double, double, double,  double *, double *, double *);
     extern __global__ void multi_cycle_pulse(int, double, double, double, double,  double, double *, double *, double *);
+    extern __global__ void multi_cycle_pulse_staggered(int, double, double, double, double,  double, double *, double *, double *);
 
+    void testing(int i);
 }
 
 #endif

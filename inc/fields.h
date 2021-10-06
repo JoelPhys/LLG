@@ -1,6 +1,9 @@
 #ifndef _FIELDS_H_
 #define _FIELDS_H_
 
+// cpp header files
+#include <string>
+
 // my header files
 #include "../inc/array.h"
 
@@ -16,6 +19,8 @@ namespace fields {
 	extern double std_dev;
 	extern double centre_pos;
 	extern double freq;
+	extern std::string type;
+	extern double cuniform[3];
 
 	void readfields();
 	void square_pulse(double time);

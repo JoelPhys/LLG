@@ -1,5 +1,7 @@
 //cpp header files
 #include <iostream>
+#include <cmath>
+#include <random>
 #include "../inc/array.h"
 #include "../inc/spins.h"
 #include "../inc/config.h"
@@ -20,7 +22,8 @@ namespace spins {
     Array<int> lw;
     Array<int> rw;
     Array<int> zlayer;
-    
+
+
 
     void init(){
 
@@ -30,15 +33,34 @@ namespace spins {
         sx1d.IFill(0);
         sy1d.IFill(0);
         sz1d.IFill(0);
-
     }
 
     void populate(){
 
 
 		int count1d = 0;
+        if (params::afmflag == "test_Mn2Au"){
 
-		if (params::afmflag != "NiO"){
+            // //Normal Distribution for Stochastic noise
+            // std::normal_distribution<double> distribution(0.0,1.0);
+            // std::random_device device;
+            // std::mt19937 generator(device());
+    
+            // for (int i = 0; i < params::Nspins; i++){
+            //     double v1=0,v2=0,s=2.0,ss=0.0;
+            //     while(s>1.0)
+            //     {
+            //         v1=2.0*distribution(generator)-1.0;
+            //         v2=2.0*distribution(generator)-1.0;
+            //         s=v1*v1+v2*v2;
+            //     }
+            //     ss=sqrt(1.0-s);
+            //     sx1d(i)=2.0*v1*ss;
+            //     sy1d(i)=2.0*v2*ss;
+            //     sz1d(i)=1.0-2.0*s;
+            // }
+        }
+		else if (params::afmflag != "NiO"){
             for (int x = 0; x < params::Lx; x++){
                 for (int y = 0; y < params::Ly; y++){
                     for (int z = 0; z < params::Lz; z++){

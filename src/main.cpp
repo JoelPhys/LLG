@@ -147,7 +147,7 @@ int main(int argc, char* argv[]){
 
 		#ifdef CUDA
 			cufuncs::cuTemperature(params::temptype, static_cast<double>(i) * params::dt, params::ttm_start);
-			// cufuncs::cuSquarePulse(static_cast<double>(i), atof(argv[4]), atof(argv[5]), atof(argv[6]));
+			cufuncs::cuFields(fields::type, static_cast<double>(i)  * params::dt, fields::start_time, fields::end_time, fields::height);
 			cuthermal::gen_thermal_noise();
 			cufuncs::integration(static_cast<double>(i));
 		#else	

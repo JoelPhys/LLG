@@ -16,9 +16,11 @@ namespace cuthermal {
 	void curand_generator();
 	void gen_thermal_noise();
 	void destroy_generator();
-	void testing(int i);
 	__global__ void ttm(double , int , double *, double *, double *);
 	__global__ void ttf(double , int , double *, double *, int *);
+
+	// debugging
+	void testing(int i);
 }
 
 #endif

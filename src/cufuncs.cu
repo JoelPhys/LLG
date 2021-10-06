@@ -37,17 +37,38 @@ namespace cufuncs {
 		cuheun::cuFixSpins1<<<bpg,threadsperblock>>>(nspinsdw, cuglob::dlw, cuglob::drw, cuglob::dsurfx, cuglob::dsurfy, cuglob::dsurfz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d);
 	}
 
-	void cuSquarePulse(double time, double start_time, double end_time, double height){
-		cufields::square_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+	void cuFields(std::string type, double time, double start_time, double end_time, double height){
+		if (type == "Uniform"){
+			cufields::uniform<<<bpg,threadsperblock>>>(params::Nspins, fields::cuniform[0], fields::cuniform[1], fields::cuniform[2], cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
+		else if (type == "Uniform_Staggered"){
+			cufields::uniform_staggered<<<bpg,threadsperblock>>>(params::Nspins, fields::cuniform[0], fields::cuniform[1], fields::cuniform[2], cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
+		else if (type == "Square_Pulse"){
+			cufields::square_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
+		else if (type == "Gaussian_Pulse"){
+			cufields::gaussian_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
+		else if (type == "Multi_Cycle_Pulse"){
+			cufields::multi_cycle_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
+		else if (type == "Square_Pulse_Staggered"){
+			cufields::square_pulse_staggered<<<bpg,threadsperblock>>>(params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
+		else if (type == "Gaussian_Pulse_Staggered"){
+			cufields::gaussian_pulse_staggered<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
+		else if (type == "Multi_Cycle_Pulse_Staggered"){
+			cufields::multi_cycle_pulse_staggered<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
+		else {
+			std::cout << "ERROR: Unkown field type: " << type << std::endl;
+			exit(0);		
+		}
+		
 	}
-
-	void cuGaussPulse(double time){
-		cufields::gaussian_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
-	}
-
-	void cuMultiPulse(double time){
-		cufields::multi_cycle_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
-	}
+	
 
 	void cuTemperature(std::string type, double time, double ttm_start){
 		if (type == "ttm"){

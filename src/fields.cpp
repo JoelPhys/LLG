@@ -22,17 +22,18 @@
 namespace fields {
 
 	// Applied field settings
-	std::string Type;
+	std::string type;
 	bool Hfield;
 	Array<double> H_appx;
 	Array<double> H_appy;
 	Array<double> H_appz;
 
-	double start_time;
-	double end_time;
+	double start_time = 0.0;
+	double end_time = 0.0;
 	double height;
 	double freq;
 	double gauss;
+	double cuniform[3];
 
 	double std_dev;
 	double centre_pos;
@@ -46,21 +47,25 @@ namespace fields {
 		H_appx.IFill(0);
 		H_appy.IFill(0);
 		H_appz.IFill(0);
+		DEBUGGER;
 
-		Type = params::cfg.lookup("ExternalField.Type").c_str();
+		type = params::cfg.lookup("ExternalField.Type").c_str();
 		libconfig::Setting& setting1 = params::cfg.lookup("ExternalField");
 
-		if (Type == "Uniform") {
-			INFO_OUT("Field type:", Type);
+		if (type == "Uniform") {
+			INFO_OUT("Field type:", type);
 			for (int a = 0; a < params::Nmoments; a++){
 				H_appx(a) = setting1["Field"][0];
 				H_appy(a) = setting1["Field"][1];
 				H_appz(a) = setting1["Field"][2];
 			}
+			cuniform[0] = static_cast<double>(setting1["Field"][0]);
+			cuniform[1] = static_cast<double>(setting1["Field"][1]);
+			cuniform[2] = static_cast<double>(setting1["Field"][2]);
 			INFO_OUT("Field values:", "[" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "] (T)");              
 		}
-		else if (Type == "Split") {
-			INFO_OUT("Field type:", Type);
+		else if (type == "Uniform_Staggered") {
+			INFO_OUT("Field type:", type);
 			for (int a = 0; a < params::Nmoments; a++){
 				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 2)) {
 					H_appx(a) = setting1["Field"][0];
@@ -74,10 +79,13 @@ namespace fields {
 				}
 				else std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
 			}
+			cuniform[0] = static_cast<double>(setting1["Field"][0]);
+			cuniform[1] = static_cast<double>(setting1["Field"][1]);
+			cuniform[2] = static_cast<double>(setting1["Field"][2]);
 			INFO_OUT("Field values:", "[" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "] (T)");
 		}
-		else if (Type == "Square_Pulse"){
-			INFO_OUT("Field type:", Type);
+		else if ((type == "Square_Pulse") || (type == "Square_Pulse_Staggered")){
+			INFO_OUT("Field type:", type);
 			height = params::cfg.lookup("ExternalField.height");
 			start_time = params::cfg.lookup("ExternalField.start_time");
 			end_time = params::cfg.lookup("ExternalField.end_time");
@@ -85,30 +93,31 @@ namespace fields {
 			INFO_OUT("End time of pulse = ", end_time << " timesteps");
 			INFO_OUT("Magniture of pulse = ", height << " (T)");
 		}
-		else if (Type == "Gaussian_Pulse"){
-			INFO_OUT("Field type = ", Type);
+		else if (type == "Gaussian_Pulse"){
+			INFO_OUT("Field type = ", type);
 			height = params::cfg.lookup("ExternalField.height");
 			centre_pos = params::cfg.lookup("ExternalField.centre");
 			std_dev = params::cfg.lookup("ExternalField.std_dev");
-			INFO_OUT("Central Position of Pulse = ", start_time << " timesteps");
-			INFO_OUT("Standard Deviation of Pulse = ", end_time << " timesteps");
+			INFO_OUT("Central Position of Pulse = ", centre_pos << " timesteps");
+			INFO_OUT("Standard Deviation of Pulse = ", std_dev << " timesteps");
 			INFO_OUT("Magniture of pulse = ", height << " (T)");
 		}
-		else if (Type == "Multi_Cycle_Pulse"){
-			INFO_OUT("Field type = ", Type);
+		else if ((type == "Multi_Cycle_Pulse") || (type == "Multi_Cycle_Pulse_Staggered")){
+			INFO_OUT("Field type = ", type);
 			height = params::cfg.lookup("ExternalField.height");
-			centre_pos = params::cfg.lookup("ExternalField.centre");
+			centre_pos = params::cfg.lookup("ExternalField.centre_pos");
 			std_dev = params::cfg.lookup("ExternalField.std_dev");
-			freq = params::cfg.lookup("ExternalField.frequency");
-			INFO_OUT("Central Position of Pulse = ", start_time << " timesteps");
-			INFO_OUT("Standard Deviation of Pulse = ", end_time << " timesteps");
-			INFO_OUT("Magniture of pulse = ", height << " (T)");
-			INFO_OUT("Frequency of pulse = ", height << " (Hz)");
+			freq = params::cfg.lookup("ExternalField.freq");
+			INFO_OUT("Central Position of Pulse = ", centre_pos << " [s]");
+			INFO_OUT("Standard Deviation of Pulse = ", std_dev << " [s]");
+			INFO_OUT("Magniture of pulse = ", height << " [T]");
+			INFO_OUT("Frequency of pulse = ", freq << " [Hz]");
 		}
 		else {	
-			std::cout << "ERROR: Unknown Field Type." << std::endl;
+			std::cout << "ERROR: Unknown Field type." << std::endl;
 			exit(0);
 		} 
+		DEBUGGER;
 
 	}
 
@@ -162,19 +171,19 @@ namespace fields {
 	}
 
 	void calculate(double time){
-		if (Type == "Uniform"){
+		if (type == "Uniform"){
 			(time);
 		}
-		else if (Type == "split"){
+		else if (type == "split"){
 			(time);
 		}
-		else if (Type == "Square_Pulse"){
+		else if (type == "Square_Pulse"){
 			square_pulse(time);
 		}
-		else if (Type == "Gaussian_Pulse"){
+		else if (type == "Gaussian_Pulse"){
 			gaussian_pulse(time);
 		}
-		else if (Type == "Multi_Cycle_Pulse"){
+		else if (type == "Multi_Cycle_Pulse"){
 			multi_cycle_pulse(time);
 		}
 	}

@@ -6,6 +6,7 @@
 #include <curand_kernel.h>
 
 // my header files
+#include "../inc/array.h"
 #include "../inc/config.h"
 #include "../inc/defines.h"
 #include "../inc/cudefine.h"
@@ -58,31 +59,31 @@ namespace cuthermal {
     void init_cuthermal(double equilibrium_temp){
 
         //two temperature model variables
-        gamma_e=225.0;
-        Cp=3e6;
-        kappa_0=11.0;
-        delta=20.0e-9;
-        Gep=10e17;
-        P_0=1.5e21;
-        t0=100e-15;
-        tau=50e-15;
-        Nz=100;
-        dz=0.3e-9;
-        dt=1e-16;
+        gamma_e=125.0;                //gamma_e defines the electron specific heat through, C_e = gamma_e * T_e. [J/m^3/K^2]
+        Cp=3e6;                       //Specific heat of phonons. [J/m^3/K]
+        kappa_0=11.0;                 //kappa_0 defines the thermal heat conductivity (kappa) through, kappa = kappa_0 * T_e/T_p [J/m/K/s]
+        delta=20.0e-9;                //Penetration depth of laser. [m]
+        Gep=10e17;                    //Electron-phonon coupling [ J/m^3/s/K]
+        P_0=1.5e21;                   //Pump fluence prefactor, P_0. P(z,t)=P_0*exp(-((t-t0)/tau)**2)*exp(-z/delta) [ J/m^3/s]
+        t0=100e-15;                   //Pump temporal offset [s]
+        tau=50e-15;                   //Pump temporal full width half max [s]
+        Nz=100;                       //number of unit cells in z-direction (assumed uniform heating perpendicular [unit cells in z]
+        dz=0.3e-9;                    //lattice constant (or difference between planes) [m]
+        dt=1e-16;                     //Timestep [s]
         Tinit=equilibrium_temp;
         oneOvrdzdz=1./(dz*dz);
         oneOvr2dz=1./(2.0*dz);
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_gamma_e), &gamma_e, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Cp), &Cp, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_kappa_0), &kappa_0, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_delta), &delta, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Gep), &Gep, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_P_0), &P_0, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_t0), &t0, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_tau), &tau, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nz), &Nz, sizeof(int)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_dz), &dz, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_dt), &params::dt, sizeof(double)));
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_gamma_e), &gamma_e, sizeof(double)));                        
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Cp), &Cp, sizeof(double)));                                  
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_kappa_0), &kappa_0, sizeof(double)));                        
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_delta), &delta, sizeof(double)));                            
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Gep), &Gep, sizeof(double)));                                
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_P_0), &P_0, sizeof(double)));                                
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_t0), &t0, sizeof(double)));                                  
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_tau), &tau, sizeof(double)));                                
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nz), &Nz, sizeof(int)));                                     
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_dz), &dz, sizeof(double)));                                  
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_dt), &params::dt, sizeof(double)));                          
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_thermal_const), &params::thermal_const, sizeof(double)));
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_Tinit), &Tinit, sizeof(double)));
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_oneOvrdzdz), &oneOvrdzdz, sizeof(double)));
@@ -110,9 +111,6 @@ namespace cuthermal {
         CURAND_CALL(curandGenerateNormal(gen, gvalsy, params::Nspins, 0.0, 1.0));
         CURAND_CALL(curandGenerateNormal(gen, gvalsz, params::Nspins, 0.0, 1.0));
     }
-
-
-
     
     __global__ void ttm(double time, int Nz, double *Te, double *Tp, double *P_it)
     {
@@ -160,6 +158,27 @@ namespace cuthermal {
             dtfa[a] = c_thermal_const * sqrt(Te[dzlayer[a]]);
         }
     }
+
+
+    void testing(int i){
+
+		Array<double> testingx;
+		Array<double> testingy, testingz;
+		testingx.resize(params::Lz);
+		// testingy.resize(params::Nspins);
+		// testingz.resize(params::Nspins);
+
+		CUDA_CALL(cudaMemcpy(testingx.ptr(), Te, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
+		// CUDA_CALL(cudaMemcpy(testingy.ptr(), Hapy, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
+		// CUDA_CALL(cudaMemcpy(testingz.ptr(), Hapz, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
+
+	    // std::cout << i << " ";
+	    for (int a = 0; a < params::Lz; a++){
+		    std::cout << testingx(a) << " ";	
+	    }
+	    std::cout << std::endl;
+	}
+
 
     
 }
