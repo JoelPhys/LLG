@@ -17,6 +17,8 @@
 #include "../inc/config.h"
 #include "../inc/geom.h"
 #include "../inc/array.h"
+#include "../inc/error.h"
+#include "../inc/defects.h"
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
 #include "../inc/libconfig.h++"
@@ -35,6 +37,9 @@ namespace neigh {
     std::vector<double> Nz;
     std::vector<int> ib;
     std::vector<int> jb;
+
+    //testing
+    std::vector<int> jind;
 
     std::vector<double> Jijx;
     std::vector<double> Jijy;
@@ -204,7 +209,18 @@ namespace neigh {
 	
         // Convert to unit cell vector
         for (int i = 0; i < length; i++){
-            
+
+            if (params::Jij_units == "mRy") {
+                Jijx[i] *= (2.179872e-21) / params::mu_s;
+                Jijy[i] *= (2.179872e-21) / params::mu_s;
+                Jijz[i] *= (2.179872e-21) / params::mu_s;
+            }
+            else if (params::Jij_units == "J") {
+                Jijx[i] *= (1.0) / params::mu_s;
+                Jijy[i] *= (1.0) / params::mu_s;
+                Jijz[i] *= (1.0) / params::mu_s;
+            }   
+
             vecX = Nx[i] + params::sites[ib[i]+params::ibtoq][0] - params::sites[jb[i]+params::ibtoq][0];
             vecY = Ny[i] + params::sites[ib[i]+params::ibtoq][1] - params::sites[jb[i]+params::ibtoq][1];
             vecZ = Nz[i] + params::sites[ib[i]+params::ibtoq][2] - params::sites[jb[i]+params::ibtoq][2];
@@ -220,6 +236,7 @@ namespace neigh {
         int zval;
         int qval;
         int adjcounter = 0;
+        int defectcounter = 0;
 
         x_adj.push_back(0);
 
@@ -235,6 +252,9 @@ namespace neigh {
                             else if ((params::ybound == "fixed") && ((y == 0) || (y == params::Ly-1))){
                             }
                             else if ((params::zbound == "fixed")&& ((z == 0) || (z == params::Lz-1))){
+                            }
+                            else if ((defects::list.size() != 0) && (geom::LatCount(x,y,z,q) == defects::list[defectcounter])){
+                                defectcounter++;
                             }
                             else {
                                 simspin.push_back(geom::LatCount(x,y,z,q));
@@ -280,9 +300,11 @@ namespace neigh {
                                             adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
                                             adjcounter++;
 
-                                            Jijx_prime.push_back( ( Jijx[i] * 2.179872e-21) / params::mu_s);
-                                            Jijy_prime.push_back( ( Jijy[i] * 2.179872e-21) / params::mu_s);
-                                            Jijz_prime.push_back( ( Jijz[i] * 2.179872e-21) / params::mu_s);
+
+                                            jind.push_back(i);
+                                            Jijx_prime.push_back( Jijx[i] /** 2.179872e-21) / params::mu_s*/);
+                                            Jijy_prime.push_back( Jijy[i] /** 2.179872e-21) / params::mu_s*/);
+                                            Jijz_prime.push_back( Jijz[i] /** 2.179872e-21) / params::mu_s*/);
                                         }
                                     }
                                 }
@@ -305,7 +327,10 @@ namespace neigh {
                             }
                             else if ((params::zbound == "fixed")&& ((z == 0) || (z == params::Lz-1))){
                             }
-                            else {
+                            else if ((defects::list.size() != 0) && (geom::LatCount(x,y,z,q) == defects::list[defectcounter])){
+                                defectcounter++;
+                            }
+                            else {      
                                 simspin.push_back(geom::LatCount(x,y,z,q));
 
                                 for (int i = 0; i < length; i++){
@@ -349,9 +374,10 @@ namespace neigh {
                                             adjncy.push_back(geom::LatCount(xval, yval, zval, qval));
                                             adjcounter++;
 
-                                            Jijx_prime.push_back( (Jijx[i]) / params::mu_s);
-                                            Jijy_prime.push_back( (Jijy[i]) / params::mu_s);
-                                            Jijz_prime.push_back( (Jijz[i]) / params::mu_s);
+                                            jind.push_back(i);
+                                            Jijx_prime.push_back( (Jijx[i]) /*/ params::mu_s*/);
+                                            Jijy_prime.push_back( (Jijy[i]) /*/ params::mu_s*/);
+                                            Jijz_prime.push_back( (Jijz[i]) /*/ params::mu_s*/);
                                         }
                                     }
                                 }

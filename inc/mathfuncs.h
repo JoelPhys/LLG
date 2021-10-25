@@ -7,6 +7,8 @@
 extern Array2D<double> R;
 
 // Functions
+int gcd(int a, int b);
+int lcm(int a, int b);
 void IdentityMatrix();
 int modfunc(int L, int x);
 void Inverse3x3(double m[][3], double minv[][3]);

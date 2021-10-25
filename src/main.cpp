@@ -19,6 +19,7 @@
 #include "../inc/array.h"
 #include "../inc/config.h"
 #include "../inc/fields.h"
+#include "../inc/defects.h"
 #include "../inc/defines.h"
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
@@ -51,6 +52,7 @@ int main(int argc, char* argv[]){
 	geom::CreateLattice();
 	geom::CountDistinct();
 	geom::CreateIntLattice();
+	defects::init();
 	neigh::ReadFile();
 	neigh::InteractionMatrix();
 	heun::init();
@@ -70,6 +72,7 @@ int main(int argc, char* argv[]){
 
 	// ======= Initiliase Spin Position ======================================================================== //
 	spins::populate();
+	defects::populate();
 	util::readexternalspins(argv[3]);
 
 	// testing for hedgehog
@@ -103,7 +106,10 @@ int main(int argc, char* argv[]){
 	c = params::dt_spinwaves / params::dt;
 
 	util::InitMagFile(Temp);
-	// util::InitDWFile(Temp);
+
+	if (params::simtype == "DW"){		
+	util::InitDWFile(Temp);
+	}
 
 	TITLE("SIMULATION STARTING");
 	util::startclock();
@@ -132,7 +138,7 @@ int main(int argc, char* argv[]){
 			util::OutputMagToFile(i);
 			
 			if (params::simtype == "DW"){		
-				// util::OutputDWtoFile(i);
+				util::OutputDWtoFile(i);
 			}
 			if (params::simtype == "spinwaves"){
 				if ((i >= params::start)){
@@ -156,6 +162,8 @@ int main(int argc, char* argv[]){
 		
 	}
 	// ==================================================================================================== //
+
+	util::OutputLatticetoTerm();
 
 	// Carry out time FFT once simulation is complete
 	if (params::simtype == "spinwaves"){

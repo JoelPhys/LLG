@@ -14,6 +14,12 @@
         extern std::vector<int> simspin;
         extern int nsimspin;
 
+        // testing
+        extern std::vector<int> jind;
+        extern std::vector<double> Jijy;
+        extern std::vector<double> Jijz;
+        extern std::vector<double> Jijx;
+
         // Functions
         void init();
         void ReadFile();

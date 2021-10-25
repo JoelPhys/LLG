@@ -30,6 +30,10 @@ namespace cuglob {
 	//testing for hedgehog
 	double *dsurfx, *dsurfy, *dsurfz;
 
+	//testing
+	double *dJx_new, *dJy_new, *dJz_new;
+	int *djind;
+
 	int device = 0;
 
 	void device_info(){
@@ -145,6 +149,13 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(dsurfy, 0.0, sizeof(double) * geom::surfy.size()));
 		CUDA_CALL(cudaMemset(dsurfz, 0.0, sizeof(double) * geom::surfz.size()));
 
+
+		//testing
+		CUDA_CALL(cudaMalloc((void**)&dJx_new, sizeof(double)*neigh::Jijx.size()));
+		CUDA_CALL(cudaMalloc((void**)&dJy_new, sizeof(double)*neigh::Jijx.size()));
+		CUDA_CALL(cudaMalloc((void**)&dJz_new, sizeof(double)*neigh::Jijx.size()));
+		CUDA_CALL(cudaMalloc((void**)&djind, sizeof(int)*neigh::jind.size()));
+
 		CUDA_CALL(cudaMalloc((void**)&dsimspin, sizeof(int) * neigh::nsimspin));
 		CUDA_CALL(cudaMemset(dsimspin, 0.0, sizeof(int) * neigh::nsimspin));
 
@@ -196,6 +207,14 @@ namespace cuglob {
 		CUDA_CALL(cudaMemcpy(dJy, &neigh::Jijy_prime[0], sizeof(double) * neigh::Jijy_prime.size(), cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(dJz, &neigh::Jijz_prime[0], sizeof(double) * neigh::Jijz_prime.size(), cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(dsimspin, &neigh::simspin[0], sizeof(int) * neigh::nsimspin, cudaMemcpyHostToDevice));	
+
+		//testing
+		std::cout << neigh::jind.size() << std::endl;
+		std::cout << neigh::Jijx_prime.size() << std::endl;
+		CUDA_CALL(cudaMemcpy(djind, &neigh::jind[0], sizeof(int) * neigh::jind.size(), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dJx_new, &neigh::Jijx[0], sizeof(double) * neigh::Jijx.size(), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dJy_new, &neigh::Jijy[0], sizeof(double) * neigh::Jijy.size(), cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dJz_new, &neigh::Jijz[0], sizeof(double) * neigh::Jijz.size(), cudaMemcpyHostToDevice));
 
 	}
 

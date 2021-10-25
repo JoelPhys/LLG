@@ -64,9 +64,9 @@ namespace cuthermal {
         kappa_0=11.0;                 //kappa_0 defines the thermal heat conductivity (kappa) through, kappa = kappa_0 * T_e/T_p [J/m/K/s]
         delta=20.0e-9;                //Penetration depth of laser. [m]
         Gep=10e17;                    //Electron-phonon coupling [ J/m^3/s/K]
-        P_0=1.5e21;                   //Pump fluence prefactor, P_0. P(z,t)=P_0*exp(-((t-t0)/tau)**2)*exp(-z/delta) [ J/m^3/s]
+        P_0=2.0e21;                   //Pump fluence prefactor, P_0. P(z,t)=P_0*exp(-((t-t0)/tau)**2)*exp(-z/delta) [ J/m^3/s]
         t0=100e-15;                   //Pump temporal offset [s]
-        tau=50e-15;                   //Pump temporal full width half max [s]
+        tau=200e-15;                   //Pump temporal full width half max [s]
         Nz=100;                       //number of unit cells in z-direction (assumed uniform heating perpendicular [unit cells in z]
         dz=0.3e-9;                    //lattice constant (or difference between planes) [m]
         dt=1e-16;                     //Timestep [s]
@@ -122,26 +122,26 @@ namespace cuthermal {
             double Tpp1;
             double z;
 
-            if (i == 0)
-            {
+            // if (i == 0)
+            // {
                 P_it[i]=c_P_0*exp(-((time-c_t0)/c_tau)*((time-c_t0)/c_tau));
                 Tep1=Te[0] + (c_dt/(c_gamma_e*Te[0]))*(c_Gep*(Tp[0]-Te[0]) + P_it[0] + c_kappa_0*( (Te[0]/Tp[0]) * 2.0*(Te[1]-Te[0])*c_oneOvrdzdz));
                 Tpp1=Tp[0]+(c_dt*c_Gep/c_Cp)*(Te[0]-Tp[0]);
-            }
-            if (i == Nz-1)
-            {
-                z=static_cast<double>(Nz-1)*c_dz;
-                P_it[Nz-1]=c_P_0*exp(-((time-c_t0)/c_tau)*((time-c_t0)/c_tau))*exp(-z/c_delta);
-                Tep1=Te[Nz-1]+(c_dt/(c_gamma_e*Te[Nz-1]))*(c_Gep*(Tp[Nz-1]-Te[Nz-1])+P_it[Nz-1]+c_kappa_0*( (Te[Nz-1]/Tp[Nz-1]) * 2.0*(Te[Nz-2]-Te[Nz-1])*c_oneOvrdzdz));
-                Tpp1=Tp[Nz-1]+(c_dt*c_Gep/c_Cp)*(Te[Nz-1]-Tp[Nz-1]);
-            }
-            if ((1 <= i) && (i < Nz-1))
-            {
-                z=static_cast<double>(i)*c_dz;
-                P_it[i]=c_P_0*exp(-((time-c_t0)/c_tau)*((time-c_t0)/c_tau))*exp(-z/c_delta);
-                Tep1=Te[i] + (c_dt/(c_gamma_e*Te[i]))*(c_Gep*(Tp[i]-Te[i]) + P_it[i]+c_kappa_0*( (Te[i]/Tp[i]) * (Te[i+1]-2.0*Te[i]+Te[i-1])*c_oneOvrdzdz+(Tp[i]*((Te[i+1]-Te[i-1])*c_oneOvr2dz) - Te[i]*(Tp[i+1]-Tp[i-1])*c_oneOvr2dz)/(Tp[i]*Tp[i])*((Te[i+1]-Te[i-1])*c_oneOvr2dz)));
-                Tpp1=Tp[i]+(c_dt*c_Gep/c_Cp)*(Te[i]-Tp[i]);
-            }
+            // }
+            // if (i == Nz-1)
+            // {
+            //     z=static_cast<double>(Nz-1)*c_dz;
+            //     P_it[Nz-1]=c_P_0*exp(-((time-c_t0)/c_tau)*((time-c_t0)/c_tau))*exp(-z/c_delta);
+            //     Tep1=Te[Nz-1]+(c_dt/(c_gamma_e*Te[Nz-1]))*(c_Gep*(Tp[Nz-1]-Te[Nz-1])+P_it[Nz-1]+c_kappa_0*( (Te[Nz-1]/Tp[Nz-1]) * 2.0*(Te[Nz-2]-Te[Nz-1])*c_oneOvrdzdz));
+            //     Tpp1=Tp[Nz-1]+(c_dt*c_Gep/c_Cp)*(Te[Nz-1]-Tp[Nz-1]);
+            // }
+            // if ((1 <= i) && (i < Nz-1))
+            // {
+            //     z=static_cast<double>(i)*c_dz;
+            //     P_it[i]=c_P_0*exp(-((time-c_t0)/c_tau)*((time-c_t0)/c_tau))*exp(-z/c_delta);
+            //     Tep1=Te[i] + (c_dt/(c_gamma_e*Te[i]))*(c_Gep*(Tp[i]-Te[i]) + P_it[i]+c_kappa_0*( (Te[i]/Tp[i]) * (Te[i+1]-2.0*Te[i]+Te[i-1])*c_oneOvrdzdz+(Tp[i]*((Te[i+1]-Te[i-1])*c_oneOvr2dz) - Te[i]*(Tp[i+1]-Tp[i-1])*c_oneOvr2dz)/(Tp[i]*Tp[i])*((Te[i+1]-Te[i-1])*c_oneOvr2dz)));
+            //     Tpp1=Tp[i]+(c_dt*c_Gep/c_Cp)*(Te[i]-Tp[i]);
+            // }
 
             //update the values of Te[i] and Tp[i]
             Te[i]=Tep1;
@@ -172,7 +172,7 @@ namespace cuthermal {
 		// CUDA_CALL(cudaMemcpy(testingy.ptr(), Hapy, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 		// CUDA_CALL(cudaMemcpy(testingz.ptr(), Hapz, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 
-	    // std::cout << i << " ";
+	    std::cout << i << " ";
 	    for (int a = 0; a < params::Lz; a++){
 		    std::cout << testingx(a) << " ";	
 	    }

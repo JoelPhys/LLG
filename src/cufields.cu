@@ -163,14 +163,14 @@ namespace cufields {
 
 		if (i < N){
 			if (( i % 4 == 0) || (i % 4 == 2)) {
-				Hapx[i] = gauss;
+				Hapx[i] = 0.0;
 				Hapy[i] = 0.0;
-				Hapz[i] = 0.0;  
+				Hapz[i] = gauss;  
 			}
 			else if (( i % 4 == 1) || (i % 4 == 3)) {
-				Hapx[i] = -1.0 * gauss;
+				Hapx[i] = 0.0;
 				Hapy[i] = 0.0;
-				Hapz[i] = 0.0;  
+				Hapz[i] = -1.0 * gauss;  
 			}
 		}
 
@@ -185,7 +185,7 @@ namespace cufields {
 		// testingy.resize(params::Nspins);
 		// testingz.resize(params::Nspins);
 
-		CUDA_CALL(cudaMemcpy(testingx.ptr(), cuglob::Hapx, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		// CUDA_CALL(cudaMemcpy(testingx.ptr(), cuglob::Hapz, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
 		// CUDA_CALL(cudaMemcpy(testingy.ptr(), Hapy, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 		// CUDA_CALL(cudaMemcpy(testingz.ptr(), Hapz, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 

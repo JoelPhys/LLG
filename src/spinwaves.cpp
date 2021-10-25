@@ -1,20 +1,24 @@
-#include <iostream>
-#include <sstream>
+// cpp header files
 #include <cmath>
-#include <fstream>
 #include <vector>
-#include <iomanip>
 #include <random>
+#include <sstream>
+#include <iomanip>
+#include <fstream>
+#include <iostream>
 #include <algorithm>
+
+// my header files
+#include "../inc/geom.h"
 #include "../inc/fftw3.h"
 #include "../inc/spins.h"
-#include "../inc/config.h"
 #include "../inc/array.h"
+#include "../inc/config.h"
+#include "../inc/defines.h"
 #include "../inc/array2d.h"
 #include "../inc/array3d.h"
 #include "../inc/array4d.h"
 #include "../inc/mathfuncs.h"
-#include "../inc/geom.h"
 #include "../inc/spinwaves.h"
 #include "../inc/neighbourlist.h"
 
@@ -169,9 +173,17 @@ namespace spinwaves {
 		// loop over all elememts in k array
 		double kpts = geom::Ix; 
 
-		double kpathx[7] = {0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.423940489};
-		double kpathy[7] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0};
-		double kpathz[7] = {0.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0};
+		// double kpathx[7] = {0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.423940489};
+		// double kpathy[7] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0};
+		// double kpathz[7] = {0.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0};
+
+		double kpathx[2] = {0.4, 0.6};
+		double kpathy[2] = {0.0, 0.0};
+		double kpathz[2] = {1.0, 0.0};
+
+		int ratio[3];
+
+
 
 		int from[3], to[3], in[3];
 
@@ -179,8 +191,9 @@ namespace spinwaves {
 
 		// TESTING  ==============================================================================================================
 
-		for (int p = 0; p < 6; p++){
+		for (int p = 0; p < 1; p++){
 			
+			// x component
 			if (kpathx[p+1] > kpathx[p]){
 				from[0] = static_cast<int>(kpathx[p] * params::Lx);
 				to[0] = static_cast<int>(kpathx[p+1] * params::Lx);
@@ -201,6 +214,7 @@ namespace spinwaves {
 				in[0] = -1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
 			}
 
+			// y component
 			if (kpathy[p+1] > kpathy[p]){
 				from[1] = static_cast<int>(kpathy[p] * params::Ly);
 				to[1] = static_cast<int>(kpathy[p+1] * params::Ly);
@@ -220,6 +234,8 @@ namespace spinwaves {
 				to[1] = static_cast<int>(kpathy[p+1] * params::Ly)-1;
 				in[1] = -1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
+
+			// z component
 			if (kpathz[p+1] > kpathz[p]){
 				from[2] = static_cast<int>(kpathz[p] * params::Lz);
 				to[2] = static_cast<int>(kpathz[p+1] * params::Lz);
@@ -235,10 +251,11 @@ namespace spinwaves {
 				}
 			}
 			else {
-				from[2] = static_cast<int>(kpathz[p] * params::Lz)-1;
-				to[2] = static_cast<int>(kpathz[p+1] * params::Lz)-1;
+				from[2] = static_cast<int>(kpathz[p] * params::Lz); //-1;
+				to[2] = static_cast<int>(kpathz[p+1] * params::Lz); //-1;
 				in[2] = -1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
+				DEBUGGER;
 
 			std::cout << "from = " << from[0] << " " << from[1] << " " << from[2] << std::endl;
 			std::cout << "to = " << to[0] << " " << to[1] << " " << to[2] << std::endl;
@@ -249,6 +266,7 @@ namespace spinwaves {
 			int c = from[2];
 
 			int largestdiff = std::abs(from[0]- to[0]);
+				DEBUGGER;
 
 			for(int i = 1; i < 3; ++i){
 				// Change < to > if you want to find the smallest element
@@ -256,15 +274,18 @@ namespace spinwaves {
 					largestdiff = std::abs(from[i]- to[i]);
 				}
 			}
+				DEBUGGER;
 
 			for (int x = 0; x < largestdiff; x++){
 				
 				std::cout << " TEST " << a << " " << b << " " << c << std::endl;
-				
+								DEBUGGER;
+
 				for (int np = 0; np < icount; np++){
 					FFTstcfT(np)[REAL] = FFTstcfarray_test(np,a,b,c)[REAL];
 					FFTstcfT(np)[IMAG] = FFTstcfarray_test(np,a,b,c)[IMAG];
 				}
+				DEBUGGER;
 
 				if (a != to[0]){
 					a += in[0];
@@ -276,8 +297,9 @@ namespace spinwaves {
 					c += in[2];
 				}
 
-
+				DEBUGGER;
 				fftw_execute(Stime);
+				DEBUGGER;
 
 				// Create output files for k vectors
 				std::stringstream sstr2;

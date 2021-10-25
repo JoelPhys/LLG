@@ -18,6 +18,7 @@ obj/mathfuncs.o \
 obj/config.o \
 obj/fields.o \
 obj/geom.o \
+obj/defects.o \
 obj/error.o \
 obj/spinwaves.o \
 obj/util.o \
@@ -36,13 +37,13 @@ CUDAOBJ=$(OBJECTS:.o=_cuda.o)
 all: ASDcu ASD
 
 ASDcu: $(CUDAOBJ) $(OBJNVCC)
-	$(NVCC) -DCUDA -O3 -G -o $@ $^ $(CONFIGLIB) $(FFTW3LIB) $(CULIBS)
+	$(NVCC) -DCUDA $(OPT) -o $@ $^ $(CONFIGLIB) $(FFTW3LIB) $(CULIBS)
 
 $(CUDAOBJ): obj/%_cuda.o: src/%.cpp
 	$(GCC) $(OPT) -DCUDA -c -o $@ $< $(CONFIGINC) $(FFTW3INC) -DCPUCOMP=$(CPUCOMP) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
 
 obj/%.o: src/%.cu
-	$(NVCC) -O3 -DCUDA -G -c -o $@ $< $(CONFIGINC) $(FFTW3INC) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
+	$(NVCC) $(OPT) -DCUDA -c -o $@ $< $(CONFIGINC) $(FFTW3INC) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
 
 
 ASD: $(OBJECTS)

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+#include "../inc/geom.h"
 #include "../inc/array.h"
 #include "../inc/spins.h"
 #include "../inc/config.h"
@@ -67,24 +68,24 @@ namespace spins {
                         for (int q = 0; q < params::Nq; q++){
 
                             // testing domain walls
-                            // if (x < params::Lx/2){
-                            //     Sx4(x,y,z,q) = params::initm[q][0];
-                            //     Sy4(x,y,z,q) = params::initm[q][1];
-                            //     Sz4(x,y,z,q) = params::initm[q][2];                       
-                            // }
-                            // else if (x > params::Lx/2){
-                            //     Sx4(x,y,z,q) = -1 * params::initm[q][0];
-                            //     Sy4(x,y,z,q) = -1 * params::initm[q][1];
-                            //     Sz4(x,y,z,q) = -1 * params::initm[q][2];                         
-                            // }
-                            // else if (x == params::Lx/2){
-                            //     Sx4(x,y,z,q) = 0.0;
-                            //     Sz4(x,y,z,q) = 1.0;                        
-                            // }
+                            //if (x < params::Lx/2){
+                            //    sx1d(geom::LatCount(x,y,z,q)) = params::initm[q][0];
+                            //    sy1d(geom::LatCount(x,y,z,q)) = params::initm[q][1];
+                            //    sz1d(geom::LatCount(x,y,z,q)) = params::initm[q][2];                       
+                            //}
+                            //else if (x > params::Lx/2){
+                            //    sx1d(geom::LatCount(x,y,z,q)) = -1 * params::initm[q][0];
+                            //    sy1d(geom::LatCount(x,y,z,q)) = -1 * params::initm[q][1];
+                            //    sz1d(geom::LatCount(x,y,z,q)) = -1 * params::initm[q][2];                         
+                            //}
+                            //else if (x == params::Lx/2){
+                            //    sx1d(geom::LatCount(x,y,z,q)) = 0.0;
+                            //    sz1d(geom::LatCount(x,y,z,q)) = 1.0;                        
+                            //}
 
-                            sx1d(count1d + q) = params::initm[q][0];
-                            sy1d(count1d + q) = params::initm[q][1];
-                            sz1d(count1d + q) = params::initm[q][2];
+                             sx1d(count1d + q) = params::initm[q][0];
+                             sy1d(count1d + q) = params::initm[q][1];
+                             sz1d(count1d + q) = params::initm[q][2];
 
                         }	
                         count1d += params::Nq; 

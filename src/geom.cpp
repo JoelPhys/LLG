@@ -6,7 +6,6 @@
 // my header files
 #include "../inc/geom.h"
 #include "../inc/geom.h"
-#include "../inc/spins.h"
 #include "../inc/config.h"
 #include "../inc/array4d.h"
 #include "../inc/array3d.h"
@@ -160,28 +159,28 @@ void initdw(){
             for (int j = 0; j < params::Ly; j++){
                 for (int k = 0; k < params::Lz; k++){
                     for (int q = 0; q < params::Nq; q++){
-                        // if ((q == 0) || (q == 2)){
-                        //     lw(inc) = geom::LatCount(0,j,k,q);
-                        //     rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
-                        // }
-                        // else if ((q == 1) || (q == 3)){
-                        //     rw(inc) = geom::LatCount(0,j,k,q);
-                        //     lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
-                        // }
-                        // else {
-                        //     std::cout << "ERROR: Unable to assign domain wall \n";
-                        //     exit(0);
-                        // }
+                        if ((q == 0) || (q == 2)){
+                            lw(inc) = geom::LatCount(0,j,k,q);
+                            rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                        }
+                        else if ((q == 1) || (q == 3)){
+                            rw(inc) = geom::LatCount(0,j,k,q);
+                            lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                        }
+                        else {
+                            std::cout << "ERROR: Unable to assign domain wall \n";
+                            exit(0);
+                        }
 
                         //testing for hedgehogs
-                        if ((i == 0) || (j == 0) || (k == 0) || (i == params::Lx-1) || (j == params::Ly-1) || (k == params::Lz-1)){
-                            lw(inc) = geom::LatCount(i,j,k,q); 
-                            surfx(inc) = spins::sx1d(geom::LatCount(i,j,k,q));
-                            surfy(inc) = spins::sy1d(geom::LatCount(i,j,k,q));
-                            surfz(inc) = spins::sz1d(geom::LatCount(i,j,k,q));
-                            inc++;
-                            // std::cout << geom::LatCount(i,j,k,q) << std::endl;
-                        }
+                        // if ((i == 0) || (j == 0) || (k == 0) || (i == params::Lx-1) || (j == params::Ly-1) || (k == params::Lz-1)){
+                        //     lw(inc) = geom::LatCount(i,j,k,q); 
+                        //     surfx(inc) = spins::sx1d(geom::LatCount(i,j,k,q));
+                        //     surfy(inc) = spins::sy1d(geom::LatCount(i,j,k,q));
+                        //     surfz(inc) = spins::sz1d(geom::LatCount(i,j,k,q));
+                        //     inc++;
+                        //     // std::cout << geom::LatCount(i,j,k,q) << std::endl;
+                        // }
                     }
                 }
             }

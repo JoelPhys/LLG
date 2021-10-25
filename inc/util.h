@@ -25,6 +25,7 @@ namespace util {
     void CloseMagFile();
     void SumMag(int i);
     void OutputSumMag();
+    void OutputLatticetoTerm();
     void startclock();
     void endclock();
     void readexternalspins(std::string);

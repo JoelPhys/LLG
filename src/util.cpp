@@ -57,7 +57,7 @@ namespace util {
 	void InitMagFile(double temp){
 		std::stringstream sstr;
 		// sstr << params::filepath << "mag_tsteps_" << params::Nt << "_T_" << temp << ".dat";
-		sstr << params::filepath << "mag_tsteps_" << params::Nt << "_T_" << temp << ".out";
+		sstr << params::filepath << "mag_tsteps_" << params::Nt << "_T_" << std::setw(4) << std::setfill('0') << temp << ".out";
 		magfile.open(sstr.str());
 	}
 
@@ -304,6 +304,23 @@ namespace util {
 	void CloseMagFile(){
 		magfile << std::flush;
 		magfile.close();
+	}
+
+	void OutputLatticetoTerm(){
+		for (int i = 0; i < params::Lx; i++){
+			for (int j = 0; j < params::Ly; j++){
+				for (int k = 0; k < params::Lz; k++){
+					for (int q = 0; q < params::Nq; q++){
+						std::cout << geom::latticeX(i,j,k,q) << " ";
+						std::cout << geom::latticeY(i,j,k,q) << " ";
+						std::cout << geom::latticeZ(i,j,k,q) << " ";
+						std::cout << spins::sx1d(geom::LatCount(i,j,k,q)) << " ";
+						std::cout << spins::sy1d(geom::LatCount(i,j,k,q)) << " ";
+						std::cout << spins::sz1d(geom::LatCount(i,j,k,q)) << std::endl;
+					}
+				}
+			}
+		}
 	}
 
 	void OutputDWtoFile(int i){

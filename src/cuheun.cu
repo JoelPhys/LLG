@@ -101,7 +101,7 @@ namespace cuheun {
 		}
 	}
 
-	__global__ void cuHeun1(int N, double time, int *dsimspin, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx, double *dJy, double *dJz, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
+	__global__ void cuHeun1(int *djind, int N, double time, int *dsimspin, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
 		const int c = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -124,13 +124,11 @@ namespace cuheun {
 			Hcub[2] = c_dzcp * dSz1d[a] * dSz1d[a] * dSz1d[a];
 
 			double Hex[3] = {0.0, 0.0, 0.0};
-			int counting = dx_adj1[c];
 
 			for (int b = dx_adj1[c]; b < dx_adj1[c+1]; b++){
-				Hex[0] += dJx[counting] * (dSx1d[dadjncy1[b]]);
-				Hex[1] += dJy[counting] * (dSy1d[dadjncy1[b]]);
-				Hex[2] += dJz[counting] * (dSz1d[dadjncy1[b]]);
-				counting++;
+				Hex[0] += dJx_new[djind[b]] * (dSx1d[dadjncy1[b]]);
+				Hex[1] += dJy_new[djind[b]] * (dSy1d[dadjncy1[b]]);
+				Hex[2] += dJz_new[djind[b]] * (dSz1d[dadjncy1[b]]);
 			}
 
 			double Hnew[3];
@@ -165,7 +163,7 @@ namespace cuheun {
 		} 
 	}
 
-	__global__ void cuHeun2(int N, double time, int *dsimspin, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx, double *dJy, double *dJz, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
+	__global__ void cuHeun2(int *djind, int N, double time, int *dsimspin, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
 		const int c = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -184,15 +182,12 @@ namespace cuheun {
 			Hcub_dash[2]=  c_dzcp * Sdashnz[a] * Sdashnz[a] * Sdashnz[a];
 
 			double Hex_dash[3] = {0.0, 0.0, 0.0};
-			int counting = dx_adj1[c];
 
 			// Exchange interaction prime
 			for (int b = dx_adj1[c]; b < dx_adj1[c+1]; b++){
-
-				Hex_dash[0] += dJx[counting] * (Sdashnx[dadjncy1[b]]);
-				Hex_dash[1] += dJy[counting] * (Sdashny[dadjncy1[b]]);
-				Hex_dash[2] += dJz[counting] * (Sdashnz[dadjncy1[b]]);
-				counting++;
+				Hex_dash[0] +=  dJx_new[djind[b]] * (Sdashnx[dadjncy1[b]]);
+				Hex_dash[1] +=  dJy_new[djind[b]] * (Sdashny[dadjncy1[b]]);
+				Hex_dash[2] +=  dJz_new[djind[b]] * (Sdashnz[dadjncy1[b]]);
 			}
 
 			double Hnew_dash[3];
