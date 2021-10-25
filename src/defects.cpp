@@ -11,17 +11,32 @@
 #include "../inc/array.h"
 #include "../inc/config.h"
 #include "../inc/array2d.h"
+#include "../inc/defines.h"
+#include "../inc/libconfig.h++"
 
 namespace defects {
 
-    int centrex = 10;
-    int centrey = 10;
-    int centrez = 10;
-    int radius = 5;
+    int centrex;
+    int centrey;
+    int centrez;
+    int radius;
 
     std::vector<int> list;
 
     void init(){
+
+        if (params::cfg.exists("Defects") == 1){
+            centrex = params::cfg.lookup("Defects.centrex");
+            centrey = params::cfg.lookup("Defects.centrey");
+            centrez = params::cfg.lookup("Defects.centrez");
+            radius = params::cfg.lookup("Defects.radius");
+
+            INFO_OUT("Spherical Defect:", "true");
+            INFO_OUT("Defect Location:", "[" << centrex << ", " << centrey << ", " << centrez << "] [unit cells]");
+            INFO_OUT("Spherical Defect radius:", radius << " [unit cells]");
+
+        }   
+
 
     int minx = centrex - radius;
     int miny = centrex - radius;
@@ -52,20 +67,21 @@ namespace defects {
     void populate(){
         int count = 0;
         int index = 0;
-        
-        if (list.size() != 0){
-            for (int x = 0; x < params::Lx; x++){
-                for (int y = 0; y < params::Ly; y++){
-                    for (int z = 0; z < params::Lz; z++){
-                        for (int q = 0; q < params::Nq; q++){
+        if (params::cfg.exists("Defects") == 1){
+            if (list.size() != 0){
+                for (int x = 0; x < params::Lx; x++){
+                    for (int y = 0; y < params::Ly; y++){
+                        for (int z = 0; z < params::Lz; z++){
+                            for (int q = 0; q < params::Nq; q++){
 
-                                index = geom::LatCount(x,y,z,q);
-                                if (index == list[count]){
-                                    spins::sx1d(index) = 0.0;
-                                    spins::sy1d(index) = 0.0;
-                                    spins::sz1d(index) = 0.0;
-                                    count++;
-                                }
+                                    index = geom::LatCount(x,y,z,q);
+                                    if (index == list[count]){
+                                        spins::sx1d(index) = 0.0;
+                                        spins::sy1d(index) = 0.0;
+                                        spins::sz1d(index) = 0.0;
+                                        count++;
+                                    }
+                            }
                         }
                     }
                 }

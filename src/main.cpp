@@ -163,7 +163,7 @@ int main(int argc, char* argv[]){
 	}
 	// ==================================================================================================== //
 
-	util::OutputLatticetoTerm();
+	// util::OutputLatticetoTerm();
 
 	// Carry out time FFT once simulation is complete
 	if (params::simtype == "spinwaves"){
