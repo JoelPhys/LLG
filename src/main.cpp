@@ -72,9 +72,9 @@ int main(int argc, char* argv[]){
 
 	// ======= Initiliase Spin Position ======================================================================== //
 	spins::populate();
-	defects::populate();
 	util::readexternalspins(argv[3]);
-
+	defects::populate();
+	
 	// testing for hedgehog
 	if (params::simtype == "DW"){
 		geom::initdw();

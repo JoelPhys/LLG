@@ -177,13 +177,15 @@ namespace spinwaves {
 		// double kpathy[7] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0};
 		// double kpathz[7] = {0.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0};
 
-		double kpathx[2] = {0.4, 0.6};
-		double kpathy[2] = {0.0, 0.0};
-		double kpathz[2] = {1.0, 0.0};
+		// double kpathx[13] = {0, 14, 14, 14,  0,  0, 11, 17,  0, 14, 17, 11,  0};
+		// double kpathy[13] = {0, 14, 14,  0,  0,  0,  0,  0,  0, 14, 11, 11,  0};
+		// double kpathz[13] = {0,  0, 14, 14,  0, 29, 30,  0,  0,  0,  0, 30, 30};
+
+		double kpathx[13] = {0, 15, 15, 15,  0,  0, 12, 18,  0, 15, 17, 12,  0};
+		double kpathy[13] = {0, 15, 15,  0,  0,  0,  0,  0,  0, 15, 11, 12,  0};
+		double kpathz[13] = {0,  0, 15, 15,  0, 30, 30,  0,  0,  0,  0, 30, 30};
 
 		int ratio[3];
-
-
 
 		int from[3], to[3], in[3];
 
@@ -191,71 +193,127 @@ namespace spinwaves {
 
 		// TESTING  ==============================================================================================================
 
-		for (int p = 0; p < 1; p++){
+		for (int p = 0; p < 12; p++){
 			
 			// x component
+			// if (kpathx[p+1] > kpathx[p]){
+			// 	from[0] = static_cast<int>(kpathx[p] * params::Lx);
+			// 	to[0] = static_cast<int>(kpathx[p+1] * params::Lx);
+			// 	in[0] = 1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
+			// }
+			// else if (kpathx[p+1] == kpathx[p]){
+			// 	from[0] = static_cast<int>(kpathx[p] * params::Lx);
+			// 	to[0] = static_cast<int>(kpathx[p] * params::Lx)+1;
+			// 	in[0] = 0;
+			// 	if (from[0] != 0){
+			// 		from[0] += -1;
+			// 		to[0] += -1;
+			// 	}
+			// }
+			// else {
+			// 	from[0] = static_cast<int>(kpathx[p] * params::Lx)-1;
+			// 	to[0] = static_cast<int>(kpathx[p+1] * params::Lx)-1;
+			// 	in[0] = -1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
+			// }
+
+			// // y component
+			// if (kpathy[p+1] > kpathy[p]){
+			// 	from[1] = static_cast<int>(kpathy[p] * params::Ly);
+			// 	to[1] = static_cast<int>(kpathy[p+1] * params::Ly);
+			// 	in[1] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
+			// }
+			// else if (kpathy[p+1] == kpathy[p]){
+			// 	from[1] = static_cast<int>(kpathy[p] * params::Ly);
+			// 	to[1] = static_cast<int>(kpathy[p] * params::Ly)+1;
+			// 	in[1] = 0;
+			// 	if (from[1] != 0){
+			// 		from[1] += -1;
+			// 		to[1] += -1;
+			// 	}
+			// }
+			// else {
+			// 	from[1] = static_cast<int>(kpathy[p] * params::Ly)-1;
+			// 	to[1] = static_cast<int>(kpathy[p+1] * params::Ly)-1;
+			// 	in[1] = -1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
+			// }
+
+			// // z component
+			// if (kpathz[p+1] > kpathz[p]){
+			// 	from[2] = static_cast<int>(kpathz[p] * params::Lz);
+			// 	to[2] = static_cast<int>(kpathz[p+1] * params::Lz);
+			// 	in[2] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
+			// }
+			// else if (kpathz[p+1] == kpathz[p]){
+			// 	from[2] = static_cast<int>(kpathz[p] * params::Lz);
+			// 	to[2] = static_cast<int>(kpathz[p] * params::Lz)+1;
+			// 	in[2] = 0;
+			// 	if (from[2] != 0){
+			// 		from[2] += -1;
+			// 		to[2] += -1;
+			// 	}
+			// }
+			// else {
+			// 	from[2] = static_cast<int>(kpathz[p] * params::Lz)-1;
+			// 	to[2] = static_cast<int>(kpathz[p+1] * params::Lz)-1;
+			// 	in[2] = -1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
+			// }
+
 			if (kpathx[p+1] > kpathx[p]){
-				from[0] = static_cast<int>(kpathx[p] * params::Lx);
-				to[0] = static_cast<int>(kpathx[p+1] * params::Lx);
-				in[0] = 1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
+				from[0] = kpathx[p];
+				to[0] = kpathx[p+1];
+				in[0] = 1;
 			}
 			else if (kpathx[p+1] == kpathx[p]){
-				from[0] = static_cast<int>(kpathx[p] * params::Lx);
-				to[0] = static_cast<int>(kpathx[p] * params::Lx)+1;
+				from[0] = kpathx[p];
+				to[0] = kpathx[p]+1;
 				in[0] = 0;
-				if (from[0] != 0){
-					from[0] += -1;
-					to[0] += -1;
-				}
 			}
 			else {
-				from[0] = static_cast<int>(kpathx[p] * params::Lx)-1;
-				to[0] = static_cast<int>(kpathx[p+1] * params::Lx)-1;
-				in[0] = -1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
+				from[0] = kpathx[p];
+				to[0] = kpathx[p+1];
+				in[0] = -1;
 			}
 
 			// y component
 			if (kpathy[p+1] > kpathy[p]){
-				from[1] = static_cast<int>(kpathy[p] * params::Ly);
-				to[1] = static_cast<int>(kpathy[p+1] * params::Ly);
-				in[1] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
+				from[1] = kpathy[p];
+				to[1] = kpathy[p+1];
+				in[1] = 1;
 			}
 			else if (kpathy[p+1] == kpathy[p]){
-				from[1] = static_cast<int>(kpathy[p] * params::Ly);
-				to[1] = static_cast<int>(kpathy[p] * params::Ly)+1;
+				from[1] = kpathy[p];
+				to[1] = kpathy[p]+1;
 				in[1] = 0;
-				if (from[1] != 0){
-					from[1] += -1;
-					to[1] += -1;
-				}
 			}
 			else {
-				from[1] = static_cast<int>(kpathy[p] * params::Ly)-1;
-				to[1] = static_cast<int>(kpathy[p+1] * params::Ly)-1;
-				in[1] = -1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
+				from[1] = kpathy[p];
+				to[1] = kpathy[p+1];
+				in[1] = -1;
 			}
 
 			// z component
 			if (kpathz[p+1] > kpathz[p]){
-				from[2] = static_cast<int>(kpathz[p] * params::Lz);
-				to[2] = static_cast<int>(kpathz[p+1] * params::Lz);
-				in[2] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
-			}
-			else if (kpathz[p+1] == kpathz[p]){
-				from[2] = static_cast<int>(kpathz[p] * params::Lz);
-				to[2] = static_cast<int>(kpathz[p] * params::Lz)+1;
-				in[2] = 0;
-				if (from[2] != 0){
-					from[2] += -1;
-					to[2] += -1;
+				from[2] = kpathz[p];
+				to[2] = kpathz[p+1];
+				in[2] = 1;
+				if (p == 10){
+					in[2] = 5;
 				}
 			}
-			else {
-				from[2] = static_cast<int>(kpathz[p] * params::Lz); //-1;
-				to[2] = static_cast<int>(kpathz[p+1] * params::Lz); //-1;
-				in[2] = -1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
+			else if (kpathz[p+1] == kpathz[p]){
+				from[2] = kpathz[p];
+				to[2] = kpathz[p]+1;	
+				in[2] = 0;
 			}
-				DEBUGGER;
+			else {
+				from[2] = kpathz[p];
+				to[2] = kpathz[p+1];
+				in[2] = -1;
+				if (p == 6){
+					in[2] = -5;
+				}
+			}
+
 
 			std::cout << "from = " << from[0] << " " << from[1] << " " << from[2] << std::endl;
 			std::cout << "to = " << to[0] << " " << to[1] << " " << to[2] << std::endl;
@@ -265,8 +323,8 @@ namespace spinwaves {
 			int b = from[1];
 			int c = from[2];
 
+
 			int largestdiff = std::abs(from[0]- to[0]);
-				DEBUGGER;
 
 			for(int i = 1; i < 3; ++i){
 				// Change < to > if you want to find the smallest element
@@ -274,129 +332,129 @@ namespace spinwaves {
 					largestdiff = std::abs(from[i]- to[i]);
 				}
 			}
-				DEBUGGER;
+
+			if (p == 10) largestdiff = 7;
+			if (p == 6) largestdiff = 7;
 
 			for (int x = 0; x < largestdiff; x++){
 				
-				std::cout << " TEST " << a << " " << b << " " << c << std::endl;
-								DEBUGGER;
-
-				for (int np = 0; np < icount; np++){
-					FFTstcfT(np)[REAL] = FFTstcfarray_test(np,a,b,c)[REAL];
-					FFTstcfT(np)[IMAG] = FFTstcfarray_test(np,a,b,c)[IMAG];
-				}
-				DEBUGGER;
-
-				if (a != to[0]){
-					a += in[0];
-				}
-				if (b != to[1]){
-					b += in[1];
-				}
-				if (c != to[2]){
-					c += in[2];
-				}
-
-				DEBUGGER;
-				fftw_execute(Stime);
-				DEBUGGER;
-
-				// Create output files for k vectors
-				std::stringstream sstr2;
-				sstr2 << "output/spinwaves/";
-				sstr2 << "kx" << std::setw(4) << std::setfill('0') << counter;
-				// sstr2 << "ky" << std::setw(4) << std::setfill('0') << b;
-				// sstr2 << "kz" << std::setw(4) << std::setfill('0') << c;
-				sstr2 << ".txt";
-				counter++;
-
-
-				std::ofstream kzout;
-				kzout.open(sstr2.str());
-				kzout << std::setprecision(10);
-
-
-				for (int j = 0; j < icount/2; j++){
-
-
-					// output one side spectrum;
-					j1 = icount-j-1;     
-					os1 = stcfT(j)[REAL] * stcfT(j)[REAL] + stcfT(j)[IMAG] * stcfT(j)[IMAG];
-					os2 = stcfT(j1)[REAL] * stcfT(j1)[REAL] + stcfT(j1)[IMAG] * stcfT(j1)[IMAG];
-
-					os[j] = os1 + os2;
-				}
-
-				double largest = os[0];
-				double index;
-
-				// Find largest value in k_z array
-				for (int jj = 1; jj < icount/2; jj++){
-					if (largest < os[jj]){
-						largest = os[jj];
-						index = jj;
+					for (int np = 0; np < icount; np++){
+						FFTstcfT(np)[REAL] = FFTstcfarray_test(np,a,b,c)[REAL];
+						FFTstcfT(np)[IMAG] = FFTstcfarray_test(np,a,b,c)[IMAG];
 					}
-				}
 
-				// output peaks as frequency values to a file for comparison against LSWT
-				//peaksout << index * ( 1 / (params::dt_spinwaves * Npoints)) << " ";
+					std::cout << " TEST " << largestdiff << " " << x << " " << a << " " << b << " " << c << std::endl;
 
-				for (int kk = 0; kk < icount/2; kk++){
-					os[kk] /= largest;
-					freq = kk * freqstep;
-					// kzout << os[kk] << "\n";
-				}
 
-				int n = icount/2;
-				int s = icount/2 + icount/2 - 1;
-				int mean = icount/4;
-				double sg = 10;
-				double sum = 0;
-				double g[n];
-				double w[s];
+					if (a != to[0]){
+						a += in[0];
+					}
+					if (b != to[1]){
+						b += in[1];
+					}
+					if (c != to[2]){
+						c += in[2];
+					}
 
-				for (int i = 0; i < n; i++){     
-					g[i] = exp(-1 * ((i - mean) * (i - mean)) / (2 * sg * sg));
-					sum += g[i];
-				}
+					fftw_execute(Stime);
 
-				//Ensure sum of gaussian is 0
-				for (int i = 0; i < n; i++){
-					g[i] /= sum;         
-				}        
+					// Create output files for k vectors
+					std::stringstream sstr2;
+					sstr2 << "output/spinwaves/";
+					sstr2 << "kx" << std::setw(4) << std::setfill('0') << counter;
+					// sstr2 << "ky" << std::setw(4) << std::setfill('0') << b;
+					// sstr2 << "kz" << std::setw(4) << std::setfill('0') << c;
+					sstr2 << ".txt";
+					counter++;
 
-				// Convolution
-				for (int k = 0; k < s; k++){
-					w[k] = 0;
 
-					for (int i = 0; i < s; i++){
+					std::ofstream kzout;
+					kzout.open(sstr2.str());
+					kzout << std::setprecision(10);
 
-						//w[k] += in[i] * g[i];
-						if (k-i >= 0 && k-i < n && i < n){
-							w[k] += os[i] * g[k-i];
+
+					for (int j = 0; j < icount/2; j++){
+
+
+						// output one side spectrum;
+						j1 = icount-j-1;     
+						os1 = stcfT(j)[REAL] * stcfT(j)[REAL] + stcfT(j)[IMAG] * stcfT(j)[IMAG];
+						os2 = stcfT(j1)[REAL] * stcfT(j1)[REAL] + stcfT(j1)[IMAG] * stcfT(j1)[IMAG];
+
+						os[j] = os1 + os2;
+					}
+
+					double largest = os[0];
+					double index;
+
+					// Find largest value in k_z array
+					for (int jj = 1; jj < icount/2; jj++){
+						if (largest < os[jj]){
+							largest = os[jj];
+							index = jj;
 						}
 					}
 
-				}
+					// output peaks as frequency values to a file for comparison against LSWT
+					peaksout << index * ( 1 / (params::dt_spinwaves * Npoints)) << " ";
 
-				largest = w[0];
-				for (int jj = 0; jj < s; jj++){
-					if (largest < w[jj]){
-						largest = w[jj];
+					for (int kk = 0; kk < icount/2; kk++){
+						os[kk] /= largest;
+						freq = kk * freqstep;
+						// kzout << os[kk] << "\n";
 					}
-				}
-				for (int kk = 0; kk < s; kk++){
-					w[kk] /= largest;
-				}
 
-				for (int kk = 0; kk < n; kk++){
-					if (kk - mean >= 0){
-						kzout << w[kk] << "\n";
+					int n = icount/2;
+					int s = icount/2 + icount/2 - 1;
+					int mean = icount/4;
+					double sg = 10;
+					double sum = 0;
+					double g[n];
+					double w[s];
+
+					for (int i = 0; i < n; i++){     
+						g[i] = exp(-1 * ((i - mean) * (i - mean)) / (2 * sg * sg));
+						sum += g[i];
 					}
-				}
 
-				kzout << std::flush;
-				kzout.close(); 
+					//Ensure sum of gaussian is 0
+					for (int i = 0; i < n; i++){
+						g[i] /= sum;         
+					}        
+
+					// Convolution
+					for (int k = 0; k < s; k++){
+						w[k] = 0;
+
+						for (int i = 0; i < s; i++){
+
+							//w[k] += in[i] * g[i];
+							if (k-i >= 0 && k-i < n && i < n){
+								w[k] += os[i] * g[k-i];
+							}
+						}
+
+					}
+
+					largest = w[0];
+					for (int jj = 0; jj < s; jj++){
+						if (largest < w[jj]){
+							largest = w[jj];
+						}
+					}
+					for (int kk = 0; kk < s; kk++){
+						w[kk] /= largest;
+					}
+
+					for (int kk = 0; kk < n; kk++){
+						if (kk - mean >= 0){
+							kzout << w[kk] << "\n";
+						}
+					}
+
+					kzout << std::flush;
+					kzout.close(); 
+				// }
 			}
 		}
 			// ==================================================================================================================================

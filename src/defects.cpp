@@ -35,33 +35,39 @@ namespace defects {
             INFO_OUT("Defect Location:", "[" << centrex << ", " << centrey << ", " << centrez << "] [unit cells]");
             INFO_OUT("Spherical Defect radius:", radius << " [unit cells]");
 
-        }   
 
 
-    int minx = centrex - radius;
-    int miny = centrex - radius;
-    int minz = centrex - radius;
-    int maxx = centrex + radius;
-    int maxy = centrex + radius;
-    int maxz = centrex + radius;
-    int index;
 
-        for (int x = minx; x <= maxx; x++){
-            for (int y = miny; y <= maxy; y++){
-                for (int z = minz; z <= maxz; z++){
-                    for (int q = 0; q < params::Nq; q++){
-        
-                        if ((x - centrex)*(x - centrex) + (y - centrey)*(y - centrey) + (z - centrez)*(z - centrez) <= radius*radius){
+            int minx = centrex - radius;
+            int miny = centrey - radius;
+            int minz = centrez - radius;
+            int maxx = centrex + radius;
+            int maxy = centrey + radius;
+            int maxz = centrez + radius;
+            int index;
 
-                            index = geom::LatCount(x,y,z,q);
-                            list.push_back(index);
+            for (int x = minx; x <= maxx; x++){
+                for (int y = miny; y <= maxy; y++){
+                    for (int z = minz; z <= maxz; z++){
+                        for (int q = 0; q < params::Nq; q++){
+            
+                            // loop through sites that are within simulation box
+                            if ((minx >= 0) && (miny >= 0) && (minz >= 0) && (maxx < params::Lx) && (maxy < params::Ly) && (maxz < params::Lz)){
+                                
+                                // circle equation
+                                if ((x - centrex)*(x - centrex) + (y - centrey)*(y - centrey) + (z - centrez)*(z - centrez) <= radius*radius){
 
+                                    // find 1d index of spin and add it to the defect list.
+                                    index = geom::LatCount(x,y,z,q);
+                                    list.push_back(index);
+
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-
+     }
     }
     
     void populate(){

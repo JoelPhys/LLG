@@ -47,7 +47,6 @@ namespace fields {
 		H_appx.IFill(0);
 		H_appy.IFill(0);
 		H_appz.IFill(0);
-		DEBUGGER;
 
 		type = params::cfg.lookup("ExternalField.Type").c_str();
 		libconfig::Setting& setting1 = params::cfg.lookup("ExternalField");
@@ -117,7 +116,6 @@ namespace fields {
 			std::cout << "ERROR: Unknown Field type." << std::endl;
 			exit(0);
 		} 
-		DEBUGGER;
 
 	}
 

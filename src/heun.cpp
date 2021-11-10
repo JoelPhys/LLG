@@ -30,6 +30,7 @@ namespace heun {
     Array<double> S_dash_normedx1d, S_dash_normedy1d, S_dash_normedz1d;
 
     // function variables
+    int a;
     int counting;
     double S_new[3];
     double invmag, invmag1;
@@ -69,7 +70,9 @@ namespace heun {
 
     void integration(double Thermal_Fluct){
 
-        for (int a = 0; a < params::Nspins; a++){
+        for (int c = 0; c < neigh::simspin.size(); c++){
+
+            a = neigh::simspin[c];
 
             for (int k = 0; k < 3; k++){
                 guassian_vals[k] = distribution(generator);
@@ -94,15 +97,24 @@ namespace heun {
             H_exch[1] = 0;
             H_exch[2] = 0;
 
-            counting = neigh::x_adj[a];
+            // counting = neigh::x_adj[a];
 
-            for (int b = neigh::x_adj[a]; b < neigh::x_adj[a+1]; b++){
-                H_exch[0] += neigh::Jijx_prime[counting] * (spins::sx1d(neigh::adjncy[b]));
-                H_exch[1] += neigh::Jijy_prime[counting] * (spins::sy1d(neigh::adjncy[b]));
-                H_exch[2] += neigh::Jijz_prime[counting] * (spins::sz1d(neigh::adjncy[b]));
-                counting++;
+            for (int b = neigh::x_adj[c]; b < neigh::x_adj[c+1]; b++){
+
+                if (a == 2){
+                    std::cout << neigh::adjncy[b] << " " << neigh::Jijx[neigh::jind[b]] << " ";
+                }
+                // H_exch[0] += neigh::Jijx_prime[counting] * (spins::sx1d(neigh::adjncy[b]));
+                // H_exch[1] += neigh::Jijy_prime[counting] * (spins::sy1d(neigh::adjncy[b]));
+                // H_exch[2] += neigh::Jijz_prime[counting] * (spins::sz1d(neigh::adjncy[b]));
+                H_exch[0] += neigh::Jijx[neigh::jind[b]] * (spins::sx1d(neigh::adjncy[b]));
+                H_exch[1] += neigh::Jijy[neigh::jind[b]] * (spins::sy1d(neigh::adjncy[b]));
+                H_exch[2] += neigh::Jijz[neigh::jind[b]] * (spins::sz1d(neigh::adjncy[b]));
+                // counting++;
             }
-
+            if (a == 2){
+            std::cout << std::endl;
+            }
             H_new[0] = H_thermal(a,0) + fields::H_appx(a) + H_uni[0] + H_cub[0] + H_exch[0];
             H_new[1] = H_thermal(a,1) + fields::H_appy(a) + H_uni[1] + H_cub[1] + H_exch[1];
             H_new[2] = H_thermal(a,2) + fields::H_appz(a) + H_uni[2] + H_cub[2] + H_exch[2];
@@ -128,7 +140,9 @@ namespace heun {
             S_dash_normedz1d(a) = invmag * S_dash[2];   
         }
 
-        for (int a = 0; a < params::Nspins; a++){
+        for (int c = 0; c < neigh::simspin.size(); c++){
+
+            a = neigh::simspin[c];
             
             //  Uniaxial Anisototropy
             H_uni_dash[0]= params::dxup * S_dash_normedx1d(a);
@@ -145,12 +159,15 @@ namespace heun {
             H_exch_dash[2] = 0;
 
             // Exchange interaction prime
-            counting = neigh::x_adj[a];
-            for (int b = neigh::x_adj[a]; b < neigh::x_adj[a+1]; b++){
-                H_exch_dash[0] += neigh::Jijx_prime[counting] * (S_dash_normedx1d(neigh::adjncy[b]));
-                H_exch_dash[1] += neigh::Jijy_prime[counting] * (S_dash_normedy1d(neigh::adjncy[b]));
-                H_exch_dash[2] += neigh::Jijz_prime[counting] * (S_dash_normedz1d(neigh::adjncy[b]));
-                counting++;
+            // counting = neigh::x_adj[a];
+            for (int b = neigh::x_adj[c]; b < neigh::x_adj[c+1]; b++){
+                // H_exch_dash[0] += neigh::Jijx_prime[counting] * (S_dash_normedx1d(neigh::adjncy[b]));
+                // H_exch_dash[1] += neigh::Jijy_prime[counting] * (S_dash_normedy1d(neigh::adjncy[b]));
+                // H_exch_dash[2] += neigh::Jijz_prime[counting] * (S_dash_normedz1d(neigh::adjncy[b]));
+                H_exch_dash[0] += neigh::Jijx[neigh::jind[b]] * (S_dash_normedx1d(neigh::adjncy[b]));
+                H_exch_dash[1] += neigh::Jijy[neigh::jind[b]] * (S_dash_normedy1d(neigh::adjncy[b]));
+                H_exch_dash[2] += neigh::Jijz[neigh::jind[b]] * (S_dash_normedz1d(neigh::adjncy[b]));
+                // counting++;
             }
 
             H_new_dash[0] = H_thermal(a,0) + fields::H_appx(a) + H_uni_dash[0] + H_cub_dash[0] + H_exch_dash[0];
