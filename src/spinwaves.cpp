@@ -360,7 +360,7 @@ namespace spinwaves {
 
 					// Create output files for k vectors
 					std::stringstream sstr2;
-					sstr2 << "output/spinwaves/";
+					sstr2 << params::filepath;
 					sstr2 << "kx" << std::setw(4) << std::setfill('0') << counter;
 					// sstr2 << "ky" << std::setw(4) << std::setfill('0') << b;
 					// sstr2 << "kz" << std::setw(4) << std::setfill('0') << c;
