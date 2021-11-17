@@ -165,7 +165,7 @@ namespace spinwaves {
 
 		// Create output file for peaks
 		std::stringstream peakstring;
-		peakstring << "output/spinwaves/peaks.txt";
+		peakstring << params::filepath_sw << "peaks.txt";
 		std::ofstream peaksout;
 		peaksout.open(peakstring.str());
 		peaksout << std::setprecision(10);
@@ -360,7 +360,7 @@ namespace spinwaves {
 
 					// Create output files for k vectors
 					std::stringstream sstr2;
-					sstr2 << params::filepath;
+					sstr2 << params::filepath_sw;
 					sstr2 << "kx" << std::setw(4) << std::setfill('0') << counter;
 					// sstr2 << "ky" << std::setw(4) << std::setfill('0') << b;
 					// sstr2 << "kz" << std::setw(4) << std::setfill('0') << c;
@@ -396,7 +396,7 @@ namespace spinwaves {
 					}
 
 					// output peaks as frequency values to a file for comparison against LSWT
-					peaksout << index * ( 1 / (params::dt_spinwaves * Npoints)) << " ";
+					peaksout << index * ( 1 / (params::dt_spinwaves * Npoints)) << "\n";
 
 					for (int kk = 0; kk < icount/2; kk++){
 						os[kk] /= largest;

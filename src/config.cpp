@@ -53,6 +53,7 @@ namespace params {
 	std::string afmflag;
 	std::string format;
 	std::string filepath;
+	std::string filepath_sw;
 	bool OutputToTerminal;
 
 	// Jij SETTINGS
@@ -340,7 +341,8 @@ namespace params {
 		cfgmissing("Spinwaves.StartTime");			
 		cfgmissing("Util.afmflag");  				
 		cfgmissing("Exchange.Format");  			
-		cfgmissing("Util.filepath");        		
+		cfgmissing("Util.filepath");
+		cfgmissing("Spinwaves.filepath");        		
 		cfgmissing("Spinwaves.TimeStep");			
 		cfgmissing("Exchange.InputFile");			
 		cfgmissing("Exchange.Units");   			
@@ -353,7 +355,8 @@ namespace params {
 	 	start = cfg.lookup("Spinwaves.StartTime");
  		afmflag = cfg.lookup("Util.afmflag").c_str();  
 	 	format = cfg.lookup("Exchange.Format").c_str();  
-		filepath = cfg.lookup("Util.filepath").c_str();        
+		filepath = cfg.lookup("Util.filepath").c_str();      
+		filepath_sw = cfg.lookup("Spinwaves.filepath").c_str();   
 		dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");
 	 	Jij_filename = cfg.lookup("Exchange.InputFile").c_str();
 	 	Jij_units = cfg.lookup("Exchange.Units").c_str();   

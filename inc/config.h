@@ -46,6 +46,7 @@
         
         //output file location
         extern std::string filepath;
+        extern std::string filepath_sw;
 
         // Jij SETTINGS
         extern std::string Jij_filename;
