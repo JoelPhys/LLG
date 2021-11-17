@@ -113,6 +113,30 @@ namespace util {
 				M(0,2) += spins::sz1d(a); 
 			}
 		}
+		else if (params::afmflag == "CuMnAs"){
+			for (int a = 0; a < params::Nspins; a++){   
+
+				// Total Magnetisation
+				Mt(0) += spins::sx1d(a);			
+				Mt(1) += spins::sy1d(a);
+				Mt(2) += spins::sz1d(a);
+
+				if (modfunc(params::Nq,a) == 0){
+					M(0,0) += spins::sx1d(a);
+					M(0,1) += spins::sy1d(a);
+					M(0,2) += spins::sz1d(a); 
+				}
+				else if (modfunc(params::Nq,a) == 1) {
+					M(1,0) += spins::sx1d(a);
+					M(1,1) += spins::sy1d(a);
+					M(1,2) += spins::sz1d(a); 
+				}
+				else {
+					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+					exit(0);
+				}
+			}
+		}
 		else if (params::afmflag == "Mn2Au"){
 			for (int a = 0; a < params::Nspins; a++){   
 
