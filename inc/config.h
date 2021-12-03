@@ -71,6 +71,7 @@
         // Temperature
         extern std::string temptype;
         extern double ttm_start;
+        extern double temp_gradient;
 
         extern bool OutputToTerminal;
 

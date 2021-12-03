@@ -18,6 +18,9 @@
         extern Array4D<int> LatCount;
         extern Array<int> lw;
         extern Array<int> rw;
+        
+        extern Array<int> xlayer;
+        extern Array<int> ylayer;
         extern Array<int> zlayer;
 
         //testing for hedgehog

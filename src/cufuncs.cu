@@ -84,6 +84,9 @@ namespace cufuncs {
 		else if (type == "constant"){
 			cuthermal::ttf<<<bpg,threadsperblock>>>(time - ttm_start, params::Nspins, cuthermal::dtfa, cuthermal::Te, cuthermal::dzlayer);
 		}
+		else if (type == "uniform_gradient"){
+			cuthermal::ttfg<<<bpg,threadsperblock>>>(time - ttm_start, params::Nspins, cuthermal::dtfa, cuthermal::Te, cuthermal::dxlayer, params::temp_gradient);
+		}
 	}
 	
 	void cuRotation(){

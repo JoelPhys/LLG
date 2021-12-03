@@ -6,6 +6,7 @@
 #include <curand_kernel.h>
 
 // my header files
+#include "../inc/geom.h"
 #include "../inc/array.h"
 #include "../inc/config.h"
 #include "../inc/defines.h"
@@ -31,6 +32,7 @@ namespace cuthermal {
     double oneOvrdzdz;
     double oneOvr2dz;
 
+    // two temperature model constants
     __constant__ double c_gamma_e;
 	__constant__ double c_Cp;
 	__constant__ double c_kappa_0;
@@ -47,9 +49,12 @@ namespace cuthermal {
     __constant__ double c_oneOvr2dz;
     __constant__ double c_thermal_const;
 
+    // thermal gradient constants
+    __constant__ double c_grad;
+
     double *Te, *Tp, *P_it;
 	double *dtfa;
-    int *dzlayer;
+    int *dxlayer, *dylayer, *dzlayer;
 
     // stochastic noise variables
     float *gvalsx, *gvalsy, *gvalsz;
@@ -73,6 +78,8 @@ namespace cuthermal {
         Tinit=equilibrium_temp;
         oneOvrdzdz=1./(dz*dz);
         oneOvr2dz=1./(2.0*dz);
+
+        // Constants two temperature model
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_gamma_e), &gamma_e, sizeof(double)));                        
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_Cp), &Cp, sizeof(double)));                                  
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_kappa_0), &kappa_0, sizeof(double)));                        
@@ -88,6 +95,9 @@ namespace cuthermal {
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_Tinit), &Tinit, sizeof(double)));
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_oneOvrdzdz), &oneOvrdzdz, sizeof(double)));
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_oneOvr2dz), &oneOvr2dz, sizeof(double)));
+
+        // Constants for thermal gradient
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_grad), &params::temp_gradient, sizeof(double)));
     }
 
     void destroy_generator(){
@@ -159,22 +169,34 @@ namespace cuthermal {
         }
     }
 
+    __global__ void ttfg(double time, int N, double *dtfa, double *Te, int *dlayer,  double grad)
+    {
+
+        const int a = blockDim.x * blockIdx.x + threadIdx.x; 
+
+        if (a < N){
+            dtfa[a] = c_thermal_const * sqrt(dlayer[a] * grad);
+        }
+    }
+
 
     void testing(int i){
 
 		Array<double> testingx;
 		Array<double> testingy, testingz;
-		testingx.resize(params::Lz);
-		// testingy.resize(params::Nspins);
+		testingx.resize(params::Nspins);
+		testingy.resize(params::Lx);
 		// testingz.resize(params::Nspins);
 
-		CUDA_CALL(cudaMemcpy(testingx.ptr(), Te, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
-		// CUDA_CALL(cudaMemcpy(testingy.ptr(), Hapy, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(testingx.ptr(), dtfa, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		// CUDA_CALL(cudaMemcpy(testingy.ptr(), Te, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 		// CUDA_CALL(cudaMemcpy(testingz.ptr(), Hapz, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 
 	    std::cout << i << " ";
-	    for (int a = 0; a < params::Lz; a++){
-		    std::cout << testingx(a) << " ";	
+	    for (int a = 0; a < params::Lx; a++){
+		    std::cout << std::scientific << a * params::a1 << " ";
+            std::cout << testingx(geom::LatCount(a,2,2,0)) << std::endl;	
+            // std::cout << testingy(a) << std::endl;	
 	    }
 	    std::cout << std::endl;
 	}

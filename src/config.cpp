@@ -76,6 +76,7 @@ namespace params {
 	//Temperature
 	std::string temptype;
 	double ttm_start;
+	double temp_gradient;
 
 	void banner(){
 		std::cout << std::endl;
@@ -246,7 +247,18 @@ namespace params {
 		cfgmissing("Temperature.ttm_start");				
 		temptype = cfg.lookup("Temperature.method").c_str();
 		ttm_start = cfg.lookup("Temperature.ttm_start");
-
+		if ((temptype == "uniform_gradient") && (cfg.exists("Temperature.gradient") == 0)){
+			std::cout << "ERROR: Method is uniform_gradient but no gradient value has been provided" << std::endl;
+			std::cout << "EXITING SIMULATION" << std::endl;
+			exit(0);
+		}
+		else if ((temptype == "uniform_gradient")){
+			double temp_gradient_km = cfg.lookup("Temperature.gradient");
+			INFO_OUT("Temperature Gradient:", temp_gradient_km << "[K/m]");
+			temp_gradient = temp_gradient_km * a1;
+			INFO_OUT("Temperature Gradient:", temp_gradient << "[K / unit cell]");
+		}
+		
 		// Print key parameters to log file
 		TITLE("MATERIAL CONSTANTS");
 		INFO_OUT("Damping constant:",lambda);

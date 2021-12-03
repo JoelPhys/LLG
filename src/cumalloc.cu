@@ -163,6 +163,8 @@ namespace cuglob {
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::Te, sizeof(double)*params::Lz));
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::Tp, sizeof(double)*params::Lz));
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::P_it, sizeof(double)*params::Lz));
+		CUDA_CALL(cudaMalloc((void**)&cuthermal::dxlayer, sizeof(int)*geom::xlayer.size()));
+		CUDA_CALL(cudaMalloc((void**)&cuthermal::dylayer, sizeof(int)*geom::ylayer.size()));
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::dzlayer, sizeof(int)*geom::zlayer.size()));
 
 		CUDA_CALL(cudaMemset(cuthermal::Te, 0.0, sizeof(double)*params::Lz));
@@ -189,7 +191,9 @@ namespace cuglob {
 
 		CUDA_CALL(cudaMemcpy(cuthermal::Te, rTe.ptr(), sizeof(double) * params::Lz, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(cuthermal::Tp, rTp.ptr(), sizeof(double) * params::Lz, cudaMemcpyHostToDevice));
-		CUDA_CALL(cudaMemcpy(geom::zlayer.ptr(), cuthermal::dzlayer, sizeof(int) * params::Nspins, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(cuthermal::dxlayer, geom::xlayer.ptr(), sizeof(int) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(cuthermal::dylayer, geom::ylayer.ptr(), sizeof(int) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(cuthermal::dzlayer, geom::zlayer.ptr(), sizeof(int) * params::Nspins, cudaMemcpyHostToDevice));
 
 	}
 

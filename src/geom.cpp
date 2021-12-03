@@ -23,6 +23,8 @@ namespace geom {
     Array4D<double> latticeZ;
     Array4D<int> LatCount;
     Array3D<int> Scount;
+    Array<int> xlayer;
+    Array<int> ylayer;
     Array<int> zlayer;
 
     int Ix, Iy, Iz, IzC;
@@ -44,12 +46,16 @@ namespace geom {
         latticeY.resize(params::Lx,params::Ly,params::Lz,params::Nq);
         latticeZ.resize(params::Lx,params::Ly,params::Lz,params::Nq);
         LatCount.resize(params::Lx,params::Ly,params::Lz,params::Nq);
+        xlayer.resize(params::Nspins);
+        ylayer.resize(params::Nspins);
         zlayer.resize(params::Nspins);
 
         latticeX.IFill(0);
         latticeY.IFill(0);
         latticeZ.IFill(0);
         LatCount.IFill(0);
+        xlayer.IFill(0);
+        ylayer.IFill(0);
         zlayer.IFill(0);
 
         for (int x = 0; x < params::Lx; ++x){ 
@@ -62,6 +68,8 @@ namespace geom {
                         latticeY(x,y,z,q) = params::sites[q][1] + params::Plat[0][1]*Cx + params::Plat[1][1]*Cy + params::Plat[2][1]*Cz;
                         latticeZ(x,y,z,q) = params::sites[q][2] + params::Plat[0][2]*Cx + params::Plat[1][2]*Cy + params::Plat[2][2]*Cz;
                         LatCount(x,y,z,q) = counter;
+                        xlayer(counter) = x;
+                        ylayer(counter) = y;
                         zlayer(counter) = z;
                         counter++;
                     }
