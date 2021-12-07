@@ -30,10 +30,11 @@
 
         extern int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
         extern int Idx, Idy, Idz; // For integer lattice
-        extern double a1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
+        extern double a1, b1, c1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
 
         extern int xdimS, ydimS, zdimS, start;
         extern double dt_spinwaves;
+        extern double sg_spinwaves;
 
         //Rotation angle
         extern double angle;	

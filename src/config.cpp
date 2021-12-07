@@ -38,9 +38,10 @@ namespace params {
 
 	int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
 	int Idx, Idy, Idz; // For integer lattice
-	double a1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
+	double a1, b1, c1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
 	int xdimS, ydimS, zdimS, start;
 	double dt_spinwaves;
+	double sg_spinwaves;
 	double angle;
 
 
@@ -175,10 +176,14 @@ namespace params {
 		// Material Constants
 		cfgmissing("MaterialConsts.lambda");			
 		cfgmissing("MaterialConsts.mu_s");				
-		cfgmissing("MaterialConsts.a");					
+		cfgmissing("MaterialConsts.a");
+		cfgmissing("MaterialConsts.b");
+		cfgmissing("MaterialConsts.c");					
 		lambda = cfg.lookup("MaterialConsts.lambda");
 		mu_s = cfg.lookup("MaterialConsts.mu_s");
 		a1 = cfg.lookup("MaterialConsts.a");
+		b1 = cfg.lookup("MaterialConsts.b");
+		c1 = cfg.lookup("MaterialConsts.c");
 
     	mu_s *= mu_b;
     	INVmu_s = 1 / mu_s;
@@ -265,7 +270,9 @@ namespace params {
 		INFO_OUT("Magnetic Moment:", mu_s << " (mu_b)");
 		INFO_OUT("Uniaxial Anisotropy:", "[" << dxu << " , " << dyu << " , " << dzu << "] (J)");
 		INFO_OUT("Cubic Anisotropy:", dzc << "(J)");
-		INFO_OUT("Lattice Parameter:", a1 << " (m)");
+		INFO_OUT("Lattice Parameter, a:", a1 << " (m)");
+		INFO_OUT("Lattice Parameter, b:", b1 << " (m)");
+		INFO_OUT("Lattice Parameter, c:", c1 << " (m)");
 		INFO_OUT("Timestep:", dt << " (s)");
 		INFO_OUT("Number of timesteps:", Nt);
 		INFO_OUT("Outputting every ", outputstep << " timesteps");
@@ -355,7 +362,8 @@ namespace params {
 		cfgmissing("Exchange.Format");  			
 		cfgmissing("Util.filepath");
 		cfgmissing("Spinwaves.filepath");        		
-		cfgmissing("Spinwaves.TimeStep");			
+		cfgmissing("Spinwaves.TimeStep");
+		cfgmissing("Spinwaves.smoothing");			
 		cfgmissing("Exchange.InputFile");			
 		cfgmissing("Exchange.Units");   			
 		cfgmissing("Exchange.Cutoff");    			
@@ -370,6 +378,7 @@ namespace params {
 		filepath = cfg.lookup("Util.filepath").c_str();      
 		filepath_sw = cfg.lookup("Spinwaves.filepath").c_str();   
 		dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");
+		sg_spinwaves = cfg.lookup("Spinwaves.smoothing");
 	 	Jij_filename = cfg.lookup("Exchange.InputFile").c_str();
 	 	Jij_units = cfg.lookup("Exchange.Units").c_str();   
 		JijCutoff = cfg.lookup("Exchange.Cutoff");    
