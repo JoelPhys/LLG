@@ -1,5 +1,6 @@
 // cpp header files
 #include <vector>
+#include <iomanip>
 #include <iostream>
 #include <unordered_set>
 
@@ -167,19 +168,35 @@ void initdw(){
             for (int j = 0; j < params::Ly; j++){
                 for (int k = 0; k < params::Lz; k++){
                     for (int q = 0; q < params::Nq; q++){
-                        if ((q == 0) || (q == 2)){
-                            lw(inc) = geom::LatCount(0,j,k,q);
-                            rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+
+                        if (params::afmflag == "Mn2Au"){
+                            if ((q == 0) || (q == 2)){
+                                lw(inc) = geom::LatCount(0,j,k,q);
+                                rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                            }
+                            else if ((q == 1) || (q == 3)){
+                                rw(inc) = geom::LatCount(0,j,k,q);
+                                lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                            }
+                            else {
+                                std::cout << "ERROR: Unable to assign domain wall \n";
+                                exit(0);
+                            }
                         }
-                        else if ((q == 1) || (q == 3)){
-                            rw(inc) = geom::LatCount(0,j,k,q);
-                            lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                        else if (params::afmflag == "SC"){
+                            if ((q== 0) || (q == 3) || (q == 5) || (q == 6)) {
+                                lw(inc) = geom::LatCount(0,j,k,q);
+                                rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                            }
+                            else {
+                                rw(inc) = geom::LatCount(0,j,k,q);
+                                lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                            }
                         }
                         else {
                             std::cout << "ERROR: Unable to assign domain wall \n";
                             exit(0);
                         }
-
                         //testing for hedgehogs
                         // if ((i == 0) || (j == 0) || (k == 0) || (i == params::Lx-1) || (j == params::Ly-1) || (k == params::Lz-1)){
                         //     lw(inc) = geom::LatCount(i,j,k,q); 

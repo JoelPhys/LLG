@@ -79,8 +79,8 @@ namespace spins {
                             //    sz1d(geom::LatCount(x,y,z,q)) = -1 * params::initm[q][2];                         
                             //}
                             //else if (x == params::Lx/2){
-                            //    sx1d(geom::LatCount(x,y,z,q)) = 0.0;
-                            //    sz1d(geom::LatCount(x,y,z,q)) = 1.0;                        
+                            //    sx1d(geom::LatCount(x,y,z,q)) = 0.5;
+                            //    sz1d(geom::LatCount(x,y,z,q)) = 0.5;                        
                             //}
 
                              sx1d(count1d + q) = params::initm[q][0];

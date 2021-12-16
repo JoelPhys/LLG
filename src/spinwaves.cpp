@@ -103,7 +103,7 @@ namespace spinwaves {
 						lval = l + params::Isites[q][0];
 						mval = m + params::Isites[q][1];
 						nval = n + params::Isites[q][2];
-						stcf(lval,mval,nval) = spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval)) + spins::sz1d(geom::Scount(lval,mval,nval)) * spins::sz1d(geom::Scount(lval,mval,nval));
+						stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)) + spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval));
 					}
 				}
 			}
@@ -173,9 +173,9 @@ namespace spinwaves {
 		// loop over all elememts in k array
 		double kpts = geom::Ix; 
 
-		// double kpathx[7] = {0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.423940489};
-		// double kpathy[7] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0};
-		// double kpathz[7] = {0.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0};
+		double kpathx[7] = {0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.423940489};
+		double kpathy[7] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0};
+		double kpathz[7] = {0.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0};
 
 		// double kpathx[13] = {0, 14, 14, 14,  0,  0, 11, 17,  0, 14, 17, 11,  0};
 		// double kpathy[13] = {0, 14, 14,  0,  0,  0,  0,  0,  0, 14, 11, 11,  0};
@@ -185,9 +185,9 @@ namespace spinwaves {
 		// double kpathy[13] = {0, 15, 15,  0,  0,  0,  0,  0,  0, 15, 11, 12,  0};
 		// double kpathz[13] = {0,  0, 15, 15,  0, 30, 30,  0,  0,  0,  0, 30, 30};
 
-		double kpathx[8] = {0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0};
-		double kpathy[8] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0.0};
-		double kpathz[8] = {0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5};
+		// double kpathx[8] = {0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0};
+		// double kpathy[8] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0.0};
+		// double kpathz[8] = {0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5};
 
 		// double kpathx[4] = {0.0, 0.0, 0.5, 0.0};
 		// double kpathy[4] = {0.0, 0.5, 0.5, 0.0};
@@ -198,14 +198,16 @@ namespace spinwaves {
 		int from[3], to[3], in[3];
 
 		int counter = 0;
+		double xout;
 
 		// TESTING  ==============================================================================================================
 
-		for (int p = 0; p < 7; p++){
+		for (int p = 0; p < 6; p++){
 			
 			// x component
 			if (kpathx[p+1] > kpathx[p]){
-				from[0] = static_cast<int>(kpathx[p] * params::Lx);
+				if (p == 0) {from[0] = static_cast<int>(kpathx[p] * params::Lx);}
+				if (p >= 1) {from[0] = static_cast<int>(kpathx[p] * params::Lx)+1;}
 				to[0] = static_cast<int>(kpathx[p+1] * params::Lx);
 				in[0] = 1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
 			}
@@ -219,14 +221,15 @@ namespace spinwaves {
 				}
 			}
 			else {
-				from[0] = static_cast<int>(kpathx[p] * params::Lx)-1;
+				from[0] = static_cast<int>(kpathx[p] * params::Lx)-2;
 				to[0] = static_cast<int>(kpathx[p+1] * params::Lx)-1;
 				in[0] = -1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
 			}
 
 			// y component
 			if (kpathy[p+1] > kpathy[p]){
-				from[1] = static_cast<int>(kpathy[p] * params::Ly);
+				if (p == 0) {from[1] = static_cast<int>(kpathy[p] * params::Ly);}
+				if (p >= 1) {from[1] = static_cast<int>(kpathy[p] * params::Ly)+1;}
 				to[1] = static_cast<int>(kpathy[p+1] * params::Ly);
 				in[1] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
@@ -240,14 +243,15 @@ namespace spinwaves {
 				}
 			}
 			else {
-				from[1] = static_cast<int>(kpathy[p] * params::Ly)-1;
+				from[1] = static_cast<int>(kpathy[p] * params::Ly)-2;
 				to[1] = static_cast<int>(kpathy[p+1] * params::Ly)-1;
 				in[1] = -1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
 
 			// z component
 			if (kpathz[p+1] > kpathz[p]){
-				from[2] = static_cast<int>(kpathz[p] * params::Lz);
+				if (p == 0) {from[2] = static_cast<int>(kpathz[p] * params::Lz);}
+				if (p >= 1) {from[2] = static_cast<int>(kpathz[p] * params::Lz)+1;}
 				to[2] = static_cast<int>(kpathz[p+1] * params::Lz);
 				in[2] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
@@ -261,11 +265,11 @@ namespace spinwaves {
 				}
 			}
 			else {
-				from[2] = static_cast<int>(kpathz[p] * params::Lz)-1;
+				from[2] = static_cast<int>(kpathz[p] * params::Lz)-2;
 				to[2] = static_cast<int>(kpathz[p+1] * params::Lz)-1;
 				in[2] = -1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
-
+			// DEBUGGER;
 			// if (kpathx[p+1] > kpathx[p]){
 			// 	from[0] = kpathx[p];
 			// 	to[0] = kpathx[p+1];
@@ -323,9 +327,9 @@ namespace spinwaves {
 			// }
 
 
-			std::cout << "from = " << from[0] << " " << from[1] << " " << from[2] << std::endl;
-			std::cout << "to = " << to[0] << " " << to[1] << " " << to[2] << std::endl;
-			std::cout << "in = " << in[0] << " " << in[1] << " " << in[2] << std::endl;
+			// std::cout << "from = " << from[0] << " " << from[1] << " " << from[2] << std::endl;
+			// std::cout << "to = " << to[0] << " " << to[1] << " " << to[2] << std::endl;
+			// std::cout << "in = " << in[0] << " " << in[1] << " " << in[2] << std::endl;
 
 			int a = from[0];
 			int b = from[1];
@@ -351,7 +355,7 @@ namespace spinwaves {
 						FFTstcfT(np)[IMAG] = FFTstcfarray_test(np,a,b,c)[IMAG];
 					}
 
-					std::cout << " TEST " << largestdiff << " " << p << " " << a << " " << b << " " << c << std::endl;
+					std::cout << " TEST " << /*largestdiff << " " << p << " " <<*/ a << " " << b << " " << c << std::endl;
 
 
 					if (a != to[0]){
@@ -407,8 +411,10 @@ namespace spinwaves {
 					double ai = in[0]/params::a1;
 					double bi = in[1]/params::b1;
 					double ci = in[2]/params::c1;
+					double mag = sqrt(ai*ai + bi*bi + ci*ci);
+					xout += mag;
 
-					peaksout << counter * sqrt(ai*ai + bi*bi + ci*ci) << " " << index * ( 1 / (params::dt_spinwaves * Npoints)) << "\n";
+					peaksout << xout << " " << index * ( 1 / (params::dt_spinwaves * Npoints)) << "\n";
 					counter++;
 
 					for (int kk = 0; kk < icount/2; kk++){

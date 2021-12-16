@@ -173,14 +173,19 @@ namespace params {
 		// Reduced Time variables
 		dtau = gamma * dt;
 		half_dtau = 0.5 * dtau;   
-		// Material Constants
-		cfgmissing("MaterialConsts.lambda");			
-		cfgmissing("MaterialConsts.mu_s");				
+		
+		// Gilbert Damping
+		cfgmissing("MaterialConsts.lambda");				
+		lambda = cfg.lookup("MaterialConsts.lambda");
+
+		// Magnetic Moment
+		cfgmissing("MaterialConsts.mu_s");
+		mu_s = cfg.lookup("MaterialConsts.mu_s");
+
+		// lattice constants
 		cfgmissing("MaterialConsts.a");
 		cfgmissing("MaterialConsts.b");
-		cfgmissing("MaterialConsts.c");					
-		lambda = cfg.lookup("MaterialConsts.lambda");
-		mu_s = cfg.lookup("MaterialConsts.mu_s");
+		cfgmissing("MaterialConsts.c");	
 		a1 = cfg.lookup("MaterialConsts.a");
 		b1 = cfg.lookup("MaterialConsts.b");
 		c1 = cfg.lookup("MaterialConsts.c");
