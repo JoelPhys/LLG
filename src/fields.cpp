@@ -112,6 +112,13 @@ namespace fields {
 			INFO_OUT("Magniture of pulse = ", height << " [T]");
 			INFO_OUT("Frequency of pulse = ", freq << " [Hz]");
 		}
+		else if (type == "Sine_Pulse"){
+			INFO_OUT("Field type = ", type);
+			height = params::cfg.lookup("ExternalField.height");
+			freq = params::cfg.lookup("ExternalField.freq");
+			INFO_OUT("Magniture of pulse = ", height << " [T]");
+			INFO_OUT("Frequency of pulse = ", freq << " [Hz]");
+		}
 		else {	
 			std::cout << "ERROR: Unknown Field type." << std::endl;
 			exit(0);

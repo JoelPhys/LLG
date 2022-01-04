@@ -177,6 +177,29 @@ namespace cufields {
 
 	}
 
+	__global__ void sine_pulse(int N, double time, double height, double freq, double *Hapx, double *Hapy, double *Hapz){
+
+		const int i = blockDim.x*blockIdx.x + threadIdx.x;
+
+		double gauss;
+		gauss = height * sin(2*M_PI*freq*time);
+
+		if (i < N){
+			if (( i % 4 == 0) || (i % 4 == 2)) {
+				Hapx[i] = 0.0;
+				Hapy[i] = gauss;
+				Hapz[i] = 0.0;  
+			}
+			else if (( i % 4 == 1) || (i % 4 == 3)) {
+				Hapx[i] = 0.0;
+				Hapy[i] = -1.0 * gauss;
+				Hapz[i] = 0.0;  
+			}
+		}
+
+
+	}
+
 	void testing(int i){
 
 		Array<double> testingx;

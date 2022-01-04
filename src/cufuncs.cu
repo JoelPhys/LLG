@@ -62,6 +62,9 @@ namespace cufuncs {
 		else if (type == "Multi_Cycle_Pulse_Staggered"){
 			cufields::multi_cycle_pulse_staggered<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
+		else if (type == "Sine_Pulse"){
+			cufields::sine_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
 		else {
 			std::cout << "ERROR: Unkown field type: " << type << std::endl;
 			exit(0);		
