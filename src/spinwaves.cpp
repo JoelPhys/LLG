@@ -103,7 +103,7 @@ namespace spinwaves {
 						lval = l + params::Isites[q][0];
 						mval = m + params::Isites[q][1];
 						nval = n + params::Isites[q][2];
-						stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)) + spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval));
+						stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)) + spins::sz1d(geom::Scount(lval,mval,nval)) * spins::sz1d(geom::Scount(lval,mval,nval));
 					}
 				}
 			}
@@ -173,9 +173,13 @@ namespace spinwaves {
 		// loop over all elememts in k array
 		double kpts = geom::Ix; 
 
-		double kpathx[7] = {0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.423940489};
-		double kpathy[7] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0};
-		double kpathz[7] = {0.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0};
+		// double kpathx[7] = {0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.423940489};
+		// double kpathy[7] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0};
+		// double kpathz[7] = {0.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0};
+
+		double kpathx[2] = {0.0, 0.0};
+		double kpathy[2] = {0.0, 0.5};
+		double kpathz[2] = {0.0, 0.0};
 
 		// double kpathx[13] = {0, 14, 14, 14,  0,  0, 11, 17,  0, 14, 17, 11,  0};
 		// double kpathy[13] = {0, 14, 14,  0,  0,  0,  0,  0,  0, 14, 11, 11,  0};
@@ -202,7 +206,7 @@ namespace spinwaves {
 
 		// TESTING  ==============================================================================================================
 
-		for (int p = 0; p < 6; p++){
+		for (int p = 0; p < 1; p++){
 			
 			// x component
 			if (kpathx[p+1] > kpathx[p]){
@@ -230,7 +234,7 @@ namespace spinwaves {
 			if (kpathy[p+1] > kpathy[p]){
 				if (p == 0) {from[1] = static_cast<int>(kpathy[p] * params::Ly);}
 				if (p >= 1) {from[1] = static_cast<int>(kpathy[p] * params::Ly)+1;}
-				to[1] = static_cast<int>(kpathy[p+1] * params::Ly);
+				to[1] = static_cast<int>(kpathy[p+1] * geom::Iy);
 				in[1] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
 			else if (kpathy[p+1] == kpathy[p]){
@@ -378,12 +382,9 @@ namespace spinwaves {
 					// sstr2 << "kz" << std::setw(4) << std::setfill('0') << c;
 					sstr2 << ".txt";
 
-
-
 					std::ofstream kzout;
 					kzout.open(sstr2.str());
 					kzout << std::setprecision(10);
-
 
 					for (int j = 0; j < icount/2; j++){
 

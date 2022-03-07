@@ -12,13 +12,16 @@ namespace cuthermal {
 	extern double *dtfa;
 	extern int *dxlayer, *dylayer, *dzlayer;
 
+	extern double *dconst;
+
+
 	void init_cuthermal(double equilibrium_temp);
 	void curand_generator();
 	void gen_thermal_noise();
 	void destroy_generator();
 	__global__ void ttm(double , int , double *, double *, double *);
-	__global__ void ttf(double , int , double *, double *, int *);
-	__global__ void ttfg(double , int , double *, double *, int *, double);
+	__global__ void ttf(double , int , double *, double *, double *, int *);
+	__global__ void ttfg(double , int , double *, double *, double *, int *, double);
 
 	// debugging
 	void testing(int i);

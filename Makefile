@@ -22,7 +22,6 @@ obj/defects.o \
 obj/error.o \
 obj/spinwaves.o \
 obj/util.o \
-obj/heun.o \
 obj/main.o
 
 OBJNVCC = \

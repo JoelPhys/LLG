@@ -19,8 +19,12 @@
         extern double dt, Nt, dtau, half_dtau;   
         extern int relaxtime, outputstep;
 
-        extern double lambda, lambdaPrime, mu_s, INVmu_s, thermal_const;
-	
+        extern std::vector<double> lambda;
+        extern std::vector<double> lambdaPrime;
+	    extern std::vector<double> thermal_const;
+        extern std::vector<double> mu_s;
+        extern std::vector<double> INVmu_s;
+
         // Uniaxial Anisotropy
         extern double dxu, dyu, dzu;
         extern double dxup, dyup, dzup;
@@ -28,9 +32,11 @@
         // Uniaxial Anisotropy
         extern double dzc, dzcp;
 
-        extern int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
+        extern int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat;
         extern int Idx, Idy, Idz; // For integer lattice
         extern double a1, b1, c1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
+        extern std::vector<int> sublat_sites;
+        extern std::vector<int> NmomentsSubLat;
 
         extern int xdimS, ydimS, zdimS, start;
         extern double dt_spinwaves;

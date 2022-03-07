@@ -95,7 +95,7 @@ namespace fields {
 		else if (type == "Gaussian_Pulse"){
 			INFO_OUT("Field type = ", type);
 			height = params::cfg.lookup("ExternalField.height");
-			centre_pos = params::cfg.lookup("ExternalField.centre");
+			centre_pos = params::cfg.lookup("ExternalField.centre_pos");
 			std_dev = params::cfg.lookup("ExternalField.std_dev");
 			INFO_OUT("Central Position of Pulse = ", centre_pos << " timesteps");
 			INFO_OUT("Standard Deviation of Pulse = ", std_dev << " timesteps");

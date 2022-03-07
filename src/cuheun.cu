@@ -21,21 +21,17 @@ namespace cuheun {
 	__constant__ double c_dzcp;
 	__constant__ double c_dtau; 
 	__constant__ double c_hdtau; 
-	__constant__ double c_lambda;
-	__constant__ double c_lambdap;
+	// __constant__ double c_lambda;
+	// __constant__ double c_lambdap;
 	__constant__ int c_Nq;
 	__constant__ double c_angle;
 	__constant__ int c_nsimspin;
 
-
-
-
-
 	void allocate_heun_consts(){
 
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_nsimspin), &neigh::nsimspin, sizeof(int)));
-		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambda), &params::lambda, sizeof(double)));
-		CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambdap), &params::lambdaPrime, sizeof(double)));
+		// CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambda), &params::lambda, sizeof(double)));
+		// CUDA_CALL(cudaMemcpyToSymbol(*(&c_lambdap), &params::lambdaPrime, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dtau), &params::dtau, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dxup), &params::dxup, sizeof(double)));
 		CUDA_CALL(cudaMemcpyToSymbol(*(&c_dyup), &params::dyup, sizeof(double)));
@@ -101,13 +97,15 @@ namespace cuheun {
 		}
 	}
 
-	__global__ void cuHeun1(int *djind, int N, double time, int *dsimspin, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
+	__global__ void cuHeun1(int *djind, int N, double time, int *dsimspin, double *lambda, double *lambdap, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
 		const int c = blockDim.x*blockIdx.x + threadIdx.x;
 
 		if (c < N){
 
 			int a = dsimspin[c];
+
+			int siteincell = a % c_Nq; 
 
 			Htx[a] = static_cast<double>(gvalsx1[a]) * Thermal_Fluct[a];
 			Hty[a] = static_cast<double>(gvalsy1[a]) * Thermal_Fluct[a];
@@ -117,6 +115,18 @@ namespace cuheun {
 			Huni[0] = c_dxup * dSx1d[a]; 
 			Huni[1] = c_dyup * dSy1d[a]; 
 			Huni[2] = c_dzup * dSz1d[a]; 
+
+			// testing anisotropy for multilayers
+			// if ((a % c_Nq == 0) || (a % c_Nq == 1) || (a % c_Nq == 2)){
+			// 	Huni[0] = c_dxup * dSx1d[a] / 1.8548e-23; //2mu_b 
+			// 	Huni[1] = c_dyup * dSy1d[a] / 1.8548e-23; //2mu_b 
+			// 	Huni[2] = c_dzup * dSz1d[a] / 1.8548e-23; //2mu_b 
+			// }
+			// else if ((a % c_Nq == 3) || (a % c_Nq == 4) || (a % c_Nq == 5)){
+			// 	Huni[0] = c_dxup * dSx1d[a] / 3.7096e-23; //4mu_b 
+			// 	Huni[1] = c_dyup * dSy1d[a] / 3.7096e-23; //4mu_b 
+			// 	Huni[2] = c_dzup * dSz1d[a] / 3.7096e-23; //4mu_b 	
+			// }
 
 			double Hcub[3];
 			Hcub[0] = c_dzcp * dSx1d[a] * dSx1d[a] * dSx1d[a]; 
@@ -146,9 +156,9 @@ namespace cuheun {
 			SxSxH[1] = dSz1d[a] * SxH[0] - dSx1d[a] * SxH[2];
 			SxSxH[2] = dSx1d[a] * SxH[1] - dSy1d[a] * SxH[0];
 
-			DelSx[a] = - 1 * c_lambdap * (SxH[0] + c_lambda * SxSxH[0]);
-			DelSy[a] = - 1 * c_lambdap * (SxH[1] + c_lambda * SxSxH[1]);
-			DelSz[a] = - 1 * c_lambdap * (SxH[2] + c_lambda * SxSxH[2]);
+			DelSx[a] = - 1 * lambdap[siteincell] * (SxH[0] + lambda[siteincell] * SxSxH[0]);
+			DelSy[a] = - 1 * lambdap[siteincell] * (SxH[1] + lambda[siteincell] * SxSxH[1]);
+			DelSz[a] = - 1 * lambdap[siteincell] * (SxH[2] + lambda[siteincell] * SxSxH[2]);
 
 			double Sdash[3];
 			Sdash[0] = dSx1d[a] + (DelSx[a] * c_dtau);
@@ -163,18 +173,30 @@ namespace cuheun {
 		} 
 	}
 
-	__global__ void cuHeun2(int *djind, int N, double time, int *dsimspin, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
+	__global__ void cuHeun2(int *djind, int N, double time, int *dsimspin, double *lambda, double *lambdap, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
 		const int c = blockDim.x*blockIdx.x + threadIdx.x;
 
 		if (c < N){
 
 			int a = dsimspin[c];
+			int siteincell = a % c_Nq;
 
 			double Huni_dash[3];
 			Huni_dash[0] = c_dxup * Sdashnx[a];
 			Huni_dash[1] = c_dyup * Sdashny[a];
 			Huni_dash[2]=  c_dzup * Sdashnz[a];
+			
+			// if ((a % c_Nq == 0) || (a % c_Nq == 1) || (a % c_Nq == 2)){
+			// 	Huni_dash[0] = c_dxup * Sdashnx[a] / 1.8548e-23; //2mu_b 
+			// 	Huni_dash[1] = c_dyup * Sdashny[a] / 1.8548e-23; //2mu_b 
+			// 	Huni_dash[2] = c_dzup * Sdashnz[a] / 1.8548e-23; //2mu_b 
+			// }
+			// else if ((a % c_Nq == 3) || (a % c_Nq == 4) || (a % c_Nq == 5)){
+			// 	Huni_dash[0] = c_dxup *  Sdashnx[a] / 3.7096e-23; //4mu_b 
+			// 	Huni_dash[1] = c_dyup *  Sdashny[a] / 3.7096e-23; //4mu_b 
+			// 	Huni_dash[2] = c_dzup *  Sdashnz[a] / 3.7096e-23; //4mu_b 	
+			// }
 
 			double Hcub_dash[3];
 			Hcub_dash[0] = c_dzcp * Sdashnx[a] * Sdashnx[a] * Sdashnx[a];
@@ -206,9 +228,9 @@ namespace cuheun {
 			SxSxHd[2] = Sdashnx[a] * SxHd[1] - Sdashny[a] * SxHd[0];
 
 			double DelSd[3];
-			DelSd[0] = -1 * c_lambdap * (SxHd[0] + c_lambda * SxSxHd[0]);
-			DelSd[1] = -1 * c_lambdap * (SxHd[1] + c_lambda * SxSxHd[1]);
-			DelSd[2] = -1 * c_lambdap * (SxHd[2] + c_lambda * SxSxHd[2]);
+			DelSd[0] = -1 * lambdap[siteincell] * (SxHd[0] + lambda[siteincell] * SxSxHd[0]);
+			DelSd[1] = -1 * lambdap[siteincell] * (SxHd[1] + lambda[siteincell] * SxSxHd[1]);
+			DelSd[2] = -1 * lambdap[siteincell] * (SxHd[2] + lambda[siteincell] * SxSxHd[2]);
 
 			double Sn[3];
 			Sn[0] = dSx1d[a] + c_hdtau * (DelSx[a] + DelSd[0]);

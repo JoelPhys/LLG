@@ -211,14 +211,14 @@ namespace neigh {
         for (int i = 0; i < length; i++){
 
             if (params::Jij_units == "mRy") {
-                Jijx[i] *= (2.179872e-21) / params::mu_s;
-                Jijy[i] *= (2.179872e-21) / params::mu_s;
-                Jijz[i] *= (2.179872e-21) / params::mu_s;
+                Jijx[i] *= (2.179872e-21) / params::mu_s[ib[i]+params::ibtoq];
+                Jijy[i] *= (2.179872e-21) / params::mu_s[ib[i]+params::ibtoq];
+                Jijz[i] *= (2.179872e-21) / params::mu_s[ib[i]+params::ibtoq];
             }
             else if (params::Jij_units == "J") {
-                Jijx[i] *= (1.0) / params::mu_s;
-                Jijy[i] *= (1.0) / params::mu_s;
-                Jijz[i] *= (1.0) / params::mu_s;
+                Jijx[i] *= (1.0) / params::mu_s[ib[i]+params::ibtoq];
+                Jijy[i] *= (1.0) / params::mu_s[ib[i]+params::ibtoq];
+                Jijz[i] *= (1.0) / params::mu_s[ib[i]+params::ibtoq];
             }   
 
             vecX = Nx[i] + params::sites[ib[i]+params::ibtoq][0] - params::sites[jb[i]+params::ibtoq][0];

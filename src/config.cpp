@@ -24,10 +24,14 @@ namespace params {
 	std::string simtype;
 
 	double k_B, mu_b, gamma;
-	double dt, Nt, dtau, half_dtau;   
-	double lambda, lambdaPrime, mu_s, INVmu_s, thermal_const;
+	double dt, Nt, dtau, half_dtau;
 	int relaxtime, outputstep;
 
+	std::vector<double> lambda;
+	std::vector<double> lambdaPrime;
+	std::vector<double> thermal_const;
+	std::vector<double> mu_s;
+	std::vector<double> INVmu_s;
 
 	// Uniaxial Anisotropy
 	double dxu, dyu, dzu;
@@ -36,13 +40,15 @@ namespace params {
 	//Cubic Anisotropy
 	double dzc, dzcp;
 
-	int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat, NmomentsSubLat;
+	int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat;
 	int Idx, Idy, Idz; // For integer lattice
 	double a1, b1, c1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
 	int xdimS, ydimS, zdimS, start;
 	double dt_spinwaves;
 	double sg_spinwaves;
 	double angle;
+	std::vector<int> sublat_sites;
+	std::vector<int> NmomentsSubLat;
 
 
 	//Boundary Conditions
@@ -94,6 +100,10 @@ namespace params {
 		std::cout << "                                       ░░░░░░                                                             " << std::endl;		
 	}
 
+	//=======================================================================================================
+	// Check config file exists =============================================================================
+	//=======================================================================================================
+
 	void cfgmissing(std::string in){
 		if (!cfg.exists(in)){
 			std::cout << "ERROR: Missing config file setting " << in << std::endl;
@@ -102,7 +112,10 @@ namespace params {
 		}
 	}
 
-	//Intialise Config File ====================================================================================================================================//
+	//=======================================================================================================
+	//Intialise Config File =================================================================================
+	//=======================================================================================================
+
 	void intitialiseConfig(const char* cfg_filename){
 
 		TITLE("COMPILATION INFO");
@@ -143,11 +156,18 @@ namespace params {
 		}
 		cfg.setAutoConvert(true);
 	}
-	//===========================================================================================================================================================//
 
-	// Read Parameters ==========================================================================================================================================//
+	//=======================================================================================================
+	// Read Parameters ======================================================================================
+	//=======================================================================================================
+
 	void readparams(){
 
+		// Output Simulation Start time
+		time_t now = time(0);
+		std::string simtim = strtok(ctime(&now), "\n");
+		INFO_OUT("Time of Simulation:", simtim);
+		
 		// Simulation Type
 		cfgmissing("SimulationType");
 		simtype = cfg.lookup("SimulationType").c_str();
@@ -176,43 +196,17 @@ namespace params {
 		
 		// Gilbert Damping
 		cfgmissing("MaterialConsts.lambda");				
-		lambda = cfg.lookup("MaterialConsts.lambda");
+		// lambda = cfg.lookup("MaterialConsts.lambda");
 
 		// Magnetic Moment
-		cfgmissing("MaterialConsts.mu_s");
-		mu_s = cfg.lookup("MaterialConsts.mu_s");
+		// cfgmissing("MaterialConsts.mu_s");
+		// mu_s = cfg.lookup("MaterialConsts.mu_s");
 
-		// lattice constants
-		cfgmissing("MaterialConsts.a");
-		cfgmissing("MaterialConsts.b");
-		cfgmissing("MaterialConsts.c");	
-		a1 = cfg.lookup("MaterialConsts.a");
-		b1 = cfg.lookup("MaterialConsts.b");
-		c1 = cfg.lookup("MaterialConsts.c");
-
-    	mu_s *= mu_b;
-    	INVmu_s = 1 / mu_s;
-
-		// Uniaxial Anisotropy
-		cfgmissing("Uniaxial_Anisotropy.d_x");			
-		cfgmissing("Uniaxial_Anisotropy.d_y");			
-		cfgmissing("Uniaxial_Anisotropy.d_z");
-		dxu = cfg.lookup("Uniaxial_Anisotropy.d_x");
-		dyu = cfg.lookup("Uniaxial_Anisotropy.d_y");
-		dzu = cfg.lookup("Uniaxial_Anisotropy.d_z");			
-		dxup = 2 * ( dxu / mu_s );
-		dyup = 2 * ( dyu / mu_s );	
-		dzup = 2 * ( dzu / mu_s );
 
 		// Cubic Anisotropy
 		cfgmissing("Cubic_Anisotropy.d_c");				
 		dzc = cfg.lookup("Cubic_Anisotropy.d_c");			
-		dzcp = 2 * ( dzc / mu_s );
-
-		// Thermal parameters
-		thermal_const = sqrt( (2 * lambda * k_B)  / (mu_s * dtau) );
-		lambdaPrime = 1 / (1+(lambda*lambda));
-
+		// dzcp = 2 * ( dzc / mu_s );
 
 		// system dimensions
 		cfgmissing("Geom.UnitCellsInX");				
@@ -236,7 +230,6 @@ namespace params {
 		// System geometry
 		Nspins = Nq*Lx*Ly*Lz;
 		Nmoments = (Nq*Lx*Ly*Lz); 
-		NmomentsSubLat = Nspins / Nsublat;
 		NsitesINV_S = 1/(Lx*Ly*Lz);
 		xdim = ax*Lx;
 		ydim = ay*Ly;
@@ -271,8 +264,8 @@ namespace params {
 		
 		// Print key parameters to log file
 		TITLE("MATERIAL CONSTANTS");
-		INFO_OUT("Damping constant:",lambda);
-		INFO_OUT("Magnetic Moment:", mu_s << " (mu_b)");
+		// INFO_OUT("Damping constant:",lambda);
+		// INFO_OUT("Magnetic Moment:", mu_s << " (mu_b)");
 		INFO_OUT("Uniaxial Anisotropy:", "[" << dxu << " , " << dyu << " , " << dzu << "] (J)");
 		INFO_OUT("Cubic Anisotropy:", dzc << "(J)");
 		INFO_OUT("Lattice Parameter, a:", a1 << " (m)");
@@ -288,9 +281,73 @@ namespace params {
 		INFO_OUT("Boundary Conditions:", "[" << xbound << " , " << ybound << " , " << zbound << "]");
 		INFO_OUT("Temperature method: ", temptype);
 		INFO_OUT("two temperature model start time: ", ttm_start);
-		
 
-		//Read Site positions ==============================================================================
+
+		//=======================================================================================================
+		//Read Magnetic Moments =================================================================================
+		//=======================================================================================================
+
+		mu_s.resize(Nq);
+		INVmu_s.resize(Nq);
+		std::string mutext;
+		for (int i = 0; i < Nq; i++){
+
+			// Read from config file
+			libconfig::Setting& setting = cfg.lookup("MaterialConsts");  
+			mu_s[i]   = setting["mu_s"][i];
+
+			// Print information to log file
+			mutext = "Magnetic Moment for site " + std::to_string(i) + ":";
+			INFO_OUT(mutext, mu_s[i] << " [mu_b]")
+			
+			// Convert to SI units
+			mu_s[i] *= mu_b;
+    		INVmu_s[i] = 1.0 / mu_s[i];
+		}
+
+
+		//=======================================================================================================
+		// Uniaxial Anisotropy ==================================================================================
+		//=======================================================================================================
+		cfgmissing("Uniaxial_Anisotropy.d_x");			
+		cfgmissing("Uniaxial_Anisotropy.d_y");			
+		cfgmissing("Uniaxial_Anisotropy.d_z");
+		dxu = cfg.lookup("Uniaxial_Anisotropy.d_x");
+		dyu = cfg.lookup("Uniaxial_Anisotropy.d_y");
+		dzu = cfg.lookup("Uniaxial_Anisotropy.d_z");			
+		dxup = 2 * ( dxu / mu_s[0] );
+		dyup = 2 * ( dyu / mu_s[0] );	
+		dzup = 2 * ( dzu / mu_s[0] );
+
+
+		//=======================================================================================================
+		//Read Damping Consts ===================================================================================
+		//=======================================================================================================
+
+		lambda.resize(Nq);
+		lambdaPrime.resize(Nq);
+		thermal_const.resize(Nq);
+		std::string lmtext;
+		for (int i = 0; i < Nq; i++){
+
+			// Read from config file
+			libconfig::Setting& setting = cfg.lookup("MaterialConsts");  
+			lambda[i] = setting["lambda"][i];
+
+			// Print information to log file
+			lmtext = "Damping Constant for site  " + std::to_string(i) + ":";
+			INFO_OUT(lmtext, lambda[i] << " [arb.]");
+
+			// Thermal parameters
+			thermal_const[i] = sqrt( (2 * lambda[i] * k_B)  / (mu_s[i] * dtau) );
+			lambdaPrime[i] = 1 / (1+(lambda[i]*lambda[i]));
+
+		}
+		
+		//=======================================================================================================
+		//Read Site positions ===================================================================================
+		//=======================================================================================================
+
 		sites.resize(Nq);
 		for (int s = 0; s < Nq; s++){
 			sites[s].resize(3);
@@ -304,9 +361,11 @@ namespace params {
 			sites[s][1] = setting[str.c_str()][1];
 			sites[s][2] = setting[str.c_str()][2];
 		}
+		
+		//=======================================================================================================
+		// Read integer site position ===========================================================================
 		//=======================================================================================================
 
-		// Read integer site position ===========================================================================
 		Isites.resize(Nq);
 		for (int s = 0; s < Nq; s++){
 			Isites[s].resize(3);
@@ -315,7 +374,8 @@ namespace params {
 			sstr << "ISite" << s;
 			std::string str = sstr.str();
 
-			libconfig::Setting& setting = cfg.lookup("IntegerSites");  
+			libconfig::Setting& setting = cfg.lookup("IntegerSites"); 
+			cfgmissing("IntegerSites." + str);
 			Isites[s][0] = setting[str.c_str()][0];
 			Isites[s][1] = setting[str.c_str()][1];
 			Isites[s][2] = setting[str.c_str()][2];
@@ -326,23 +386,35 @@ namespace params {
 		Idz = cfg.lookup("IntegerSites.Idz");
 
 		//=======================================================================================================
+		// Read Lattice Vectors and constants ===================================================================
+		//=======================================================================================================
 
-		// Read Lattice Vectors =================================================================================
+		// lattice constants
+		cfgmissing("LatticeVectors.a");
+		cfgmissing("LatticeVectors.b");
+		cfgmissing("LatticeVectors.c");	
+		a1 = cfg.lookup("LatticeVectors.a");
+		b1 = cfg.lookup("LatticeVectors.b");
+		c1 = cfg.lookup("LatticeVectors.c");
+
 		for (int v = 0; v < 3; v++){
 
 			std::stringstream sstr1;
 			sstr1 << "LatVec" << v;
 			std::string str1 = sstr1.str();
 
-			libconfig::Setting& setting = cfg.lookup("LatticeVectors");   
+			libconfig::Setting& setting = cfg.lookup("LatticeVectors");  
+			cfgmissing("LatticeVectors." + str1);
 			Plat[v][0] = setting[str1.c_str()][0];
 			Plat[v][1] = setting[str1.c_str()][1];
 			Plat[v][2] = setting[str1.c_str()][2];
 			INFO_OUT("Lattice Vectors:", std::fixed << std::setprecision(5) << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2]);
 		}
+
+		//=======================================================================================================
+		// Read Initial Magnetisation Vectors ===================================================================
 		//=======================================================================================================
 
-		// Read Initial Magnetisation Vectors ===================================================================
 		initm.resize(Nq);
 		
 		for (int v = 0; v < Nq; v++){
@@ -358,8 +430,27 @@ namespace params {
 			initm[v][2] = setting[str2.c_str()][2];
 			INFO_OUT("Initial Magnestaion Vectors:", std::fixed << std::setprecision(5) << initm[v][0] << " " << initm[v][1] << " " << initm[v][2]);
 		}
-		//=======================================================================================================
 
+		//=======================================================================================================
+		// Read Sublat vector ===================================================================================
+		//=======================================================================================================
+		sublat_sites.resize(Nq);
+		NmomentsSubLat.resize(Nsublat);
+
+		for (int v = 0; v < Nq; v++){
+			libconfig::Setting& setting = cfg.lookup("Geom");   
+			sublat_sites[v] = setting["sublat_sites"][v];
+
+			//count number of sites within each sublattice
+			NmomentsSubLat[sublat_sites[v]] += 1*Lx*Ly*Lz;
+
+		}
+
+		std::cout << NmomentsSubLat[0] << " " << NmomentsSubLat[1] << " " << NmomentsSubLat[2] << std::endl;
+
+		//=======================================================================================================
+		// Rest of parameters ===================================================================================
+		//=======================================================================================================
 
 		cfgmissing("Util.OutputToTerminal");		
 		cfgmissing("Spinwaves.StartTime");			
@@ -401,7 +492,5 @@ namespace params {
  
 
 	}
-	//========================================================================================================================================//
-
 
 }

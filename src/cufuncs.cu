@@ -1,6 +1,7 @@
 // cpp header files
 #include <cuda.h>
 #include <sstream>
+#include <iomanip>
 #include <curand.h>
 #include <iostream>
 #include <cuda_runtime.h>
@@ -77,18 +78,19 @@ namespace cufuncs {
 		if (type == "ttm"){
 			if (time < ttm_start){
 
-				cuthermal::ttf<<<bpg,threadsperblock>>>(time, params::Nspins, cuthermal::dtfa, cuthermal::Te, cuthermal::dzlayer);
+				cuthermal::ttf<<<bpg,threadsperblock>>>(time, params::Nspins, cuthermal::dconst, cuthermal::dtfa, cuthermal::Te, cuthermal::dzlayer);
 			}
 			else {
+				// std::cout << std::scientific << time << " " << ttm_start << std::endl;
 				cuthermal::ttm<<<bpg,threadsperblock>>>(time - ttm_start, params::Lz, cuthermal::Te, cuthermal::Tp, cuthermal::P_it);
-				cuthermal::ttf<<<bpg,threadsperblock>>>(time - ttm_start, params::Nspins, cuthermal::dtfa, cuthermal::Te, cuthermal::dzlayer);
+				cuthermal::ttf<<<bpg,threadsperblock>>>(time - ttm_start, params::Nspins, cuthermal::dconst, cuthermal::dtfa, cuthermal::Te, cuthermal::dzlayer);
 			}
 		}
 		else if (type == "constant"){
-			cuthermal::ttf<<<bpg,threadsperblock>>>(time - ttm_start, params::Nspins, cuthermal::dtfa, cuthermal::Te, cuthermal::dzlayer);
+			cuthermal::ttf<<<bpg,threadsperblock>>>(time - ttm_start, params::Nspins, cuthermal::dconst, cuthermal::dtfa, cuthermal::Te, cuthermal::dzlayer);
 		}
 		else if (type == "uniform_gradient"){
-			cuthermal::ttfg<<<bpg,threadsperblock>>>(time - ttm_start, params::Nspins, cuthermal::dtfa, cuthermal::Te, cuthermal::dxlayer, params::temp_gradient);
+			cuthermal::ttfg<<<bpg,threadsperblock>>>(time - ttm_start, params::Nspins, cuthermal::dconst, cuthermal::dtfa, cuthermal::Te, cuthermal::dxlayer, params::temp_gradient);
 		}
 	}
 	
@@ -97,8 +99,8 @@ namespace cufuncs {
 	}
 
 	void integration(double time){
-		cuheun::cuHeun1<<<bpg,threadsperblock>>>(cuglob::djind, neigh::nsimspin, time, cuglob::dsimspin, cuthermal::dtfa, cuthermal::gvalsx, cuthermal::gvalsy, cuthermal::gvalsz, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx_new, cuglob::dJy_new, cuglob::dJz_new, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx,  cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
-		cuheun::cuHeun2<<<bpg,threadsperblock>>>(cuglob::djind, neigh::nsimspin, time, cuglob::dsimspin, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx_new, cuglob::dJy_new, cuglob::dJz_new, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx, cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
+		cuheun::cuHeun1<<<bpg,threadsperblock>>>(cuglob::djind, neigh::nsimspin, time, cuglob::dsimspin, cuglob::c_lambda, cuglob::c_lambdap, cuthermal::dtfa, cuthermal::gvalsx, cuthermal::gvalsy, cuthermal::gvalsz, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx_new, cuglob::dJy_new, cuglob::dJz_new, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx,  cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
+		cuheun::cuHeun2<<<bpg,threadsperblock>>>(cuglob::djind, neigh::nsimspin, time, cuglob::dsimspin, cuglob::c_lambda, cuglob::c_lambdap, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx_new, cuglob::dJy_new, cuglob::dJz_new, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx, cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
 	}
 
 }

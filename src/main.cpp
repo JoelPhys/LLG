@@ -55,7 +55,7 @@ int main(int argc, char* argv[]){
 	defects::init();
 	neigh::ReadFile();
 	neigh::InteractionMatrix();
-	heun::init();
+	// heun::init();
 	util::init();
 
 	if (params::simtype == "spinwaves"){
@@ -65,9 +65,9 @@ int main(int argc, char* argv[]){
 
 	// ======= Temperature ==================================================================================== //
 	const double Temp = (atof(argv[2]));
-	const double thermal_fluct = params::thermal_const * sqrt(Temp);
+	// const double thermal_fluct = params::thermal_const * sqrt(Temp);
 	INFO_OUT("Temperature: ", Temp << "(K)");
-	INFO_OUT("Thermal Fluct: ", thermal_fluct);
+	// INFO_OUT("Thermal Fluct: ", thermal_fluct);
 	// ========================================================================================================= //
 
 	// ======= Initiliase Spin Position ======================================================================== //
@@ -89,6 +89,7 @@ int main(int argc, char* argv[]){
 	cuglob::copy_temp_to_device(Temp);
 	cuglob::copy_spins_to_device();
 	cuglob::copy_field_to_device();
+	cuglob::copy_damp_to_device();
 	if (params::simtype == "DW"){
 		cuglob::copy_dw_to_device();
 	}
@@ -106,6 +107,7 @@ int main(int argc, char* argv[]){
 	c = params::dt_spinwaves / params::dt;
 
 	util::InitMagFile(Temp);
+	util::InitFldFile(Temp);
 
 	if (params::simtype == "DW"){		
 	util::InitDWFile(Temp);
@@ -127,6 +129,7 @@ int main(int argc, char* argv[]){
 		if (i % params::outputstep == 0){
 			#ifdef CUDA
 			cuglob::copy_spins_to_host();
+			cuglob::copy_field_to_host();
 			#endif	
 			util::ResetMag();
 			util::SortSublat();
@@ -136,6 +139,7 @@ int main(int argc, char* argv[]){
 				util::OutputMagToTerm(i);
 			}
 			util::OutputMagToFile(i);
+			util::OutputFldToFile(i);
 			
 			if (params::simtype == "DW"){		
 				util::OutputDWtoFile(i);
@@ -156,9 +160,12 @@ int main(int argc, char* argv[]){
 			cufuncs::cuFields(fields::type, static_cast<double>(i)  * params::dt, fields::start_time, fields::end_time, fields::height);
 			cuthermal::gen_thermal_noise();
 			cufuncs::integration(static_cast<double>(i));
+			// cufields::testing(i);
 		#else	
-			heun::integration(thermal_fluct);
+			// heun::integration(thermal_fluct);
 		#endif
+
+
 		
 	}
 	// ==================================================================================================== //

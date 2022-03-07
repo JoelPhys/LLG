@@ -40,26 +40,26 @@ namespace spins {
 
 
 		int count1d = 0;
-        if (params::afmflag == "test_Mn2Au"){
+        if (params::afmflag == "test"){
 
-            // //Normal Distribution for Stochastic noise
-            // std::normal_distribution<double> distribution(0.0,1.0);
-            // std::random_device device;
-            // std::mt19937 generator(device());
+            //Normal Distribution for Stochastic noise
+            std::normal_distribution<double> distribution(0.0,1.0);
+            std::random_device device;
+            std::mt19937 generator(device());
     
-            // for (int i = 0; i < params::Nspins; i++){
-            //     double v1=0,v2=0,s=2.0,ss=0.0;
-            //     while(s>1.0)
-            //     {
-            //         v1=2.0*distribution(generator)-1.0;
-            //         v2=2.0*distribution(generator)-1.0;
-            //         s=v1*v1+v2*v2;
-            //     }
-            //     ss=sqrt(1.0-s);
-            //     sx1d(i)=2.0*v1*ss;
-            //     sy1d(i)=2.0*v2*ss;
-            //     sz1d(i)=1.0-2.0*s;
-            // }
+            for (int i = 0; i < params::Nspins; i++){
+                double v1=0,v2=0,s=2.0,ss=0.0;
+                while(s>1.0)
+                {
+                    v1=2.0*distribution(generator)-1.0;
+                    v2=2.0*distribution(generator)-1.0;
+                    s=v1*v1+v2*v2;
+                }
+                ss=sqrt(1.0-s);
+                sx1d(i)=2.0*v1*ss;
+                sy1d(i)=2.0*v2*ss;
+                sz1d(i)=1.0-2.0*s;
+            }
         }
 		else if (params::afmflag != "NiO"){
             for (int x = 0; x < params::Lx; x++){
@@ -83,9 +83,9 @@ namespace spins {
                             //    sz1d(geom::LatCount(x,y,z,q)) = 0.5;                        
                             //}
 
-                             sx1d(count1d + q) = params::initm[q][0];
-                             sy1d(count1d + q) = params::initm[q][1];
-                             sz1d(count1d + q) = params::initm[q][2];
+                            sx1d(count1d + q) = params::initm[q][0];
+                            sy1d(count1d + q) = params::initm[q][1];
+                            sz1d(count1d + q) = params::initm[q][2];
 
                         }	
                         count1d += params::Nq; 

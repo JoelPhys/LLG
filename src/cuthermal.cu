@@ -47,7 +47,11 @@ namespace cuthermal {
     __constant__ double c_Tinit;
     __constant__ double c_oneOvrdzdz;
     __constant__ double c_oneOvr2dz;
-    __constant__ double c_thermal_const;
+    // __constant__ double c_thermal_const;
+    __constant__ int c_Nq;
+
+    // Thermal Constant
+	double *dconst;
 
     // thermal gradient constants
     __constant__ double c_grad;
@@ -64,14 +68,14 @@ namespace cuthermal {
     void init_cuthermal(double equilibrium_temp){
 
         //two temperature model variables
-        gamma_e=125.0;                //gamma_e defines the electron specific heat through, C_e = gamma_e * T_e. [J/m^3/K^2]
+        gamma_e=1e3;                //gamma_e defines the electron specific heat through, C_e = gamma_e * T_e. [J/m^3/K^2]
         Cp=3e6;                       //Specific heat of phonons. [J/m^3/K]
         kappa_0=11.0;                 //kappa_0 defines the thermal heat conductivity (kappa) through, kappa = kappa_0 * T_e/T_p [J/m/K/s]
         delta=20.0e-9;                //Penetration depth of laser. [m]
         Gep=10e17;                    //Electron-phonon coupling [ J/m^3/s/K]
-        P_0=2.0e21;                   //Pump fluence prefactor, P_0. P(z,t)=P_0*exp(-((t-t0)/tau)**2)*exp(-z/delta) [ J/m^3/s]
-        t0=100e-15;                   //Pump temporal offset [s]
-        tau=200e-15;                   //Pump temporal full width half max [s]
+        P_0=2.5e21;                   //Pump fluence prefactor, P_0. P(z,t)=P_0*exp(-((t-t0)/tau)**2)*exp(-z/delta) [ J/m^3/s]
+        t0=5000e-15;                   //Pump temporal offset [s]
+        tau=4500e-16;                   //Pump temporal full width half max [s]
         Nz=100;                       //number of unit cells in z-direction (assumed uniform heating perpendicular [unit cells in z]
         dz=0.3e-9;                    //lattice constant (or difference between planes) [m]
         dt=1e-16;                     //Timestep [s]
@@ -91,7 +95,7 @@ namespace cuthermal {
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nz), &Nz, sizeof(int)));                                     
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_dz), &dz, sizeof(double)));                                  
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_dt), &params::dt, sizeof(double)));                          
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_thermal_const), &params::thermal_const, sizeof(double)));
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nq), &params::Nq, sizeof(int)));
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_Tinit), &Tinit, sizeof(double)));
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_oneOvrdzdz), &oneOvrdzdz, sizeof(double)));
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_oneOvr2dz), &oneOvr2dz, sizeof(double)));
@@ -159,23 +163,26 @@ namespace cuthermal {
         }
     }
 
-    __global__ void ttf(double time, int N, double *dtfa, double *Te, int *dzlayer)
+    __global__ void ttf(double time, int N, double *dconst, double *dtfa, double *Te, int *dzlayer)
     {
 
         const int a = blockDim.x * blockIdx.x + threadIdx.x; 
+        int siteincell = a % c_Nq;
 
         if (a < N){
-            dtfa[a] = c_thermal_const * sqrt(Te[dzlayer[a]]);
+            dtfa[a] = dconst[siteincell] * sqrt(Te[dzlayer[a]]);
         }
     }
 
-    __global__ void ttfg(double time, int N, double *dtfa, double *Te, int *dlayer,  double grad)
+    __global__ void ttfg(double time, int N, double *dconst, double *dtfa, double *Te, int *dlayer,  double grad)
     {
 
         const int a = blockDim.x * blockIdx.x + threadIdx.x; 
+        int siteincell = a % c_Nq;
 
         if (a < N){
-            dtfa[a] = c_thermal_const * sqrt(dlayer[a] * grad);
+
+            dtfa[a] = dconst[siteincell] * sqrt(dlayer[a] * grad);
         }
     }
 
@@ -183,22 +190,10 @@ namespace cuthermal {
     void testing(int i){
 
 		Array<double> testingx;
-		Array<double> testingy, testingz;
-		testingx.resize(params::Nspins);
-		testingy.resize(params::Lx);
-		// testingz.resize(params::Nspins);
-
-		CUDA_CALL(cudaMemcpy(testingx.ptr(), dtfa, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
-		// CUDA_CALL(cudaMemcpy(testingy.ptr(), Te, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
-		// CUDA_CALL(cudaMemcpy(testingz.ptr(), Hapz, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
-
+		testingx.resize(params::Lz);
+		CUDA_CALL(cudaMemcpy(testingx.ptr(), Te, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 	    std::cout << i << " ";
-	    for (int a = 0; a < params::Lx; a++){
-		    std::cout << std::scientific << a * params::a1 << " ";
-            std::cout << testingx(geom::LatCount(a,2,2,0)) << std::endl;	
-            // std::cout << testingy(a) << std::endl;	
-	    }
-	    std::cout << std::endl;
+        std::cout << testingx(0) << std::endl;	
 	}
 
 

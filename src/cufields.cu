@@ -102,7 +102,7 @@ namespace cufields {
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
 		double gauss;
-		gauss = height * exp(-1 * (((time - centre_pos) * (time - centre_pos))/(2 * std_dev * std_dev)));
+		gauss = height * exp(-1.0 * (((time - centre_pos) * (time - centre_pos))/(2.0 * std_dev * std_dev)));
 
 		if (i < N){
 
@@ -120,7 +120,7 @@ namespace cufields {
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
 		double gauss;
-		gauss = height * exp(-1 * (((time - centre_pos) * (time - centre_pos))/(2 * std_dev * std_dev)));
+		gauss = height * exp(-1.0 * (((time - centre_pos) * (time - centre_pos))/(2.0 * std_dev * std_dev)));
 
 		if (i < N){
 			if (( i % 4 == 0) || (i % 4 == 2)) {
@@ -159,9 +159,10 @@ namespace cufields {
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
 		double gauss;
-		gauss = height * exp(-1 * (((time - centre_pos) * (time - centre_pos))/(2 * std_dev * std_dev))) * sin(2*M_PI*freq*(time - centre_pos));
+		gauss = height * exp(-1.0 * (((time - centre_pos) * (time - centre_pos))/(2.0 * std_dev * std_dev))) * sin(2.0*M_PI*freq*(time - centre_pos));
 
 		if (i < N){
+ 
 			if (( i % 4 == 0) || (i % 4 == 2)) {
 				Hapx[i] = 0.0;
 				Hapy[i] = 0.0;
@@ -182,16 +183,16 @@ namespace cufields {
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
 		double gauss;
-		gauss = height * sin(2*M_PI*freq*time);
+		gauss = height * sin(2.0*M_PI*freq*time);
 
 		if (i < N){
 			if (( i % 4 == 0) || (i % 4 == 2)) {
-				Hapx[i] = 0.0;
+				Hapx[i] = 1.0;
 				Hapy[i] = gauss;
 				Hapz[i] = 0.0;  
 			}
 			else if (( i % 4 == 1) || (i % 4 == 3)) {
-				Hapx[i] = 0.0;
+				Hapx[i] = -1.0;
 				Hapy[i] = -1.0 * gauss;
 				Hapz[i] = 0.0;  
 			}
@@ -208,7 +209,7 @@ namespace cufields {
 		// testingy.resize(params::Nspins);
 		// testingz.resize(params::Nspins);
 
-		// CUDA_CALL(cudaMemcpy(testingx.ptr(), cuglob::Hapz, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(testingx.ptr(), cuglob::Hapx, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
 		// CUDA_CALL(cudaMemcpy(testingy.ptr(), Hapy, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 		// CUDA_CALL(cudaMemcpy(testingz.ptr(), Hapz, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 

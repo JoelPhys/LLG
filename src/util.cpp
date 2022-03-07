@@ -11,6 +11,7 @@
 #include "../inc/geom.h"
 #include "../inc/spins.h"
 #include "../inc/array.h"
+#include "../inc/fields.h"
 #include "../inc/config.h"
 #include "../inc/defines.h"
 #include "../inc/array2d.h"
@@ -35,11 +36,13 @@ namespace util {
 	int lc;
 
 	int isum = 0;
+	int sublatindex;
 
 	clock_t begin, end;
 
 	std::ofstream magfile;
 	std::ofstream dwfile;
+	std::ofstream fldfile;
 
 	void init(){
 		Mt.resize(3);
@@ -63,8 +66,14 @@ namespace util {
 
 	void InitDWFile(double temp){
 		std::stringstream sstr;
-		sstr << params::filepath << "dw_T_" << std::setw(4) << std::setfill('0') << temp << ".dat";
+		sstr << params::filepath << "dw_T_" << std::setw(4) << std::setfill('0') << temp << ".out";
 		dwfile.open(sstr.str());
+	}
+
+	void InitFldFile(double temp){
+		std::stringstream sstr;
+		sstr << params::filepath << "field_" << std::setw(4) << std::setfill('0') << temp << ".out";
+		fldfile.open(sstr.str());
 	}
 
 	void ResetMag(){
@@ -84,165 +93,178 @@ namespace util {
 
 	//sort sites into sublattice
 	void SortSublat(){
+		
+		for (int a = 0; a < params::Nspins; a++){
+			
+			// Total Magnetisation
+			Mt(0) += spins::sx1d(a);			
+			Mt(1) += spins::sy1d(a);
+			Mt(2) += spins::sz1d(a);
 
+			sublatindex = params::sublat_sites[a % params::Nq];
+			M(sublatindex,0) += spins::sx1d(a);
+			M(sublatindex,1) += spins::sy1d(a);
+			M(sublatindex,2) += spins::sz1d(a);
 
-		if (params::afmflag == "SC"){
-			for (int a = 0; a < params::Nspins; a++){   
-
-				// Total Magnetisation
-				Mt(0) += spins::sx1d(a);			
-				Mt(1) += spins::sy1d(a);
-				Mt(2) += spins::sz1d(a);
-
-				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 3) || (modfunc(params::Nq,a) == 5) || (modfunc(params::Nq,a) == 6)) {
-					M(0,0) += spins::sx1d(a);
-					M(0,1) += spins::sy1d(a);
-					M(0,2) += spins::sz1d(a); 
-				}
-				else {
-					M(1,0) += spins::sx1d(a);
-					M(1,1) += spins::sy1d(a);
-					M(1,2) += spins::sz1d(a); 
-				}
-			}
 		}
-		else if (params::afmflag == "N"){
-			for (int a = 0; a < params::Nspins; a++){   
-				M(0,0) += spins::sx1d(a);
-				M(0,1) += spins::sy1d(a);
-				M(0,2) += spins::sz1d(a); 
-			}
-		}
-		else if (params::afmflag == "CuMnAs"){
-			for (int a = 0; a < params::Nspins; a++){   
 
-				// Total Magnetisation
-				Mt(0) += spins::sx1d(a);			
-				Mt(1) += spins::sy1d(a);
-				Mt(2) += spins::sz1d(a);
+		// if (params::afmflag == "SC"){
+		// 	for (int a = 0; a < params::Nspins; a++){   
 
-				if (modfunc(params::Nq,a) == 0){
-					M(0,0) += spins::sx1d(a);
-					M(0,1) += spins::sy1d(a);
-					M(0,2) += spins::sz1d(a); 
-				}
-				else if (modfunc(params::Nq,a) == 1) {
-					M(1,0) += spins::sx1d(a);
-					M(1,1) += spins::sy1d(a);
-					M(1,2) += spins::sz1d(a); 
-				}
-				else {
-					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
-					exit(0);
-				}
-			}
-		}
-		else if (params::afmflag == "Mn2Au"){
-			for (int a = 0; a < params::Nspins; a++){   
+		// 		// Total Magnetisation
+		// 		Mt(0) += spins::sx1d(a);			
+		// 		Mt(1) += spins::sy1d(a);
+		// 		Mt(2) += spins::sz1d(a);
 
-				// Total Magnetisation
-				Mt(0) += spins::sx1d(a);			
-				Mt(1) += spins::sy1d(a);
-				Mt(2) += spins::sz1d(a);
+		// 		if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 3) || (modfunc(params::Nq,a) == 5) || (modfunc(params::Nq,a) == 6)) {
+		// 			M(0,0) += spins::sx1d(a);
+		// 			M(0,1) += spins::sy1d(a);
+		// 			M(0,2) += spins::sz1d(a); 
+		// 		}
+		// 		else {
+		// 			M(1,0) += spins::sx1d(a);
+		// 			M(1,1) += spins::sy1d(a);
+		// 			M(1,2) += spins::sz1d(a); 
+		// 		}
+		// 	}
+		// }
+		// else if (params::afmflag == "N"){
+		// 	for (int a = 0; a < params::Nspins; a++){   
+		// 		M(0,0) += spins::sx1d(a);
+		// 		M(0,1) += spins::sy1d(a);
+		// 		M(0,2) += spins::sz1d(a); 
+		// 	}
+		// }
+		// else if (params::afmflag == "CuMnAs"){
+		// 	for (int a = 0; a < params::Nspins; a++){   
 
-				if (modfunc(params::Nq,a) == 0){
-					M(0,0) += spins::sx1d(a);
-					M(0,1) += spins::sy1d(a);
-					M(0,2) += spins::sz1d(a); 
-				}
-				else if (modfunc(params::Nq,a) == 1) {
-					M(1,0) += spins::sx1d(a);
-					M(1,1) += spins::sy1d(a);
-					M(1,2) += spins::sz1d(a); 
-				}
-				else if (modfunc(params::Nq,a) == 2) {
-					M(0,0) += spins::sx1d(a);
-					M(0,1) += spins::sy1d(a);
-					M(0,2) += spins::sz1d(a);
-				}
-				else if (modfunc(params::Nq,a) == 3) {
-					M(1,0) += spins::sx1d(a);
-					M(1,1) += spins::sy1d(a);
-					M(1,2) += spins::sz1d(a); 
-				}
-				else {
-					std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
-					exit(0);
-				}
-			}
-		}
-		else if (params::afmflag == "NiO"){
-			for (int a = 0; a < params::Nspins; a++){   
+		// 		// Total Magnetisation
+		// 		Mt(0) += spins::sx1d(a);			
+		// 		Mt(1) += spins::sy1d(a);
+		// 		Mt(2) += spins::sz1d(a);
 
-				// Total Magnetisation
-				Mt(0) += spins::sx1d(a);			
-				Mt(1) += spins::sy1d(a);
-				Mt(2) += spins::sz1d(a);
+		// 		if (modfunc(params::Nq,a) == 0){
+		// 			M(0,0) += spins::sx1d(a);
+		// 			M(0,1) += spins::sy1d(a);
+		// 			M(0,2) += spins::sz1d(a); 
+		// 		}
+		// 		else if (modfunc(params::Nq,a) == 1) {
+		// 			M(1,0) += spins::sx1d(a);
+		// 			M(1,1) += spins::sy1d(a);
+		// 			M(1,2) += spins::sz1d(a); 
+		// 		}
+		// 		else {
+		// 			std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+		// 			exit(0);
+		// 		}
+		// 	}
+		// }
+		// else if (params::afmflag == "Mn2Au"){
+		// 	for (int a = 0; a < params::Nspins; a++){   
 
-				if (a / params::Nq % 2 == 0){
-					if (modfunc(params::Nq,a) == 0){
-						M(1,0) += spins::sx1d(a);
-						M(1,1) += spins::sy1d(a);
-						M(1,2) += spins::sz1d(a); 
-					}
-					else if (modfunc(params::Nq,a) == 1) {
-						M(1,0) += spins::sx1d(a);
-						M(1,1) += spins::sy1d(a);
-						M(1,2) += spins::sz1d(a); 
-					}
-					else if (modfunc(params::Nq,a) == 2) {
-						M(0,0) += spins::sx1d(a);
-						M(0,1) += spins::sy1d(a);
-						M(0,2) += spins::sz1d(a);
-					}
-					else if (modfunc(params::Nq,a) == 3) {
-						M(1,0) += spins::sx1d(a);
-						M(1,1) += spins::sy1d(a);
-						M(1,2) += spins::sz1d(a); 
-					}
-					else {
-						std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
-						exit(0);
-					}
-				}
-				else if (a / params::Nq % 2 == 1) {
-					if (modfunc(params::Nq,a) == 0){
-						M(0,0) += spins::sx1d(a);
-						M(0,1) += spins::sy1d(a);
-						M(0,2) += spins::sz1d(a); 
-					}
-					else if (modfunc(params::Nq,a) == 1) {
-						M(0,0) += spins::sx1d(a);
-						M(0,1) += spins::sy1d(a);
-						M(0,2) += spins::sz1d(a); 
-					}
-					else if (modfunc(params::Nq,a) == 2) {
-						M(1,0) += spins::sx1d(a);
-						M(1,1) += spins::sy1d(a);
-						M(1,2) += spins::sz1d(a);
-					}
-					else if (modfunc(params::Nq,a) == 3) {
-						M(0,0) += spins::sx1d(a);
-						M(0,1) += spins::sy1d(a);
-						M(0,2) += spins::sz1d(a); 
-					}
-					else {
-						std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
-					}	
-				}
-			}
-		}
-		else {
-			std::cout << "ERROR: Unassigned afmflag" << std::endl;
-			exit(0);
-		}
+		// 		// Total Magnetisation
+		// 		Mt(0) += spins::sx1d(a);			
+		// 		Mt(1) += spins::sy1d(a);
+		// 		Mt(2) += spins::sz1d(a);
+
+		// 		if (modfunc(params::Nq,a) == 0){
+		// 			M(0,0) += spins::sx1d(a);
+		// 			M(0,1) += spins::sy1d(a);
+		// 			M(0,2) += spins::sz1d(a); 
+		// 		}
+		// 		else if (modfunc(params::Nq,a) == 1) {
+		// 			M(1,0) += spins::sx1d(a);
+		// 			M(1,1) += spins::sy1d(a);
+		// 			M(1,2) += spins::sz1d(a); 
+		// 		}
+		// 		else if (modfunc(params::Nq,a) == 2) {
+		// 			M(0,0) += spins::sx1d(a);
+		// 			M(0,1) += spins::sy1d(a);
+		// 			M(0,2) += spins::sz1d(a);
+		// 		}
+		// 		else if (modfunc(params::Nq,a) == 3) {
+		// 			M(1,0) += spins::sx1d(a);
+		// 			M(1,1) += spins::sy1d(a);
+		// 			M(1,2) += spins::sz1d(a); 
+		// 		}
+		// 		else {
+		// 			std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+		// 			exit(0);
+		// 		}
+		// 	}
+		// }
+		// else if (params::afmflag == "NiO"){
+		// 	for (int a = 0; a < params::Nspins; a++){   
+
+		// 		// Total Magnetisation
+		// 		Mt(0) += spins::sx1d(a);			
+		// 		Mt(1) += spins::sy1d(a);
+		// 		Mt(2) += spins::sz1d(a);
+
+		// 		if (a / params::Nq % 2 == 0){
+		// 			if (modfunc(params::Nq,a) == 0){
+		// 				M(1,0) += spins::sx1d(a);
+		// 				M(1,1) += spins::sy1d(a);
+		// 				M(1,2) += spins::sz1d(a); 
+		// 			}
+		// 			else if (modfunc(params::Nq,a) == 1) {
+		// 				M(1,0) += spins::sx1d(a);
+		// 				M(1,1) += spins::sy1d(a);
+		// 				M(1,2) += spins::sz1d(a); 
+		// 			}
+		// 			else if (modfunc(params::Nq,a) == 2) {
+		// 				M(0,0) += spins::sx1d(a);
+		// 				M(0,1) += spins::sy1d(a);
+		// 				M(0,2) += spins::sz1d(a);
+		// 			}
+		// 			else if (modfunc(params::Nq,a) == 3) {
+		// 				M(1,0) += spins::sx1d(a);
+		// 				M(1,1) += spins::sy1d(a);
+		// 				M(1,2) += spins::sz1d(a); 
+		// 			}
+		// 			else {
+		// 				std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+		// 				exit(0);
+		// 			}
+		// 		}
+		// 		else if (a / params::Nq % 2 == 1) {
+		// 			if (modfunc(params::Nq,a) == 0){
+		// 				M(0,0) += spins::sx1d(a);
+		// 				M(0,1) += spins::sy1d(a);
+		// 				M(0,2) += spins::sz1d(a); 
+		// 			}
+		// 			else if (modfunc(params::Nq,a) == 1) {
+		// 				M(0,0) += spins::sx1d(a);
+		// 				M(0,1) += spins::sy1d(a);
+		// 				M(0,2) += spins::sz1d(a); 
+		// 			}
+		// 			else if (modfunc(params::Nq,a) == 2) {
+		// 				M(1,0) += spins::sx1d(a);
+		// 				M(1,1) += spins::sy1d(a);
+		// 				M(1,2) += spins::sz1d(a);
+		// 			}
+		// 			else if (modfunc(params::Nq,a) == 3) {
+		// 				M(0,0) += spins::sx1d(a);
+		// 				M(0,1) += spins::sy1d(a);
+		// 				M(0,2) += spins::sz1d(a); 
+		// 			}
+		// 			else {
+		// 				std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+		// 			}	
+		// 		}
+		// 	}
+		// }
+		// else {
+		// 	std::cout << "ERROR: Unassigned afmflag" << std::endl;
+		// 	exit(0);
+		// }
 	}
 
 	void MagLength(){
 
 		for (int l = 0; l < params::Nsublat; l++){
 			Mmag(l) = sqrt(M(l,0) * M(l,0) + M(l,1) * M(l,1) + M(l,2) * M(l,2));
-			MdivMs(l) = Mmag(l) / (params::NmomentsSubLat);
+			MdivMs(l) = Mmag(l) / (params::NmomentsSubLat[l]);
 		}
 	}
 
@@ -250,8 +272,8 @@ namespace util {
 		if (i > (params::Nt / 10) - 1) {
 			for (int l = 0; l < params::Nsublat; l++){
 				for (int m = 0; m < 3; m++){
-					Msum(l,m) += M(l,m) / params::NmomentsSubLat;
-					MsumSQR(l,m) += (M(l,m) / params::NmomentsSubLat) * (M(l,m) / params::NmomentsSubLat);
+					Msum(l,m) += M(l,m) / params::NmomentsSubLat[l];
+					MsumSQR(l,m) += (M(l,m) / params::NmomentsSubLat[l]) * (M(l,m) / params::NmomentsSubLat[l]);
 				}
 				MdivMsSum[l] += MdivMs[l];
 			}
@@ -284,7 +306,7 @@ namespace util {
 		std::cout << std::scientific << i << " " << i * params::dt  <<  " | ";
 		for (int l = 0; l < params::Nsublat; l++){
 			for (int m = 0; m < 3; m++){
-				std::cout << std::fixed << std::setprecision(6) << M(l,m) / params::NmomentsSubLat << "\t"; 
+				std::cout << std::fixed << std::setprecision(6) << M(l,m) / params::NmomentsSubLat[l] << "\t"; 
 			}
 			std::cout << std::fixed << std::setprecision(6) << MdivMs(l) << "\t | \t";
 		}
@@ -308,7 +330,7 @@ namespace util {
 		//Output sublattice magnetisation
 		for (int l = 0; l < params::Nsublat; l++){
 			for (int m = 0; m < 3; m++){
-				magfile << M(l,m) / params::NmomentsSubLat << "\t"; 
+				magfile << M(l,m) / params::NmomentsSubLat[l] << "\t"; 
 			}
 			magfile << MdivMs(l) << "\t";
 		}
@@ -327,8 +349,11 @@ namespace util {
 
 	void CloseMagFile(){
 		magfile << std::flush;
+		fldfile << std::flush;
 		magfile.close();
+		fldfile.close();
 	}
+	
 
 	void OutputLatticetoTerm(){
 		for (int i = 0; i < params::Lx; i++){
@@ -366,6 +391,13 @@ namespace util {
 			dwfile << sumx(h) << " " << sumy(h) << " " << sumz(h) << " ";
 		}
 		dwfile << "\n";
+	}
+
+	void OutputFldToFile(int i){
+		fldfile << i << " ";
+		fldfile << fields::H_appx[0] << " ";
+		fldfile << fields::H_appy[0] << " ";
+		fldfile << fields::H_appz[0] << std::endl;
 	}
 
 	void startclock(){

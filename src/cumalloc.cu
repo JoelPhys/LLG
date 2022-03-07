@@ -30,6 +30,9 @@ namespace cuglob {
 	//testing for hedgehog
 	double *dsurfx, *dsurfy, *dsurfz;
 
+	// Damping
+	double *c_lambda, *c_lambdap;
+
 	//testing
 	double *dJx_new, *dJy_new, *dJz_new;
 	int *djind;
@@ -128,6 +131,13 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(cuthermal::gvalsy, 0.0, sizeof(float) * params::Nspins));
 		CUDA_CALL(cudaMemset(cuthermal::gvalsz, 0.0, sizeof(float) * params::Nspins));
 
+		//Damping
+		CUDA_CALL(cudaMalloc((void**)&c_lambda,  sizeof(double)*params::Nq));
+		CUDA_CALL(cudaMalloc((void**)&c_lambdap, sizeof(double)*params::Nq));
+		CUDA_CALL(cudaMemset(c_lambda,  0.0, sizeof(double) * params::Nq));
+		CUDA_CALL(cudaMemset(c_lambdap, 0.0, sizeof(double) * params::Nq));
+
+
 		// Jij matrices
 		CUDA_CALL(cudaMalloc((void**)&dJx, sizeof(double)*neigh::Jijx_prime.size()));
 		CUDA_CALL(cudaMalloc((void**)&dJy, sizeof(double)*neigh::Jijx_prime.size()));
@@ -167,14 +177,25 @@ namespace cuglob {
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::dylayer, sizeof(int)*geom::ylayer.size()));
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::dzlayer, sizeof(int)*geom::zlayer.size()));
 
+		CUDA_CALL(cudaMalloc((void**)&cuthermal::dconst, sizeof(double)* params::Nq));
+		CUDA_CALL(cudaMemset(cuthermal::dconst, 0.0, sizeof(double) * params::Nq)); 
+
 		CUDA_CALL(cudaMemset(cuthermal::Te, 0.0, sizeof(double)*params::Lz));
 		CUDA_CALL(cudaMemset(cuthermal::Tp, 0.0, sizeof(double)*params::Lz));
 		CUDA_CALL(cudaMemset(cuthermal::P_it, 0.0, sizeof(double)*params::Lz));
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::dtfa, sizeof(double)* params::Nspins));
 		CUDA_CALL(cudaMemset(cuthermal::dtfa, 0.0, sizeof(double) * params::Nspins)); 
 
+
+
 		// clear memory at exit of program
 		atexit(clear_memory);
+
+	}
+
+	void copy_damp_to_device(){
+		CUDA_CALL(cudaMemcpy(c_lambda,  &params::lambda[0], sizeof(double) * params::Nq, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(c_lambdap, &params::lambdaPrime[0], sizeof(double) * params::Nq, cudaMemcpyHostToDevice));
 
 	}
 
@@ -194,6 +215,9 @@ namespace cuglob {
 		CUDA_CALL(cudaMemcpy(cuthermal::dxlayer, geom::xlayer.ptr(), sizeof(int) * params::Nspins, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(cuthermal::dylayer, geom::ylayer.ptr(), sizeof(int) * params::Nspins, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(cuthermal::dzlayer, geom::zlayer.ptr(), sizeof(int) * params::Nspins, cudaMemcpyHostToDevice));
+
+		// Thermal constant
+		CUDA_CALL(cudaMemcpy(cuthermal::dconst, &params::thermal_const[0], sizeof(double) * params::Nq, cudaMemcpyHostToDevice));
 
 	}
 
@@ -242,6 +266,12 @@ namespace cuglob {
 		CUDA_CALL(cudaMemcpy(spins::sx1d.ptr(), dSx1d, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
 		CUDA_CALL(cudaMemcpy(spins::sy1d.ptr(), dSy1d, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
 		CUDA_CALL(cudaMemcpy(spins::sz1d.ptr(), dSz1d, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+	}
+
+	void copy_field_to_host(){
+		CUDA_CALL(cudaMemcpy(fields::H_appx.ptr(), Hapx, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(fields::H_appy.ptr(), Hapy, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(fields::H_appz.ptr(), Hapz, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
 	}
 
 

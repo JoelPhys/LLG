@@ -18,9 +18,11 @@ namespace util {
     void ResetMag();
     void MagLength();
     void OutputMagToFile(int i);
+    void OutputFldToFile(int i);
     void OutputDWtoFile(int i);
     void OutputMagToTerm(int i);
     void InitMagFile(double temp);
+    void InitFldFile(double temp);
     void InitDWFile(double temp);
     void CloseMagFile();
     void SumMag(int i);

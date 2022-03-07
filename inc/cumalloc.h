@@ -17,6 +17,9 @@ namespace cuglob {
 	//testing for hedgehog;
 	extern double *dsurfx, *dsurfy, *dsurfz;
 
+	// Damping
+	extern double *c_lambda, *c_lambdap;
+
 	//testing
 	extern double *dJx_new, *dJy_new, *dJz_new;
 	extern int *djind;
@@ -29,6 +32,8 @@ namespace cuglob {
 	void copy_field_to_device();
 	void copy_spins_to_device();
 	void copy_spins_to_host();
+	void copy_field_to_host();
+	void copy_damp_to_device();
 	void copy_jij_to_device();
 	void copy_dw_to_device();
 	void clear_memory();
