@@ -36,7 +36,7 @@ namespace params {
 	// Uniaxial Anisotropy
 	double dxu, dyu, dzu;
 	double dzup, dxup, dyup;
-	
+
 	//Cubic Anisotropy
 	double dzc, dzcp;
 
@@ -70,7 +70,7 @@ namespace params {
 	bool JijCutoff, Jijhalf;
 	double Jij_min;
 	int ibtoq;
-	
+
 	// Lattive Vectors
 	double Plat[3][3];
 	double PlatINV[3][3];
@@ -120,19 +120,19 @@ namespace params {
 
 		TITLE("COMPILATION INFO");
 		INFO_OUT("CPU Compiler: ", CPUCOMP);
-		#ifdef CUDA 
+#ifdef CUDA 
 		INFO_OUT("NVCC Compiler: ", GPUCOMP); 
-		#endif
+#endif
 		INFO_OUT("Compile Date and Time: ", __DATE__ << " " << __TIME__);
 		INFO_OUT("Compiled on Machine: ", HOSTNAME);
 		if(GITDIRTY!="0")
-        {
-            INFO_OUT("WARNING: Your git build is dirty. Recompile with Git SHA:", GIT_SHA1 << ", Dirty");
-        }
-        else
-        {
-            INFO_OUT("Git SHA: ", GIT_SHA1 << ", Clean");
-        }
+		{
+			INFO_OUT("WARNING: Your git build is dirty. Recompile with Git SHA:", GIT_SHA1 << ", Dirty");
+		}
+		else
+		{
+			INFO_OUT("Git SHA: ", GIT_SHA1 << ", Clean");
+		}
 
 		if(!cfg_filename)
 		{
@@ -167,7 +167,7 @@ namespace params {
 		time_t now = time(0);
 		std::string simtim = strtok(ctime(&now), "\n");
 		INFO_OUT("Time of Simulation:", simtim);
-		
+
 		// Simulation Type
 		cfgmissing("SimulationType");
 		simtype = cfg.lookup("SimulationType").c_str();
@@ -193,7 +193,7 @@ namespace params {
 		// Reduced Time variables
 		dtau = gamma * dt;
 		half_dtau = 0.5 * dtau;   
-		
+
 		// Gilbert Damping
 		cfgmissing("MaterialConsts.lambda");				
 		// lambda = cfg.lookup("MaterialConsts.lambda");
@@ -206,7 +206,7 @@ namespace params {
 		// Cubic Anisotropy
 		cfgmissing("Cubic_Anisotropy.d_c");				
 		dzc = cfg.lookup("Cubic_Anisotropy.d_c");			
-		// dzcp = 2 * ( dzc / mu_s );
+		//dzcp = 2 * ( dzc / mu_s[0] );
 
 		// system dimensions
 		cfgmissing("Geom.UnitCellsInX");				
@@ -261,7 +261,7 @@ namespace params {
 			temp_gradient = temp_gradient_km * a1;
 			INFO_OUT("Temperature Gradient:", temp_gradient << "[K / unit cell]");
 		}
-		
+
 		// Print key parameters to log file
 		TITLE("MATERIAL CONSTANTS");
 		// INFO_OUT("Damping constant:",lambda);
@@ -299,10 +299,10 @@ namespace params {
 			// Print information to log file
 			mutext = "Magnetic Moment for site " + std::to_string(i) + ":";
 			INFO_OUT(mutext, mu_s[i] << " [mu_b]")
-			
-			// Convert to SI units
-			mu_s[i] *= mu_b;
-    		INVmu_s[i] = 1.0 / mu_s[i];
+
+				// Convert to SI units
+				mu_s[i] *= mu_b;
+			INVmu_s[i] = 1.0 / mu_s[i];
 		}
 
 
@@ -343,7 +343,7 @@ namespace params {
 			lambdaPrime[i] = 1 / (1+(lambda[i]*lambda[i]));
 
 		}
-		
+
 		//=======================================================================================================
 		//Read Site positions ===================================================================================
 		//=======================================================================================================
@@ -361,7 +361,7 @@ namespace params {
 			sites[s][1] = setting[str.c_str()][1];
 			sites[s][2] = setting[str.c_str()][2];
 		}
-		
+
 		//=======================================================================================================
 		// Read integer site position ===========================================================================
 		//=======================================================================================================
@@ -416,9 +416,9 @@ namespace params {
 		//=======================================================================================================
 
 		initm.resize(Nq);
-		
+
 		for (int v = 0; v < Nq; v++){
-			
+
 			initm[v].resize(3);
 			std::stringstream sstr2;
 			sstr2 << "initm" << v;
@@ -448,6 +448,11 @@ namespace params {
 
 		std::cout << NmomentsSubLat[0] << " " << NmomentsSubLat[1] << " " << NmomentsSubLat[2] << std::endl;
 
+		//Cubic Anisotropy
+		cfgmissing("Cubic_Anisotropy.d_c");
+		dzc = cfg.lookup("Cubic_Anisotropy.d_c");
+		dzcp = 2 * ( dzc / mu_s[0] );
+
 		//=======================================================================================================
 		// Rest of parameters ===================================================================================
 		//=======================================================================================================
@@ -468,20 +473,20 @@ namespace params {
 		cfgmissing("Exchange.CutoffEnergy");    	
 		cfgmissing("Exchange.ibtoq");  	
 		OutputToTerminal = cfg.lookup("Util.OutputToTerminal");
-	 	start = cfg.lookup("Spinwaves.StartTime");
- 		afmflag = cfg.lookup("Util.afmflag").c_str();  
-	 	format = cfg.lookup("Exchange.Format").c_str();  
+		start = cfg.lookup("Spinwaves.StartTime");
+		afmflag = cfg.lookup("Util.afmflag").c_str();  
+		format = cfg.lookup("Exchange.Format").c_str();  
 		filepath = cfg.lookup("Util.filepath").c_str();      
 		filepath_sw = cfg.lookup("Spinwaves.filepath").c_str();   
 		dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");
 		sg_spinwaves = cfg.lookup("Spinwaves.smoothing");
-	 	Jij_filename = cfg.lookup("Exchange.InputFile").c_str();
-	 	Jij_units = cfg.lookup("Exchange.Units").c_str();   
+		Jij_filename = cfg.lookup("Exchange.InputFile").c_str();
+		Jij_units = cfg.lookup("Exchange.Units").c_str();   
 		JijCutoff = cfg.lookup("Exchange.Cutoff");    
 		changesign = cfg.lookup("Exchange.ChangeSign").c_str();  
 		Jijhalf = cfg.lookup("Exchange.Double_Jij");    
 		Jij_min = cfg.lookup("Exchange.CutoffEnergy");    
- 		ibtoq = cfg.lookup("Exchange.ibtoq");  			
+		ibtoq = cfg.lookup("Exchange.ibtoq");  			
 
 		TITLE("EXCHANGE FILE INFO");
 		INFO_OUT("Exchange filename: ", params::Jij_filename);        
@@ -489,7 +494,7 @@ namespace params {
 		INFO_OUT("Exhchange Energy Minimum:", Jij_min << " (" << Jij_units << ")");
 		if (Jijhalf == true) {INFO_OUT("Have Jij values been doubled", "Yes");}
 		else if (Jijhalf == false) {INFO_OUT("Have Jij values been doubled", "No");}
- 
+
 
 	}
 

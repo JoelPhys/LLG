@@ -165,13 +165,13 @@ namespace cufields {
  
 			if (( i % 4 == 0) || (i % 4 == 2)) {
 				Hapx[i] = 0.0;
-				Hapy[i] = 0.0;
-				Hapz[i] = gauss;  
+				Hapy[i] = gauss;
+				Hapz[i] = 0.0;  
 			}
 			else if (( i % 4 == 1) || (i % 4 == 3)) {
 				Hapx[i] = 0.0;
-				Hapy[i] = 0.0;
-				Hapz[i] = -1.0 * gauss;  
+				Hapy[i] = -1.0 * gauss;
+				Hapz[i] = 0.0;  
 			}
 		}
 
