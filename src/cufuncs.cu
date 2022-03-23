@@ -48,6 +48,9 @@ namespace cufuncs {
 		else if (type == "Square_Pulse"){
 			cufields::square_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
+		else if (type == "Square_Pulse_Staggered"){
+			cufields::square_pulse_staggered<<<bpg,threadsperblock>>>(params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
 		else if (type == "Gaussian_Pulse"){
 			cufields::gaussian_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
@@ -61,7 +64,7 @@ namespace cufuncs {
 			cufields::gaussian_pulse_staggered<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 		else if (type == "Multi_Cycle_Pulse_Staggered"){
-			cufields::multi_cycle_pulse_staggered<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			cufields::multi_cycle_pulse_staggered<<<bpg,threadsperblock>>>(params::Nspins, time, height, fields::std_dev, fields::centre_pos, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 		else if (type == "Sine_Pulse"){
 			cufields::sine_pulse<<<bpg,threadsperblock>>>(params::Nspins, time, fields::height, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);

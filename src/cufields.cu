@@ -76,15 +76,17 @@ namespace cufields {
 		if (i < N){
 
 			if ((time >= start_time) && (time < end_time)){
-					if (( i % 4 == 0) || (i % 4 == 2)) {
+					//if (( i % 4 == 0) || (i % 4 == 2)) {
+					if ((i % 8 == 0) || (i % 8 == 3) || (i % 8 == 5) || (i % 8 == 6)){
 						Hapx[i] = 0.0;
-						Hapy[i] = height;
-						Hapz[i] = 0.0;  
+						Hapy[i] = 0.0;
+						Hapz[i] = height;  
 					}
-					else if (( i % 4 == 1) || (i % 4 == 3)) {
+					//else if (( i % 4 == 1) || (i % 4 == 3)) {
+					else if ((i % 8 == 1) || (i % 8 == 2) || (i % 8 == 4) || (i % 8 == 7)){
 						Hapx[i] = 0.0;
-						Hapy[i] = -1.0 * height;
-						Hapz[i] = 0.0;  
+						Hapy[i] = 0.0;
+						Hapz[i] = -1.0 * height;  
 					}
 			}
 			else {
