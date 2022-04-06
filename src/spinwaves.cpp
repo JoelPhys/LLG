@@ -20,6 +20,7 @@
 #include "../inc/array4d.h"
 #include "../inc/mathfuncs.h"
 #include "../inc/spinwaves.h"
+#include "../inc/libconfig.h++"
 #include "../inc/neighbourlist.h"
 
 namespace spinwaves {
@@ -38,16 +39,17 @@ namespace spinwaves {
 	//Testing for Mn2Au
 	Array4D<fftw_complex> FFTstcfarray_test;
 
+	// FFTW plans
 	fftw_plan Slat;
 	fftw_plan Stime;
 
 	std::ofstream file_spnwvs;
 
-	double windowing = 0;
-
 	int Npoints;
 	int icount;
 
+	// variables for Hamming Windowing function
+	double windowing = 0;
 	double hammA = 0.54;
 	double hammB = 0.46;
 
@@ -55,18 +57,61 @@ namespace spinwaves {
 
 	int lval, mval, nval;
 
-	void init(){
-		Npoints  = ceil((params::Nt - params::start) / (params::dt_spinwaves / params::dt));
-		norm = 1 / (geom::Ix * geom::Iy * geom::Iz * Npoints);
+	// Kpath variables from config giles
+	std::vector<double> kpathx;
+	std::vector<double> kpathy;
+	std::vector<double> kpathz;
+	int kpath_length;
 
-		std::cout << "Npoints = " << Npoints << std::endl;
+	// testing with 1d
+	Array<double> stcf1d;
+	Array<fftw_complex> FFTstcf1d;
+	fftw_plan Slat1d;
+
+	void init(){
+
+	
+		// Read kpath from config file
+		libconfig::Setting& setting = params::cfg.lookup("Spinwaves");
+
+		// Check if kpaths are the same lengths
+		if ((setting["kpathx"].getLength() == setting["kpathy"].getLength()) && (setting["kpathy"].getLength() == setting["kpathx"].getLength())){
+
+			kpath_length = setting["kpathx"].getLength();
+			
+			// Add kpath from config file to cfg array
+			for (int v = 0; v < kpath_length; v++){
+				kpathx.push_back(setting["kpathx"][v]);
+				kpathy.push_back(setting["kpathy"][v]);
+				kpathz.push_back(setting["kpathz"][v]);
+				v++;
+			}
+		}
+		else {
+			std::cout << "ERROR: kpaths are different lengths. Exiting." << std::endl;
+			exit(0); 
+		}
+
+		// Print kpath to log 
+
+
+		// calculate number of points in time array
+		Npoints  = ceil((params::Nt - params::start) / (params::dt_spinwaves / params::dt));
+		INFO_OUT("number of timepoints for spinwaves = ", Npoints);
+		
+		
 		icount = 0;
+		norm = 1 / (geom::Ix * geom::Iy * geom::Iz * Npoints);
 
 		stcf.resize(geom::Ix,geom::Iy,geom::Iz);
 		FFTstcf.resize(geom::Ix,geom::Iy,geom::IzC);
 		stcfT.resize(Npoints);
 		FFTstcfT.resize(Npoints);
-		FFTstcfarray.resize(Npoints, geom::Ix);
+
+		// testing for 1d
+		stcf1d.resize(params::Lx);
+		FFTstcf1d.resize(params::Lx/2+1);
+		FFTstcfarray.resize(Npoints, params::Lx/2+1);
 
 		//TESTING WITH 2D outputs
 		FFTstcfarray_test.resize(Npoints, geom::Ix, geom::Iy, geom::IzC);
@@ -77,15 +122,18 @@ namespace spinwaves {
 		fftw_set_timelimit(60);
 		Stime = fftw_plan_dft_1d(Npoints, FFTstcfT.ptr(), stcfT.ptr(), FFTW_FORWARD, FFTW_MEASURE);
 
-
+		
 		stcfT.IFill(0);
 		FFTstcf.IFill(0);
 		FFTstcfT.IFill(0);
 		stcf.IFill(0);
 		FFTstcfarray.IFill(0);
+		
 		//TESTING MN2AU
-		// stcf1d.IFill(0);
-		// FFTstcf1d.IFill(0);
+		fftw_set_timelimit(60);
+		Slat1d = fftw_plan_dft_r2c_1d(params::Lx, stcf1d.ptr(), FFTstcf1d.ptr(), FFTW_MEASURE);
+		stcf1d.IFill(0);
+		FFTstcf1d.IFill(0);
 
 		// intialise output file 
 		std::stringstream spnwvs;
@@ -114,30 +162,26 @@ namespace spinwaves {
 
 		// //TESTING WITH MN2AU DELETE IF NOT USING
 		// for (int l = 0; l < params::Lx; l++){
-		//     stcf1d(l) = spins::sy1d(geom::LatCount(l,1,1,2)) * spins::sy1d(geom::LatCount(l,1,1,2)) + spins::sz1d(geom::LatCount(l,1,1,2)) * spins::sz1d(geom::LatCount(l,1,1,2));
+		//     stcf1d(l) = spins::sx1d(geom::LatCount(l,1,1,0)) * spins::sx1d(geom::LatCount(l,1,1,0)) + spins::sz1d(geom::LatCount(l,1,1,0)) * spins::sz1d(geom::LatCount(l,1,1,0));
 		// }
 
-		// // testing for Mn2Au
+		// testing for Mn2Au
 		// fftw_execute(Slat1d);
 
 		//windowing function
-		windowing = hammA - hammB * cos((2 * M_PI * icount) / (Npoints  - 1));
+		windowing = hammA - hammB * cos((2 * M_PI * icount) / (Npoints  - 1));     
 
-		double kpts = geom::Ix;      
+		// for (int j = 0; j < params::Lx/2+1; j++){
 
-		// for (int j = 0; j < geom::Ix; j++){
+		// //     if (j < kpts){
+		// //         FFTstcfarray(icount,j)[REAL] = windowing * FFTstcf(j,0,0)[REAL];
+		// //         FFTstcfarray(icount,j)[IMAG] = windowing * FFTstcf(j,0,0)[IMAG];
+		// //         file_spnwvs << FFTstcf(j,0,0)[REAL] << " " << FFTstcf(j,0,0)[IMAG] << "\t";
 
-		//     if (j < kpts){
-		//         FFTstcfarray(icount,j)[REAL] = windowing * FFTstcf(j,0,0)[REAL];
-		//         FFTstcfarray(icount,j)[IMAG] = windowing * FFTstcf(j,0,0)[IMAG];
-		//         file_spnwvs << FFTstcf(j,0,0)[REAL] << " " << FFTstcf(j,0,0)[IMAG] << "\t";
-
-		//         //TESTING MN2AU
-		//         // FFTstcfarray(icount,j)[REAL] = windowing * FFTstcf1d(j)[REAL];
-		//         // FFTstcfarray(icount,j)[IMAG] = windowing * FFTstcf1d(j)[IMAG];
-		//         // file_spnwvs << FFTstcf1d(j)[REAL] << " " << FFTstcf1d(j)[IMAG] << "\t";
-
-		//     }
+		//     // TESTING MN2AU
+		//     FFTstcfarray(icount,j)[REAL] = windowing * FFTstcf1d(j)[REAL];
+		//     FFTstcfarray(icount,j)[IMAG] = windowing * FFTstcf1d(j)[IMAG];
+		//     // file_spnwvs << FFTstcf1d(j)[REAL] << " " << FFTstcf1d(j)[IMAG] << "\t";
 		// }
 
 		for (int j = 0; j < geom::Ix; j++){
@@ -177,10 +221,6 @@ namespace spinwaves {
 		// double kpathy[7] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0};
 		// double kpathz[7] = {0.0, 0.0, 0.5, 0.5, 0.0, 1.0, 1.0};
 
-		double kpathx[2] = {0.0, 0.0};
-		double kpathy[2] = {0.0, 0.5};
-		double kpathz[2] = {0.0, 0.0};
-
 		// double kpathx[13] = {0, 14, 14, 14,  0,  0, 11, 17,  0, 14, 17, 11,  0};
 		// double kpathy[13] = {0, 14, 14,  0,  0,  0,  0,  0,  0, 14, 11, 11,  0};
 		// double kpathz[13] = {0,  0, 14, 14,  0, 29, 30,  0,  0,  0,  0, 30, 30};
@@ -206,7 +246,7 @@ namespace spinwaves {
 
 		// TESTING  ==============================================================================================================
 
-		for (int p = 0; p < 1; p++){
+		for (int p = 0; p < kpath_length-1; p++){
 			
 			// x component
 			if (kpathx[p+1] > kpathx[p]){
@@ -354,239 +394,134 @@ namespace spinwaves {
 
 			for (int x = 0; x < largestdiff; x++){
 				
-					for (int np = 0; np < icount; np++){
-						FFTstcfT(np)[REAL] = FFTstcfarray_test(np,a,b,c)[REAL];
-						FFTstcfT(np)[IMAG] = FFTstcfarray_test(np,a,b,c)[IMAG];
-					}
-
-					std::cout << " TEST " << /*largestdiff << " " << p << " " <<*/ a << " " << b << " " << c << std::endl;
-
-
-					if (a != to[0]){
-						a += in[0];
-					}
-					if (b != to[1]){
-						b += in[1];
-					}
-					if (c != to[2]){
-						c += in[2];
-					}
-
-					fftw_execute(Stime);
-
-					// Create output files for k vectors
-					std::stringstream sstr2;
-					sstr2 << params::filepath_sw;
-					sstr2 << "kx" << std::setw(4) << std::setfill('0') << counter;
-					// sstr2 << "ky" << std::setw(4) << std::setfill('0') << b;
-					// sstr2 << "kz" << std::setw(4) << std::setfill('0') << c;
-					sstr2 << ".txt";
-
-					std::ofstream kzout;
-					kzout.open(sstr2.str());
-					kzout << std::setprecision(10);
-
-					for (int j = 0; j < icount/2; j++){
-
-
-						// output one side spectrum;
-						j1 = icount-j-1;     
-						os1 = stcfT(j)[REAL] * stcfT(j)[REAL] + stcfT(j)[IMAG] * stcfT(j)[IMAG];
-						os2 = stcfT(j1)[REAL] * stcfT(j1)[REAL] + stcfT(j1)[IMAG] * stcfT(j1)[IMAG];
-
-						os[j] = os1 + os2;
-					}
-
-					double largest = os[0];
-					double index;
-
-					// Find largest value in k_z array
-					for (int jj = 1; jj < icount/2; jj++){
-						if (largest < os[jj]){
-							largest = os[jj];
-							index = jj;
-						}
-					}
-
-					// output peaks as frequency values to a file for comparison against LSWT
-					double ai = in[0]/params::a1;
-					double bi = in[1]/params::b1;
-					double ci = in[2]/params::c1;
-					double mag = sqrt(ai*ai + bi*bi + ci*ci);
-					xout += mag;
-
-					peaksout << xout << " " << index * ( 1 / (params::dt_spinwaves * Npoints)) << "\n";
-					counter++;
-
-					for (int kk = 0; kk < icount/2; kk++){
-						os[kk] /= largest;
-						freq = kk * freqstep;
-						// kzout << os[kk] << "\n";
-					}
-
-					int n = icount/2;
-					int s = icount/2 + icount/2 - 1;
-					int mean = icount/4;
-					double sg = params::sg_spinwaves;
-					double sum = 0;
-					double g[n];
-					double w[s];
-
-					for (int i = 0; i < n; i++){     
-						g[i] = exp(-1 * ((i - mean) * (i - mean)) / (2 * sg * sg));
-						sum += g[i];
-					}
-
-					//Ensure sum of gaussian is 0
-					for (int i = 0; i < n; i++){
-						g[i] /= sum;         
-					}        
-
-					// Convolution
-					for (int k = 0; k < s; k++){
-						w[k] = 0;
-
-						for (int i = 0; i < s; i++){
-
-							//w[k] += in[i] * g[i];
-							if (k-i >= 0 && k-i < n && i < n){
-								w[k] += os[i] * g[k-i];
-							}
-						}
-
-					}
-
-					largest = w[0];
-					for (int jj = 0; jj < s; jj++){
-						if (largest < w[jj]){
-							largest = w[jj];
-						}
-					}
-					for (int kk = 0; kk < s; kk++){
-						w[kk] /= largest;
-					}
-
-					for (int kk = 0; kk < n; kk++){
-						if (kk - mean >= 0){
-							kzout << w[kk] << "\n";
-						}
-					}
-
-					kzout << std::flush;
-					kzout.close(); 
+				for (int np = 0; np < icount; np++){
+					FFTstcfT(np)[REAL] = FFTstcfarray_test(np,a,b,c)[REAL];
+					FFTstcfT(np)[IMAG] = FFTstcfarray_test(np,a,b,c)[IMAG];
+				}
+				// for (int np = 0; np < icount; np++){
+				// 	FFTstcfT(np)[REAL] = FFTstcfarray(np,a)[REAL];
+				// 	FFTstcfT(np)[IMAG] = FFTstcfarray(np,a)[IMAG];
 				// }
+				std::cout << " TEST " << /*largestdiff << " " << p << " " <<*/ a << " " << b << " " << c << std::endl;
+
+
+				if (a != to[0]){
+					a += in[0];
+				}
+				if (b != to[1]){
+					b += in[1];
+				}
+				if (c != to[2]){
+					c += in[2];
+				}
+
+				fftw_execute(Stime);
+
+				// Create output files for k vectors
+				std::stringstream sstr2;
+				sstr2 << params::filepath_sw;
+				sstr2 << "kx" << std::setw(4) << std::setfill('0') << counter;
+				// sstr2 << "ky" << std::setw(4) << std::setfill('0') << b;
+				// sstr2 << "kz" << std::setw(4) << std::setfill('0') << c;
+				sstr2 << ".txt";
+
+				std::ofstream kzout;
+				kzout.open(sstr2.str());
+				kzout << std::setprecision(10);
+
+				for (int j = 0; j < icount/2; j++){
+
+
+					// output one side spectrum;
+					j1 = icount-j-1;     
+					os1 = stcfT(j)[REAL] * stcfT(j)[REAL] + stcfT(j)[IMAG] * stcfT(j)[IMAG];
+					os2 = stcfT(j1)[REAL] * stcfT(j1)[REAL] + stcfT(j1)[IMAG] * stcfT(j1)[IMAG];
+
+					os[j] = os1 + os2;
+				}
+
+				double largest = os[0];
+				double index;
+
+				// Find largest value in k_z array
+				for (int jj = 1; jj < icount/2; jj++){
+					if (largest < os[jj]){
+						largest = os[jj];
+						index = jj;
+					}
+				}
+
+				// output peaks as frequency values to a file for comparison against LSWT
+				double ai = in[0]/params::a1;
+				double bi = in[1]/params::b1;
+				double ci = in[2]/params::c1;
+				double mag = sqrt(ai*ai + bi*bi + ci*ci);
+				xout += mag;
+
+				peaksout << xout << " " << index * ( 1 / (params::dt_spinwaves * Npoints)) << "\n";
+				counter++;
+
+				for (int kk = 0; kk < icount/2; kk++){
+					os[kk] /= largest;
+					freq = kk * freqstep;
+					// kzout << os[kk] << "\n";
+				}
+
+				int n = icount/2;
+				int s = icount/2 + icount/2 - 1;
+				int mean = icount/4;
+				double sg = params::sg_spinwaves;
+				double sum = 0;
+				double g[n];
+				double w[s];
+
+				for (int i = 0; i < n; i++){     
+					g[i] = exp(-1 * ((i - mean) * (i - mean)) / (2 * sg * sg));
+					sum += g[i];
+				}
+
+				//Ensure sum of gaussian is 0
+				for (int i = 0; i < n; i++){
+					g[i] /= sum;         
+				}        
+
+				// Convolution
+				for (int k = 0; k < s; k++){
+					w[k] = 0;
+
+					for (int i = 0; i < s; i++){
+
+						//w[k] += in[i] * g[i];
+						if (k-i >= 0 && k-i < n && i < n){
+							w[k] += os[i] * g[k-i];
+						}
+					}
+
+				}
+
+				largest = w[0];
+				for (int jj = 0; jj < s; jj++){
+					if (largest < w[jj]){
+						largest = w[jj];
+					}
+				}
+				for (int kk = 0; kk < s; kk++){
+					w[kk] /= largest;
+				}
+
+				for (int kk = 0; kk < n; kk++){
+					if (kk - mean >= 0){
+						kzout << w[kk] << "\n";
+					}
+				}
+
+				kzout << std::flush;
+				kzout.close(); 
+
 			}
 		}
-			// ==================================================================================================================================
-
-			// for (int z = 0; z < kpts; z++){
-
-
-			//     // Create output files for k vectors
-			//     std::stringstream sstr2;
-			//     sstr2 << "output/spinwaves/kz";
-			//     sstr2 << std::setw(4) << std::setfill('0') << z;
-			//     sstr2 << ".txt";
-
-			//     std::ofstream kzout;
-			//     kzout.open(sstr2.str());
-			//     kzout << std::setprecision(10);
-
-			//     // convert index to k space
-			//     kpoint = z * ( ( (2 * M_PI)/ ( params::a1)) / ( geom::IzC ));
-
-
-			//     for (int j = 0; j < icount; j++){
-			//         FFTstcfT(j)[REAL] = FFTstcfarray(j,z)[REAL];
-			//         FFTstcfT(j)[IMAG] = FFTstcfarray(j,z)[IMAG];
-			//     }
-
-			//     fftw_execute(Stime);
-
-			//     for (int j = 0; j < icount/2; j++){
-
-
-			//         // output one side spectrum;
-			//         j1 = icount-j-1;     
-			//         os1 = stcfT(j)[REAL] * stcfT(j)[REAL] + stcfT(j)[IMAG] * stcfT(j)[IMAG];
-			//         os2 = stcfT(j1)[REAL] * stcfT(j1)[REAL] + stcfT(j1)[IMAG] * stcfT(j1)[IMAG];
-
-			//         os[j] = os1 + os2;
-			//     }
-
-			//     double largest = os[0];
-			//     double index;
-
-			//     // Find largest value in k_z array
-			//     for (int jj = 1; jj < icount/2; jj++){
-			//         if (largest < os[jj]){
-			//             largest = os[jj];
-			//             index = jj;
-			//         }
-			//     }
-
-			//     // output peaks as frequency values to a file for comparison against LSWT
-			//     peaksout << kpoint << " " << index * ( 1 / (params::dt_spinwaves * Npoints)) << "\n";
-
-			//     for (int kk = 0; kk < icount/2; kk++){
-			//         os[kk] /= largest;
-			//         freq = kk * freqstep;
-			//         // kzout << os[kk] << "\n";
-			//     }
-
-			//     int n = icount/2;
-			//     int s = icount/2 + icount/2 - 1;
-			//     int mean = icount/4;
-			//     double sg = 10;
-			//     double sum = 0;
-			//     double g[n];
-			//     double w[s];
-
-			//     for (int i = 0; i < n; i++){	
-			//         g[i] = exp(-1 * ((i - mean) * (i - mean)) / (2 * sg * sg));
-			//         sum += g[i];
-			//     }
-
-			//     //Ensure sum of gaussian is 0
-			//     for (int i = 0; i < n; i++){
-			//         g[i] /= sum;		
-			//     }	
-
-			//     // Convolution
-			//     for (int k = 0; k < s; k++){
-			//         w[k] = 0;
-
-			//         for (int i = 0; i < s; i++){
-
-			//             //w[k] += in[i] * g[i];
-			//             if (k-i >= 0 && k-i < n && i < n){
-			//                 w[k] += os[i] * g[k-i];
-			//             }
-			//         }
-
-			//     }
-
-			//     largest = w[0];
-			//     for (int jj = 1; jj < s; jj++){
-			//         if (largest < w[jj]){
-			//             largest = w[jj];
-			//         }
-			//     }
-			//     for (int kk = 0; kk < s; kk++){
-			//         w[kk] /= largest;
-			//     }
-
-			//     for (int kk = 0; kk < n; kk++){
-			//         if (kk - mean >= 0){
-			//             kzout << w[kk] << "\n";
-			//         }
-			//     }
-
-			//         kzout << std::flush;
-			//         kzout.close();
-
-
-			// }
+			
+		// ==================================================================================================================================
 
 			fftw_destroy_plan(Slat);
 			fftw_destroy_plan(Stime);

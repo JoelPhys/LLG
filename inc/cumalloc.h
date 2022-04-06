@@ -24,6 +24,10 @@ namespace cuglob {
 	extern double *dJx_new, *dJy_new, *dJz_new;
 	extern int *djind;
 
+	// gpu variables
+	extern int tpb;
+    extern int bpg;
+
 	void device_info();
 	void allocate_heun_memory();
 	void allocate_Jij_memory();

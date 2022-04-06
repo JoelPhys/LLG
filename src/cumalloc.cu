@@ -37,6 +37,9 @@ namespace cuglob {
 	double *dJx_new, *dJy_new, *dJz_new;
 	int *djind;
 
+	//gpu variables
+	int tpb;
+	int bpg;
 	int device = 0;
 
 	void device_info(){
@@ -51,6 +54,9 @@ namespace cuglob {
 		std::cout.width(75); std::cout << std::left << "multiprocessors:"; std::cout << properties.multiProcessorCount << std::endl;
 		std::cout.width(75); std::cout << std::left << "max threads per processor:"; std::cout << properties.maxThreadsPerMultiProcessor << std::endl;
 		std::cout.width(75); std::cout << std::left << "max threads per block:"; std::cout << properties.maxThreadsPerBlock << std::endl;	
+		tpb = properties.maxThreadsPerBlock;
+		bpg = (params::Nspins + tpb - 1) / tpb;
+		
 	}
 
 	void clear_memory(){

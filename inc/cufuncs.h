@@ -6,8 +6,6 @@
 
 namespace cufuncs {
 
-	extern int threadsperbock;
-	extern int bpg;
 	void cuRotation();
 	void cuDomainWall();
 	void cuFields(std::string type, double time, double start_time, double end_time, double height);
