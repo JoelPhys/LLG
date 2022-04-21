@@ -266,8 +266,6 @@ namespace params {
 		TITLE("MATERIAL CONSTANTS");
 		// INFO_OUT("Damping constant:",lambda);
 		// INFO_OUT("Magnetic Moment:", mu_s << " (mu_b)");
-		INFO_OUT("Uniaxial Anisotropy:", "[" << dxu << " , " << dyu << " , " << dzu << "] (J)");
-		INFO_OUT("Cubic Anisotropy:", dzc << "(J)");
 		INFO_OUT("Lattice Parameter, a:", a1 << " (m)");
 		INFO_OUT("Lattice Parameter, b:", b1 << " (m)");
 		INFO_OUT("Lattice Parameter, c:", c1 << " (m)");
@@ -318,6 +316,10 @@ namespace params {
 		dxup = 2 * ( dxu / mu_s[0] );
 		dyup = 2 * ( dyu / mu_s[0] );	
 		dzup = 2 * ( dzu / mu_s[0] );
+
+		INFO_OUT("Uniaxial Anisotropy:", "[" << dxu << " , " << dyu << " , " << dzu << "] [J]");
+		INFO_OUT("Cubic Anisotropy:", dzc << " [J]");
+
 
 
 		//=======================================================================================================
