@@ -73,27 +73,26 @@ namespace spinwaves {
 	
 		// Read kpath from config file
 		libconfig::Setting& setting = params::cfg.lookup("Spinwaves");
+		std::string swtext;
 
 		// Check if kpaths are the same lengths
-		if ((setting["kpathx"].getLength() == setting["kpathy"].getLength()) && (setting["kpathy"].getLength() == setting["kpathx"].getLength())){
+		if ((setting["kpathx"].getLength() == setting["kpathy"].getLength()) && (setting["kpathy"].getLength() == setting["kpathz"].getLength())){
 
 			kpath_length = setting["kpathx"].getLength();
-			
+
 			// Add kpath from config file to cfg array
 			for (int v = 0; v < kpath_length; v++){
 				kpathx.push_back(setting["kpathx"][v]);
 				kpathy.push_back(setting["kpathy"][v]);
 				kpathz.push_back(setting["kpathz"][v]);
-				v++;
+				swtext = "kpoint " + std::to_string(v) + ":";
+				INFO_OUT(swtext, "[" << kpathx[v] << ", " << kpathy[v] << ", " << kpathz[v] << "]")
 			}
 		}
 		else {
 			std::cout << "ERROR: kpaths are different lengths. Exiting." << std::endl;
 			exit(0); 
 		}
-
-		// Print kpath to log 
-
 
 		// calculate number of points in time array
 		Npoints  = ceil((params::Nt - params::start) / (params::dt_spinwaves / params::dt));
@@ -233,9 +232,9 @@ namespace spinwaves {
 		// double kpathy[8] = {0.0, 0.5, 0.5, 0.0, 0.0, 0.5, 0.5, 0.0};
 		// double kpathz[8] = {0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5};
 
-		// double kpathx[4] = {0.0, 0.0, 0.5, 0.0};
-		// double kpathy[4] = {0.0, 0.5, 0.5, 0.0};
-		// double kpathz[4] = {0.0, 0.0, 0.0, 0.0};
+		// double kpathx[4] = {0.0, 0.0};
+		// double kpathy[4] = {0.0, 0.5};
+		// double kpathz[4] = {0.0, 0.0};
 
 		int ratio[3];
 
@@ -257,8 +256,8 @@ namespace spinwaves {
 			}
 			else if (kpathx[p+1] == kpathx[p]){
 				from[0] = static_cast<int>(kpathx[p] * params::Lx);
-				to[0] = static_cast<int>(kpathx[p] * params::Lx)+1;
-				in[0] = 0;
+				to[0]   = static_cast<int>(kpathx[p] * params::Lx)+1;
+				in[0]   = 0;
 				if (from[0] != 0){
 					from[0] += -1;
 					to[0] += -1;
@@ -266,15 +265,15 @@ namespace spinwaves {
 			}
 			else {
 				from[0] = static_cast<int>(kpathx[p] * params::Lx)-2;
-				to[0] = static_cast<int>(kpathx[p+1] * params::Lx)-1;
-				in[0] = -1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
+				to[0]   = static_cast<int>(kpathx[p+1] * params::Lx)-1;
+				in[0]   = -1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
 			}
 
 			// y component
 			if (kpathy[p+1] > kpathy[p]){
 				if (p == 0) {from[1] = static_cast<int>(kpathy[p] * params::Ly);}
 				if (p >= 1) {from[1] = static_cast<int>(kpathy[p] * params::Ly)+1;}
-				to[1] = static_cast<int>(kpathy[p+1] * geom::Iy);
+				to[1] = static_cast<int>(kpathy[p+1] * params::Ly);
 				in[1] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
 			else if (kpathy[p+1] == kpathy[p]){
@@ -369,7 +368,6 @@ namespace spinwaves {
 			// 		in[2] = -5;
 			// 	}
 			// }
-
 
 			// std::cout << "from = " << from[0] << " " << from[1] << " " << from[2] << std::endl;
 			// std::cout << "to = " << to[0] << " " << to[1] << " " << to[2] << std::endl;
