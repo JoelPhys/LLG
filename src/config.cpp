@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <libconfig.h++>
+#include <sys/stat.h>
 #include <ctime>
 #include <cmath>
 #include <vector>
@@ -456,6 +457,28 @@ namespace params {
 		dzcp = 2 * ( dzc / mu_s[0] );
 
 		//=======================================================================================================
+		// Check filepaths exist ================================================================================
+		//=======================================================================================================
+
+		cfgmissing("Spinwaves.filepath");        		
+		cfgmissing("Util.filepath");
+		filepath = cfg.lookup("Util.filepath").c_str();      
+		filepath_sw = cfg.lookup("Spinwaves.filepath").c_str();   
+
+		struct stat buffer;
+		if (stat(filepath.c_str(), &buffer) != 0) {
+				std::cout << "ERROR: Output directory does not exist!" << std::endl;
+			exit(0);
+		}
+
+		if (stat(filepath_sw.c_str(), &buffer) != 0) {
+    		std::cout << "ERROR: Spinwaves output directory does not exist!" << std::endl;;
+			exit(0);
+		}
+
+
+
+		//=======================================================================================================
 		// Rest of parameters ===================================================================================
 		//=======================================================================================================
 
@@ -463,8 +486,6 @@ namespace params {
 		cfgmissing("Spinwaves.StartTime");			
 		cfgmissing("Util.afmflag");  				
 		cfgmissing("Exchange.Format");  			
-		cfgmissing("Util.filepath");
-		cfgmissing("Spinwaves.filepath");        		
 		cfgmissing("Spinwaves.TimeStep");
 		cfgmissing("Spinwaves.smoothing");			
 		cfgmissing("Exchange.InputFile");			
@@ -478,8 +499,6 @@ namespace params {
 		start = cfg.lookup("Spinwaves.StartTime");
 		afmflag = cfg.lookup("Util.afmflag").c_str();  
 		format = cfg.lookup("Exchange.Format").c_str();  
-		filepath = cfg.lookup("Util.filepath").c_str();      
-		filepath_sw = cfg.lookup("Spinwaves.filepath").c_str();   
 		dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");
 		sg_spinwaves = cfg.lookup("Spinwaves.smoothing");
 		Jij_filename = cfg.lookup("Exchange.InputFile").c_str();
