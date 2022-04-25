@@ -60,9 +60,29 @@ namespace neigh {
 
         double sum1;
 
+		std::string line;
+		getline(input, line);         //read the first line of your file to string
+		std::stringstream s;
+		s << line;                   //send the line to the stringstream object...
+		
+		int how_many_cols = 0;    
+		double value;
+		
+		while(s >> value) how_many_cols++;  //while there's something in the line, increase the number of columns
+	
+		// reset input back to first line
+        input.clear();
+        input.seekg(0);
+
+
         if (params::format == "Jerome"){
             double a, b, c, d, e, f;
             double count = 0;
+
+			if (how_many_cols != 6){
+				std::cout << "ERROR: Incorrect number of cols in Jij file. Exiting" << std::endl;
+				exit(0);
+			}
 
             while (input >> a >> b >> c >> d >> e >> f)
             {
@@ -101,6 +121,11 @@ namespace neigh {
         else if (params::format == "diag"){
             double a, b, c, d, e, f, g, h;
             double count = 0;
+
+			if (how_many_cols != 8){
+				std::cout << "ERROR: Incorrect number of cols in Jij file. Exiting" << std::endl;
+				exit(0);
+			}
 
             while (input >> a >> b >> c >> d >> e >> f >> g >> h)
             {
