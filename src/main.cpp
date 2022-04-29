@@ -70,7 +70,17 @@ int main(int argc, char* argv[]){
 
 	// ======= Initiliase Spin Position ======================================================================== //
 	spins::populate();
-	util::readexternalspins(argv[3]);
+	std::string arg4, arg3 = argv[3];
+	if ((argc==4) && (arg3 == "2")){
+		std::cout << "ERROR: No external spin file provided. Exiting." << std::endl;
+		exit(0);
+	}
+	else if (argv[4]!=NULL){
+		DEBUGGER;
+		arg4 = argv[4];
+		util::readexternalspins(arg4);
+		DEBUGGER;
+	}
 	defects::populate();
 	
 	// testing for hedgehog

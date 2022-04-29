@@ -425,35 +425,42 @@ namespace util {
 
 	void readexternalspins(std::string cmdline){
 
-		if (cmdline == "2"){
+		// spicify filename
+		std::stringstream sstr_eq;
+		sstr_eq << cmdline;
+		// std::cout << sstr_eq.str() << std::endl;
+		std::ifstream equilibrationfile(sstr_eq.str());
 
-			// spicify filename
-			std::stringstream sstr_eq;
-			sstr_eq << "/home/sr4871/PhD/materials/hedgehogs/hedgehog_loc_in_raw/ASD_test.dat";
-			// std::cout << sstr_eq.str() << std::endl;
-			std::ifstream equilibrationfile(sstr_eq.str());
+		INFO_OUT("External Spin file:", cmdline);
 
-			// Check if equilibrium file could be opened
-			if (!equilibrationfile){
-				std::cout << "ERROR: Could not open equilibrium file" << std::endl;
-				exit(0);
-			}
-
-			double sx, sy, sz;
-			int posx, posy, posz;
-
-			// Loop through file
-			while (equilibrationfile >> posx >> posy >> posz >> sx >> sy >> sz){
-				for (int q = 0; q < params::Nq; q++){
-					spins::sx1d(geom::LatCount(posx,posy,posz,q)) = sx;
-					spins::sy1d(geom::LatCount(posx,posy,posz,q)) = sy;
-					spins::sz1d(geom::LatCount(posx,posy,posz,q)) = sz;
-				}
-			}
-
-			// close file
-			equilibrationfile.close();
-			
+		// Check if equilibrium file could be opened
+		if (!equilibrationfile){
+			std::cout << "ERROR: Could not open equilibrium file" << std::endl;
+			exit(0);
 		}
+
+		double sx, sy, sz;
+		int posx, posy, posz;
+		int count = 0;
+
+		// Loop through file
+		while (equilibrationfile >> posx >> posy >> posz >> sx >> sy >> sz){
+			
+			for (int q = 0; q < params::Nq; q++){
+				spins::sx1d(geom::LatCount(posx,posy,posz,q)) = sx;
+				spins::sy1d(geom::LatCount(posx,posy,posz,q)) = sy;
+				spins::sz1d(geom::LatCount(posx,posy,posz,q)) = sz;
+			}
+			count++;
+		}
+		std::cout << count << std::endl;
+		if (count != params::Lx*params::Ly*params::Lz){
+			std::cout << "ERROR: Wrong number of spins in file. Exiting." << std::endl;
+			exit(0);
+		}
+
+		// close file
+		equilibrationfile.close();
+
 	}
 }
