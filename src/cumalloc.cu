@@ -56,6 +56,9 @@ namespace cuglob {
 		std::cout.width(75); std::cout << std::left << "max threads per block:"; std::cout << properties.maxThreadsPerBlock << std::endl;	
 		tpb = properties.maxThreadsPerBlock;
 		bpg = (params::Nspins + tpb - 1) / tpb;
+
+		INFO_OUT("Simulation Threads Per Block:", tpb);
+		INFO_OUT("Simulation Blocks Per grid:", bpg);
 		
 	}
 

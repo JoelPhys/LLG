@@ -8,6 +8,7 @@
 
 // my header files
 #include "../inc/geom.h"
+#include "../inc/cudefine.h"
 #include "../inc/neighbourlist.h"
 #include "../inc/fields.h"
 #include "../inc/config.h"

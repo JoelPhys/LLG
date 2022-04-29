@@ -263,6 +263,9 @@ namespace neigh {
         int adjcounter = 0;
         int defectcounter = 0;
 
+        bool xm,xp,ym,yp,zm,zp,bound;
+        
+
         x_adj.push_back(0);
 
         // ========== Neighbour List =========== //
@@ -272,12 +275,25 @@ namespace neigh {
                     for (int z = 0; z < params::Lz; ++z){        // Column
                         for (int q = 0; q < params::Nq; ++q){    // Unit Cell
 
-                            if ((params::xbound == "fixed") && ((x == 0) || (x == params::Lx-1))){
-                            }
-                            else if ((params::ybound == "fixed") && ((y == 0) || (y == params::Ly-1))){
-                            }
-                            else if ((params::zbound == "fixed")&& ((z == 0) || (z == params::Lz-1))){
-                            }
+                            // IRREGULAR SHAPE FOR HEDGEHOG SIMULATIONS - NEED A BETTER LONG TERM FIX FOR THIE
+                            // if ((x != 0) && (x != params::Lx-1)){
+                            //     xp = spins::sx1d(geom::LatCount(x+1,y  ,z  ,q)) == 0.0;
+                            //     xm = spins::sx1d(geom::LatCount(x-1,y  ,z  ,q)) == 0.0;
+                            // }
+                            // if ((y != 0) && (y != params::Ly-1)){
+                            //     yp = spins::sx1d(geom::LatCount(x  ,y+1,z  ,q)) == 0.0;
+                            //     ym = spins::sx1d(geom::LatCount(x  ,y-1,z  ,q)) == 0.0; 
+                            // }      
+                            // if ((z != 0) && (z != params::Lz-1)){
+                            //     zp = spins::sx1d(geom::LatCount(x  ,y  ,z+1,q)) == 0.0;
+                            //     zm = spins::sx1d(geom::LatCount(x  ,y  ,z-1,q)) == 0.0;
+                            // }
+                            // bound = (xp || xm || yp || ym || zp || zm) == 1.0;
+
+                            if ((params::xbound == "fixed") && ((x == 0) || (x == params::Lx-1)));
+                            else if ((params::ybound == "fixed") && ((y == 0) || (y == params::Ly-1)));
+                            else if ((params::zbound == "fixed") && ((z == 0) || (z == params::Lz-1)));
+                            else if ((params::xbound == "fixed") && (params::ybound == "fixed") && (params::zbound == "fixed") && (bound == 1.0));
                             else if ((defects::list.size() != 0) && (geom::LatCount(x,y,z,q) == defects::list[defectcounter])){
                                 defectcounter++;
                             }
@@ -346,12 +362,30 @@ namespace neigh {
                     for (int z = 0; z < params::Lz; ++z){        // Column
                         for (int q = 0; q < params::Nq; ++q){    // Unit Cell
 
-                            if ((params::xbound == "fixed") && ((x == 0) || (x == params::Lx-1))){
+                            // IRREGULAR SHAPE FOR HEDGEHOG SIMULATIONS - NEED A BETTER LONG TERM FIX FOR THIS
+                            if ((x != 0) && (x != params::Lx-1)){
+
+                                
+                                xp = spins::sx1d(geom::LatCount(x+1,y  ,z  ,q)) == 0.0;
+                                xm = spins::sx1d(geom::LatCount(x-1,y  ,z  ,q)) == 0.0;
                             }
-                            else if ((params::ybound == "fixed") && ((y == 0) || (y == params::Ly-1))){
+                            if ((y != 0) && (y != params::Ly-1)){
+                                yp = spins::sx1d(geom::LatCount(x  ,y+1,z  ,q)) == 0.0;
+                                ym = spins::sx1d(geom::LatCount(x  ,y-1,z  ,q)) == 0.0; 
                             }
-                            else if ((params::zbound == "fixed")&& ((z == 0) || (z == params::Lz-1))){
+                            if ((z != 0) && (z != params::Lz-1)){
+                                zp = spins::sx1d(geom::LatCount(x  ,y  ,z+1,q)) == 0.0;
+                                zm = spins::sx1d(geom::LatCount(x  ,y  ,z-1,q)) == 0.0;
                             }
+                            bound = (xp || xm || yp || ym || zp || zm) == 1.0;
+
+                            // std::cout << x << " " << y << " " << z << " " << q << "\n";
+
+
+                            if ((params::xbound == "fixed") && ((x == 0) || (x == params::Lx-1)));
+                            else if ((params::ybound == "fixed") && ((y == 0) || (y == params::Ly-1)));
+                            else if ((params::zbound == "fixed")&& ((z == 0) || (z == params::Lz-1)));
+                            else if ((params::xbound == "fixed") && (params::ybound == "fixed") && (params::zbound == "fixed") && (bound == 1.0));
                             else if ((defects::list.size() != 0) && (geom::LatCount(x,y,z,q) == defects::list[defectcounter])){
                                 defectcounter++;
                             }
