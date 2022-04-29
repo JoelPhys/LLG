@@ -53,8 +53,6 @@ int main(int argc, char* argv[]){
 	geom::CountDistinct();
 	geom::CreateIntLattice();
 	defects::init();
-	neigh::ReadFile();
-	neigh::InteractionMatrix();
 	// heun::init();
 	util::init();
 
@@ -79,6 +77,9 @@ int main(int argc, char* argv[]){
 	if (params::simtype == "DW"){
 		geom::initdw();
 	}
+
+	neigh::ReadFile();
+	neigh::InteractionMatrix();
 
 	#ifdef CUDA
 	std::cout << "CUDA Simulation" << std::endl;
@@ -112,7 +113,6 @@ int main(int argc, char* argv[]){
 	if (params::simtype == "DW"){		
 	util::InitDWFile(Temp);
 	}
-
 	TITLE("SIMULATION STARTING");
 	util::startclock();
 		
@@ -120,11 +120,20 @@ int main(int argc, char* argv[]){
 	for (int i = 0; i < params::Nt; i++){
 
 		#ifdef CUDA
-		// if (i ==  params::Nt / 2) {
-		// 	std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
-		// 	cufuncs::cuRotation();
-		// }
+		if (i ==  params::Nt / 2) {
+			std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
+			cufuncs::cuRotation();
+		}
 		#endif
+
+		
+		if ((i % params::OutputLatticeStep == 0) && (i != 0)){
+			if (params::OutputLattice == true){
+				util::OutputLatticetoFile(Temp);
+			}
+		}
+
+
 
 		if (i % params::outputstep == 0){
 			#ifdef CUDA
@@ -134,13 +143,11 @@ int main(int argc, char* argv[]){
 			util::ResetMag();
 			util::SortSublat();
 			util::MagLength();
-
 			if (params::OutputToTerminal == true){
 				util::OutputMagToTerm(i);
 			}
 			util::OutputMagToFile(i);
 			util::OutputFldToFile(i);
-			
 			if (params::simtype == "DW"){		
 				util::OutputDWtoFile(i);
 			}
@@ -170,7 +177,9 @@ int main(int argc, char* argv[]){
 	}
 	// ==================================================================================================== //
 
-	// util::OutputLatticetoTerm();
+	if (params::OutputLattice == true){
+		util::OutputLatticetoFile(Temp);
+	}
 
 	// Carry out time FFT once simulation is complete
 	if (params::simtype == "spinwaves"){

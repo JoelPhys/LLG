@@ -86,6 +86,11 @@ namespace params {
 	double ttm_start;
 	double temp_gradient;
 
+	// Output Lattice
+	bool OutputLattice;		
+	int OutputLatticeStep;	
+	std::string OutputLatticeFilepath;		
+
 	void banner(){
 		std::cout << std::endl;
 		std::cout << "                                            ███    █████████    █████████  ██████████                     " << std::endl;
@@ -476,6 +481,18 @@ namespace params {
 			exit(0);
 		}
 
+		//=======================================================================================================
+		// Output of Lattice ====================================================================================
+		//=======================================================================================================
+
+		cfgmissing("Util.OutputLattice");		
+		OutputLattice = cfg.lookup("Util.OutputLattice");
+		if (OutputLattice == true){
+			cfgmissing("Util.OutputLatticeStep");	
+			cfgmissing("Util.OutputLatticeFilepath");			
+			OutputLatticeStep = cfg.lookup("Util.OutputLatticeStep");  
+			OutputLatticeFilepath = cfg.lookup("Util.OutputLatticeFilepath").c_str();  
+		}
 
 
 		//=======================================================================================================

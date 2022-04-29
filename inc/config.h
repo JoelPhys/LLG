@@ -80,6 +80,11 @@
         extern double ttm_start;
         extern double temp_gradient;
 
+        // Output Lattice
+        extern bool OutputLattice;		
+        extern int OutputLatticeStep;	
+        extern std::string OutputLatticeFilepath;		
+
         extern bool OutputToTerminal;
 
         extern double PlatINV[3][3];

@@ -43,6 +43,8 @@ namespace util {
 	std::ofstream magfile;
 	std::ofstream dwfile;
 	std::ofstream fldfile;
+	std::ofstream latfile;
+	int lati;
 
 	void init(){
 		Mt.resize(3);
@@ -355,21 +357,31 @@ namespace util {
 	}
 	
 
-	void OutputLatticetoTerm(){
+	void OutputLatticetoFile(double temp){
+
+		std::stringstream sstr;
+		sstr << params::OutputLatticeFilepath << "temp_" << std::setw(4) << std::setfill('0') << temp << "_file_" << std::setw(2) << std::setfill('0') << lati << ".lat";
+		latfile.open(sstr.str());
+
 		for (int i = 0; i < params::Lx; i++){
 			for (int j = 0; j < params::Ly; j++){
 				for (int k = 0; k < params::Lz; k++){
 					for (int q = 0; q < params::Nq; q++){
-						std::cout << geom::latticeX(i,j,k,q) << " ";
-						std::cout << geom::latticeY(i,j,k,q) << " ";
-						std::cout << geom::latticeZ(i,j,k,q) << " ";
-						std::cout << spins::sx1d(geom::LatCount(i,j,k,q)) << " ";
-						std::cout << spins::sy1d(geom::LatCount(i,j,k,q)) << " ";
-						std::cout << spins::sz1d(geom::LatCount(i,j,k,q)) << std::endl;
+						latfile << geom::latticeX(i,j,k,q) << " ";
+						latfile << geom::latticeY(i,j,k,q) << " ";
+						latfile << geom::latticeZ(i,j,k,q) << " ";
+						latfile << spins::sx1d(geom::LatCount(i,j,k,q)) << " ";
+						latfile << spins::sy1d(geom::LatCount(i,j,k,q)) << " ";
+						latfile << spins::sz1d(geom::LatCount(i,j,k,q)) << "\n";
 					}
 				}
 			}
 		}
+
+		lati++;
+		latfile << std::flush;
+		latfile.close(); 
+
 	}
 
 	void OutputDWtoFile(int i){
@@ -417,7 +429,8 @@ namespace util {
 
 			// spicify filename
 			std::stringstream sstr_eq;
-			sstr_eq << "filename";
+			sstr_eq << "/home/sr4871/PhD/materials/hedgehogs/hedgehog_loc_in_raw/ASD_test.dat";
+			// std::cout << sstr_eq.str() << std::endl;
 			std::ifstream equilibrationfile(sstr_eq.str());
 
 			// Check if equilibrium file could be opened
