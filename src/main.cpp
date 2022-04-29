@@ -134,7 +134,6 @@ int main(int argc, char* argv[]){
 		}
 
 
-
 		if (i % params::outputstep == 0){
 			#ifdef CUDA
 			cuglob::copy_spins_to_host();
@@ -172,8 +171,6 @@ int main(int argc, char* argv[]){
 			// heun::integration(thermal_fluct);
 		#endif
 
-
-		
 	}
 	// ==================================================================================================== //
 

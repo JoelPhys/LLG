@@ -87,8 +87,8 @@ namespace params {
 	double temp_gradient;
 
 	// Output Lattice
-	bool OutputLattice;		
-	int OutputLatticeStep;	
+	bool OutputLattice = false;		
+	int OutputLatticeStep = 10000000;	
 	std::string OutputLatticeFilepath;		
 
 	void banner(){
