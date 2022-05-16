@@ -125,21 +125,26 @@ namespace spins {
             std::random_device device;
             std::mt19937 generator(device());
 
-            for (int x = 1; x < params::Lx-1; x++){
-                for (int y = 1; y < params::Ly-1; y++){
-                    for (int z = 1; z < params::Lz-1; z++){
+            for (int x = 0; x < params::Lx; x++){
+                for (int y = 0; y < params::Ly; y++){
+                    for (int z = 0; z < params::Lz; z++){
                         for (int q = 0; q < params::Nq; q++){
-                            double v1=0,v2=0,s=2.0,ss=0.0;
-                            while(s>1.0)
-                            {
-                                v1=2.0*distribution(generator)-1.0;
-                                v2=2.0*distribution(generator)-1.0;
-                                s=v1*v1+v2*v2;
+
+
+                            if ((x == 0 ) || ( y == 0 ) || ( z == 0 ) || ( x == params::Lx ) || ( y == params::Ly ) || ( z == params::Lz)){
+                                double v1=0,v2=0,s=2.0,ss=0.0;
+                                while(s>1.0)
+                                {
+                                    v1=2.0*distribution(generator)-1.0;
+                                    v2=2.0*distribution(generator)-1.0;
+                                    s=v1*v1+v2*v2;
+                                }
+                                ss=sqrt(1.0-s);
+                                sx1d(count1d + q)=2.0*v1*ss;
+                                sy1d(count1d + q)=2.0*v2*ss;
+                                sz1d(count1d + q)=1.0-2.0*s;
+
                             }
-                            ss=sqrt(1.0-s);
-                            sx1d(count1d + q)=2.0*v1*ss;
-                            sy1d(count1d + q)=2.0*v2*ss;
-                            sz1d(count1d + q)=1.0-2.0*s;
                         }
                         count1d += params::Nq;
                     }
