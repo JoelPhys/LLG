@@ -12,6 +12,7 @@ namespace cufuncs {
 	void cuTemperature(std::string type, double time, double ttm_start);
 	void init_device_vars();
 	void integration(double time);
+	void initial_energy(double time);
 	void integrationDW(double time);
 }
 #endif

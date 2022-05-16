@@ -126,6 +126,12 @@ int main(int argc, char* argv[]){
 	}
 	TITLE("SIMULATION STARTING");
 	util::startclock();
+
+	#ifdef CUDA
+		cufuncs::cuFields(fields::type, static_cast<double>(0)  * params::dt, fields::start_time, fields::end_time, fields::height);
+		cufuncs::integration(static_cast<double>(0));
+	#endif
+
 		
 	// ========== LOOP THROUGH TIMESTEPS ================================================================ //
 	for (int i = 0; i < params::Nt; i++){

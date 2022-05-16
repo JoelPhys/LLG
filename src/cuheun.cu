@@ -166,9 +166,9 @@ namespace cuheun {
 					Hnew[1] = Hty[a] + Hapy[a] + Huni[1] + Hcub[1] + Hex[1];
 					Hnew[2] = Htz[a] + Hapz[a] + Huni[2] + Hcub[2] + Hex[2];
 
-					dEx[a] = (Hex[0] * dSx1d[a] + Hex[1] * dSy1d[a] + Hex[2] * dSz1d[a])
+					dEx[a] = -(Hex[0] * dSx1d[a] + Hex[1] * dSy1d[a] + Hex[2] * dSz1d[a]);
 							// + 0.5*(Huni[0] * dSx1d[a] + Huni[1] * dSy1d[a] + Huni[2] * dSz1d[a]) 
-							+ (Htx[a] * dSx1d[a] + Hty[a] * dSy1d[a] + Htz[a] * dSz1d[a]); 
+							// - (Htx[a] * dSx1d[a] + Hty[a] * dSy1d[a] + Htz[a] * dSz1d[a]); 
 
 					double SxH[3];
 					SxH[0] = dSy1d[a] * Hnew[2] - dSz1d[a] * Hnew[1];
