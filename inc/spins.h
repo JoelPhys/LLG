@@ -27,6 +27,7 @@ namespace spins {
     // Functions
     void init();
     void populate();
+    void randomise();
 
 }
 

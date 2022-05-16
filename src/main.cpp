@@ -82,6 +82,7 @@ int main(int argc, char* argv[]){
 		DEBUGGER;
 	}
 	defects::populate();
+	spins::randomise();
 	
 	// testing for hedgehog
 	if (params::simtype == "DW"){

@@ -53,28 +53,7 @@ namespace spins {
 
 
 		int count1d = 0;
-        if (params::afmflag == "test"){
-
-            //Normal Distribution for Stochastic noise
-            std::normal_distribution<double> distribution(0.0,1.0);
-            std::random_device device;
-            std::mt19937 generator(device());
-    
-            for (int i = 0; i < params::Nspins; i++){
-                double v1=0,v2=0,s=2.0,ss=0.0;
-                while(s>1.0)
-                {
-                    v1=2.0*distribution(generator)-1.0;
-                    v2=2.0*distribution(generator)-1.0;
-                    s=v1*v1+v2*v2;
-                }
-                ss=sqrt(1.0-s);
-                sx1d(i)=2.0*v1*ss;
-                sy1d(i)=2.0*v2*ss;
-                sz1d(i)=1.0-2.0*s;
-            }
-        }
-		else if (params::afmflag != "NiO"){
+		if (params::afmflag != "NiO"){
             for (int x = 0; x < params::Lx; x++){
                 for (int y = 0; y < params::Ly; y++){
                     for (int z = 0; z < params::Lz; z++){
@@ -134,6 +113,39 @@ namespace spins {
                 }
             }
         }
+    }
+
+    void randomise(){
+
+        if (params::afmflag == "test"){
+		    int count1d = 0;
+
+            //Normal Distribution for Stochastic noise
+            std::normal_distribution<double> distribution(0.0,1.0);
+            std::random_device device;
+            std::mt19937 generator(device());
+
+            for (int x = 1; x < params::Lx-1; x++){
+                for (int y = 1; y < params::Ly-1; y++){
+                    for (int z = 1; z < params::Lz-1; z++){
+                        for (int q = 0; q < params::Nq; q++){
+                            double v1=0,v2=0,s=2.0,ss=0.0;
+                            while(s>1.0)
+                            {
+                                v1=2.0*distribution(generator)-1.0;
+                                v2=2.0*distribution(generator)-1.0;
+                                s=v1*v1+v2*v2;
+                            }
+                            ss=sqrt(1.0-s);
+                            sx1d(count1d + q)=2.0*v1*ss;
+                            sy1d(count1d + q)=2.0*v2*ss;
+                            sz1d(count1d + q)=1.0-2.0*s;
+                        }
+                        count1d += params::Nq;
+                    }
+                }
+            }
+        }        
     }
 
 
