@@ -15,6 +15,11 @@ namespace spins {
     Array<double> sy1d;
     Array<double> sz1d;
 
+    // Total Energy
+    Array<double> Ex;
+    Array<double> Ey;
+    Array<double> Ez;
+
     // Testing for hedgehog
     Array<double> surfx;
     Array<double> surfy;
@@ -34,6 +39,14 @@ namespace spins {
         sx1d.IFill(0);
         sy1d.IFill(0);
         sz1d.IFill(0);
+
+
+        Ex.resize(params::Nspins);
+        Ey.resize(params::Nspins);
+        Ez.resize(params::Nspins);
+        Ex.IFill(0);
+        Ey.IFill(0);
+        Ez.IFill(0);
     }
 
     void populate(){

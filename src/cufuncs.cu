@@ -99,7 +99,7 @@ namespace cufuncs {
 	}
 
 	void integration(double time){
-		cuheun::cuHeun1<<<cuglob::bpg,cuglob::tpb>>>(cuglob::djind, neigh::nsimspin, time, cuglob::dsimspin, cuglob::c_lambda, cuglob::c_lambdap, cuthermal::dtfa, cuthermal::gvalsx, cuthermal::gvalsy, cuthermal::gvalsz, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx_new, cuglob::dJy_new, cuglob::dJz_new, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx,  cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
+		cuheun::cuHeun1<<<cuglob::bpg,cuglob::tpb>>>(cuglob::djind, neigh::nsimspin, time, cuglob::dsimspin, cuglob::c_lambda, cuglob::c_lambdap, cuthermal::dtfa, cuthermal::gvalsx, cuthermal::gvalsy, cuthermal::gvalsz, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx_new, cuglob::dJy_new, cuglob::dJz_new, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx,  cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz, cuglob::dEx, cuglob::dEy, cuglob::dEz);
 		cuheun::cuHeun2<<<cuglob::bpg,cuglob::tpb>>>(cuglob::djind, neigh::nsimspin, time, cuglob::dsimspin, cuglob::c_lambda, cuglob::c_lambdap, cuglob::dx_adj, cuglob::dadjncy, cuheun::Htx, cuheun::Hty, cuheun::Htz, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d, cuglob::dJx_new, cuglob::dJy_new, cuglob::dJz_new, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuheun::DelSx, cuheun::DelSy, cuheun::DelSz, cuheun::Sdashnx, cuheun::Sdashny, cuheun::Sdashnz);
 	}
 

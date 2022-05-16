@@ -22,7 +22,7 @@
 namespace util {
 
 
-
+	double E;
 	Array<double> Mt;
 	Array<double> Mmag;
 	Array<double> MdivMs;
@@ -95,6 +95,8 @@ namespace util {
 
 	//sort sites into sublattice
 	void SortSublat(){
+
+		E = 0.0;
 		
 		for (int a = 0; a < params::Nspins; a++){
 			
@@ -107,6 +109,8 @@ namespace util {
 			M(sublatindex,0) += spins::sx1d(a);
 			M(sublatindex,1) += spins::sy1d(a);
 			M(sublatindex,2) += spins::sz1d(a);
+
+			E += spins::Ex(a);
 
 		}
 
@@ -318,6 +322,9 @@ namespace util {
 		// 	std::cout  <<(M(0,m) / params::NmomentsSubLat) + (M(1,m) / params::NmomentsSubLat) << "\t";
 		// }
 
+		//output total energy
+		std::cout << E << " ";
+
 		// output Total magnetisation
 		if (params::afmflag != "N"){
 			std::cout << Mt(0) / params::Nspins << "\t" << Mt(1)  / params::Nspins<< "\t" << Mt(2) / params::Nspins;
@@ -346,6 +353,10 @@ namespace util {
 		if (params::afmflag != "N"){
 			magfile << Mt(0)  / params::Nspins << "\t" << Mt(1)  / params::Nspins<< "\t" << Mt(2) / params::Nspins;
 		}
+
+		//output total energy
+		magfile << "\t" << E;
+		
 		magfile << "\n";
 	}
 
@@ -435,7 +446,7 @@ namespace util {
 
 		// Check if equilibrium file could be opened
 		if (!equilibrationfile){
-			std::cout << "ERROR: Could not open equilibrium file" << std::endl;
+			std::cout << "ERROR: Could not open equilibrium file: " << sstr_eq.str() << std::endl;
 			exit(0);
 		}
 

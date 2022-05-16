@@ -101,6 +101,7 @@ int main(int argc, char* argv[]){
 	cuglob::copy_spins_to_device();
 	cuglob::copy_field_to_device();
 	cuglob::copy_damp_to_device();
+	cuglob::copy_energy_to_device();
 	if (params::simtype == "DW"){
 		cuglob::copy_dw_to_device();
 	}
@@ -148,6 +149,7 @@ int main(int argc, char* argv[]){
 			#ifdef CUDA
 			cuglob::copy_spins_to_host();
 			cuglob::copy_field_to_host();
+			cuglob::copy_energy_to_host();
 			#endif	
 			util::ResetMag();
 			util::SortSublat();

@@ -364,8 +364,6 @@ namespace neigh {
 
                             // IRREGULAR SHAPE FOR HEDGEHOG SIMULATIONS - NEED A BETTER LONG TERM FIX FOR THIS
                             if ((x != 0) && (x != params::Lx-1)){
-
-                                
                                 xp = spins::sx1d(geom::LatCount(x+1,y  ,z  ,q)) == 0.0;
                                 xm = spins::sx1d(geom::LatCount(x-1,y  ,z  ,q)) == 0.0;
                             }

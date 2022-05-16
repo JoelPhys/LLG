@@ -22,6 +22,7 @@ namespace cuglob {
 
 	double *dSx1d, *dSy1d, *dSz1d;
 	double *Hapx, *Hapy, *Hapz;
+	double *dEx, *dEy, *dEz;
 	double *dJx, *dJy, *dJz;
 	int *dlw, *drw;
 	int *dx_adj, *dadjncy;
@@ -81,6 +82,9 @@ namespace cuglob {
 		CUDA_CALL(cudaFree(dJx));
 		CUDA_CALL(cudaFree(dJy));
 		CUDA_CALL(cudaFree(dJz));
+		CUDA_CALL(cudaFree(dEx));
+		CUDA_CALL(cudaFree(dEy));
+		CUDA_CALL(cudaFree(dEz));
 		CUDA_CALL(cudaFree(dx_adj));
 		CUDA_CALL(cudaFree(dadjncy));
 		CUDA_CALL(cudaFree(cuthermal::gvalsx));
@@ -131,6 +135,14 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(Hapy, 0.0, sizeof(double) * params::Nspins));
 		CUDA_CALL(cudaMalloc((void**)&Hapz, sizeof(double)*params::Nspins));
 		CUDA_CALL(cudaMemset(Hapz, 0.0, sizeof(double) * params::Nspins));
+
+		//Total Energy
+		CUDA_CALL(cudaMalloc((void**)&dEx, sizeof(double)*params::Nspins));
+		CUDA_CALL(cudaMemset(dEx, 0.0, sizeof(double) * params::Nspins));
+		CUDA_CALL(cudaMalloc((void**)&dEy, sizeof(double)*params::Nspins));
+		CUDA_CALL(cudaMemset(dEy, 0.0, sizeof(double) * params::Nspins));
+		CUDA_CALL(cudaMalloc((void**)&dEz, sizeof(double)*params::Nspins));
+		CUDA_CALL(cudaMemset(dEz, 0.0, sizeof(double) * params::Nspins));
 
 		// Random number arrays
 		CUDA_CALL(cudaMalloc((void**)&cuthermal::gvalsx, sizeof(float)*params::Nspins));
@@ -230,6 +242,13 @@ namespace cuglob {
 
 	}
 
+	void copy_energy_to_device(){
+		CUDA_CALL(cudaMemcpy(dEx, spins::Ex.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dEy, spins::Ey.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dEz, spins::Ez.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+
+	}
+
 	void copy_field_to_device(){
 		CUDA_CALL(cudaMemcpy(Hapx, fields::H_appx.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(Hapy, fields::H_appy.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
@@ -283,6 +302,10 @@ namespace cuglob {
 		CUDA_CALL(cudaMemcpy(fields::H_appz.ptr(), Hapz, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
 	}
 
-
+	void copy_energy_to_host(){
+		CUDA_CALL(cudaMemcpy(spins::Ex.ptr(), dEx, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(spins::Ey.ptr(), dEy, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(spins::Ez.ptr(), dEz, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+	}
 
 }

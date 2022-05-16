@@ -10,6 +10,11 @@ namespace spins {
     extern Array<double> sy1d;
     extern Array<double> sz1d;
 
+    // Total Energy
+    extern Array<double> Ex;
+    extern Array<double> Ey;
+    extern Array<double> Ez;
+
     // Testing for hedgehog
     extern Array<double> surfx;
     extern Array<double> surfy;

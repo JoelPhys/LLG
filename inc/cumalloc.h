@@ -8,6 +8,7 @@ namespace cuglob {
 	extern double *dSx1d, *dSy1d, *dSz1d;
 	extern double *Hapx, *Hapy, *Hapz;
 	extern double *dJx, *dJy, *dJz;
+	extern double *dEx, *dEy, *dEz;
 	extern int *dx_adj, *dadjncy;
 	extern int *dlw, *drw;
 	extern Array<double> pJx, pJy, pJz;
@@ -37,9 +38,11 @@ namespace cuglob {
 	void copy_spins_to_device();
 	void copy_spins_to_host();
 	void copy_field_to_host();
+	void copy_energy_to_host();
 	void copy_damp_to_device();
 	void copy_jij_to_device();
 	void copy_dw_to_device();
+	void copy_energy_to_device();
 	void clear_memory();
 
 
