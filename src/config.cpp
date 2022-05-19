@@ -88,7 +88,8 @@ namespace params {
 
 	// Output Lattice
 	bool OutputLattice = false;		
-	int OutputLatticeStep = 10000000;	
+	int OutputLatticeStep = 10000000;
+	int OutputLatticeStart = 10000000;	
 	std::string OutputLatticeFilepath;		
 
 	void banner(){
@@ -323,7 +324,8 @@ namespace params {
 		dyup = 2 * ( dyu / mu_s[0] );	
 		dzup = 2 * ( dzu / mu_s[0] );
 
-		INFO_OUT("Uniaxial Anisotropy:", "[" << dxu << " , " << dyu << " , " << dzu << "] [J]");
+		INFO_OUT("Uniaxial Anisotropy Energy:", "[" << dxu << " , " << dyu << " , " << dzu << "] [J]");
+		INFO_OUT("Uniaxial Anisotropy Field:", "[" << dxup << " , " << dyup << " , " << dzup << "] [J]");
 		INFO_OUT("Cubic Anisotropy:", dzc << " [J]");
 
 
@@ -491,6 +493,7 @@ namespace params {
 			cfgmissing("Util.OutputLatticeStep");	
 			cfgmissing("Util.OutputLatticeFilepath");			
 			OutputLatticeStep = cfg.lookup("Util.OutputLatticeStep");  
+			OutputLatticeStart = cfg.lookup("Util.OutputLatticeStart");  
 			OutputLatticeFilepath = cfg.lookup("Util.OutputLatticeFilepath").c_str();  
 		}
 

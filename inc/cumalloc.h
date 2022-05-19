@@ -14,6 +14,7 @@ namespace cuglob {
 	extern Array<double> pJx, pJy, pJz;
 	extern Array<int> px_adj, padjncy;
 	extern int *dsimspin;
+	extern int *dsublat_sites;
 
 	//testing for hedgehog;
 	extern double *dsurfx, *dsurfy, *dsurfz;

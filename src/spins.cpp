@@ -131,7 +131,7 @@ namespace spins {
                         for (int q = 0; q < params::Nq; q++){
 
 
-                            if ((x == 0 ) || ( y == 0 ) || ( z == 0 ) || ( x == params::Lx ) || ( y == params::Ly ) || ( z == params::Lz)){
+                            if ((x != 0 ) || ( y != 0 ) || ( z != 0 ) || ( x != params::Lx-1 ) || ( y != params::Ly-1 ) || ( z != params::Lz-1)){
                                 double v1=0,v2=0,s=2.0,ss=0.0;
                                 while(s>1.0)
                                 {

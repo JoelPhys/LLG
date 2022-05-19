@@ -13,7 +13,7 @@ namespace cufields {
     extern double height;
 
     extern __global__ void uniform(int, double, double, double, double *, double *, double *);
-    extern __global__ void uniform_staggered(int, double, double, double, double *, double *, double *);
+    extern __global__ void uniform_staggered(int, double, double, double, double *, double *, double *, int *, int);
     extern __global__ void square_pulse(int, double, double, double, double, double *, double *, double *);
     extern __global__ void square_pulse_staggered(int, double, double, double, double, double *, double *, double *);
     extern __global__ void gaussian_pulse(int, double, double, double, double,  double *, double *, double *);

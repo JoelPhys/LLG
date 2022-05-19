@@ -34,6 +34,7 @@ namespace fields {
 	double freq;
 	double gauss;
 	double cuniform[3];
+	int sublatsites;
 
 	double std_dev;
 	double centre_pos;
@@ -66,12 +67,15 @@ namespace fields {
 		else if (type == "Uniform_Staggered") {
 			INFO_OUT("Field type:", type);
 			for (int a = 0; a < params::Nmoments; a++){
-				if ((modfunc(params::Nq,a) == 0) || (modfunc(params::Nq,a) == 2)) {
+				
+				sublatsites = params::sublat_sites[a % params::Nq];
+
+				if (sublatsites == 0){
 					H_appx(a) = setting1["Field"][0];
 					H_appy(a) = setting1["Field"][1];
 					H_appz(a) = setting1["Field"][2];
 				}
-				else if ((modfunc(params::Nq,a) == 1) || (modfunc(params::Nq,a) == 3)) {
+				else if (sublatsites == 1){
 					H_appx(a) = -1.0 * static_cast<double>(setting1["Field"][0]);
 					H_appy(a) = -1.0 * static_cast<double>(setting1["Field"][1]);
 					H_appz(a) = -1.0 * static_cast<double>(setting1["Field"][2]);

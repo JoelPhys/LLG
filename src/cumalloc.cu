@@ -27,6 +27,7 @@ namespace cuglob {
 	int *dlw, *drw;
 	int *dx_adj, *dadjncy;
 	int *dsimspin;
+	int *dsublat_sites;
 
 	//testing for hedgehog
 	double *dsurfx, *dsurfy, *dsurfz;
@@ -87,6 +88,7 @@ namespace cuglob {
 		CUDA_CALL(cudaFree(dEz));
 		CUDA_CALL(cudaFree(dx_adj));
 		CUDA_CALL(cudaFree(dadjncy));
+		CUDA_CALL(cudaFree(dsublat_sites));
 		CUDA_CALL(cudaFree(cuthermal::gvalsx));
 		CUDA_CALL(cudaFree(cuthermal::gvalsy));
 		CUDA_CALL(cudaFree(cuthermal::gvalsz));
@@ -158,6 +160,9 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(c_lambda,  0.0, sizeof(double) * params::Nq));
 		CUDA_CALL(cudaMemset(c_lambdap, 0.0, sizeof(double) * params::Nq));
 
+		//Sublattice ordering
+		CUDA_CALL(cudaMalloc((void**)&dsublat_sites, sizeof(int)*params::Nq));
+		CUDA_CALL(cudaMemset(dsublat_sites,  0.0, sizeof(int) * params::Nq));
 
 		// Jij matrices
 		CUDA_CALL(cudaMalloc((void**)&dJx, sizeof(double)*neigh::Jijx_prime.size()));
@@ -278,6 +283,7 @@ namespace cuglob {
 		CUDA_CALL(cudaMemcpy(dSx1d, spins::sx1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(dSy1d, spins::sy1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(dSz1d, spins::sz1d.ptr(), sizeof(double) * params::Nspins, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(dsublat_sites, &params::sublat_sites[0], sizeof(int) * params::Nq, cudaMemcpyHostToDevice));
 	}
 
 	void copy_dw_to_device(){

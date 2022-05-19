@@ -322,13 +322,13 @@ namespace util {
 		// 	std::cout  <<(M(0,m) / params::NmomentsSubLat) + (M(1,m) / params::NmomentsSubLat) << "\t";
 		// }
 
-		//output total energy
-		std::cout << E << " ";
-
 		// output Total magnetisation
 		if (params::afmflag != "N"){
 			std::cout << Mt(0) / params::Nspins << "\t" << Mt(1)  / params::Nspins<< "\t" << Mt(2) / params::Nspins;
 		}
+
+		//output total energy
+		std::cout << "\t | \t" << E;
 		std::cout << "\n";
 	}
 

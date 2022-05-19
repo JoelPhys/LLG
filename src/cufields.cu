@@ -29,17 +29,20 @@ namespace cufields {
 
 	}
 
-	__global__ void uniform_staggered(int N, double x, double y, double z, double *Hapx, double *Hapy, double *Hapz){
+	__global__ void uniform_staggered(int N, double x, double y, double z, double *Hapx, double *Hapy, double *Hapz, int *dsublat_sites, int nsites){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
 		if (i < N){
-			if (( i % 4 == 0) || (i % 4 == 2)) {
+			
+			int sublatsites = dsublat_sites[i % nsites];
+			
+			if (sublatsites == 0){
 				Hapx[i] = x;
 				Hapy[i] = y;
 				Hapz[i] = z; 
 			} 
-			if (( i % 4 == 1) || (i % 4 == 3)) {
+			else if (sublatsites == 1){
 				Hapx[i] = -1*x;
 				Hapy[i] = -1*y;
 				Hapz[i] = -1*z; 

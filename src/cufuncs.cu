@@ -40,7 +40,7 @@ namespace cufuncs {
 			cufields::uniform<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, fields::cuniform[0], fields::cuniform[1], fields::cuniform[2], cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 		else if (type == "Uniform_Staggered"){
-			cufields::uniform_staggered<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, fields::cuniform[0], fields::cuniform[1], fields::cuniform[2], cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			cufields::uniform_staggered<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, fields::cuniform[0], fields::cuniform[1], fields::cuniform[2], cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, cuglob::dsublat_sites,params::Nq);
 		}
 		else if (type == "Square_Pulse"){
 			cufields::square_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
