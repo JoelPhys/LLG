@@ -1,5 +1,6 @@
 output/magnetisation/*
 output/spinwaves/*
+output/lattice/*
 ASD
 ASDcu
 obj/*.o
