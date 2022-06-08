@@ -95,7 +95,7 @@ namespace cufuncs {
 	}
 	
 	void cuRotation(){
-		cuheun::cuRotfun<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d); 
+		cuheun::cuRotfun<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, params::Nq, cuglob::dsublat_sites, cuglob::dSx1d, cuglob::dSy1d, cuglob::dSz1d); 
 	}
 
 	void initial_energy(double time){

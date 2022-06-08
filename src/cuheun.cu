@@ -76,37 +76,44 @@ namespace cuheun {
 
 	}
 
-	__global__ void cuRotfun(int N, double *dSx1d, double  *dSy1d, double  *dSz1d){
+	__global__ void cuRotfun(int N, int nsites, int *dsublat_sites, double *dSx1d, double  *dSy1d, double  *dSz1d){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
 		if (i < N){
 
 			double vec[3];
-			if ((i % 8 == 0) || (i % 8 == 3) || (i % 8 == 5) || (i % 8 == 6)){
+
+			int sublatsites = dsublat_sites[i % nsites];
+
+			if (sublatsites == 0){
 				// if (( i % c_Nq == 1) || (i % c_Nq == 3)) {
 
-				vec[0] = dSx1d[i] * cos(c_angle) - dSy1d[i] * sin(c_angle);
-				vec[1] = dSx1d[i] * sin(c_angle) + dSy1d[i] * cos(c_angle);
-				vec[2] = dSz1d[i];
+				vec[0] =  dSx1d[i] * cos(c_angle) + dSz1d[i] * sin(c_angle);
+				vec[1] =  dSy1d[i]; 
+				vec[2] = -dSx1d[i] * sin(c_angle) + dSz1d[i] * cos(c_angle);
 
 				dSx1d[i] = vec[0];
 				dSy1d[i] = vec[1];
 				dSz1d[i] = vec[2];
 
 			}
-			// else if ((i % 8 == 1) || (i % 8 == 2) || (i % 8 == 4) || (i % 8 == 7)){
-			// 	// if (( i % c_Nq == 1) || (i % c_Nq == 3)) {
+			else if (sublatsites == 1){
+				// if (( i % c_Nq == 1) || (i % c_Nq == 3)) {
 
-			// 	vec[0] = dSx1d[i] * cos(c_angle) - dSy1d[i] * sin(c_angle);
-			// 	vec[1] = dSx1d[i] * sin(c_angle) + dSy1d[i] * cos(c_angle);
-			// 	vec[2] = dSz1d[i];
+				// vec[0] = dSx1d[i] * cos(c_angle) - dSy1d[i] * sin(c_angle);
+				// vec[1] = dSx1d[i] * sin(c_angle) + dSy1d[i] * cos(c_angle);
+				// vec[2] = dSz1d[i];
 
-			// 	dSx1d[i] = vec[0];
-			// 	dSy1d[i] = vec[1];
-			// 	dSz1d[i] = vec[2];
+				vec[0] =  dSx1d[i] * cos(c_angle) + dSz1d[i] * sin(c_angle);
+				vec[1] =  dSy1d[i]; 
+				vec[2] = -dSx1d[i] * sin(c_angle) + dSz1d[i] * cos(c_angle);
 
-			// }
+				dSx1d[i] = vec[0];
+				dSy1d[i] = vec[1];
+				dSz1d[i] = vec[2];
+
+			}
 		}
 	}
 
