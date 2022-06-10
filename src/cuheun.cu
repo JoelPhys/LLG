@@ -89,6 +89,10 @@ namespace cuheun {
 			if (sublatsites == 0){
 				// if (( i % c_Nq == 1) || (i % c_Nq == 3)) {
 
+				// vec[0] = dSx1d[i] * cos(c_angle) - dSy1d[i] * sin(c_angle);
+				// vec[1] = dSx1d[i] * sin(c_angle) + dSy1d[i] * cos(c_angle);
+				// vec[2] = dSz1d[i];
+
 				vec[0] =  dSx1d[i] * cos(c_angle) + dSz1d[i] * sin(c_angle);
 				vec[1] =  dSy1d[i]; 
 				vec[2] = -dSx1d[i] * sin(c_angle) + dSz1d[i] * cos(c_angle);
