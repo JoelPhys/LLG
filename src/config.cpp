@@ -93,17 +93,21 @@ namespace params {
 
 	void banner(){
 		std::cout << std::endl;
-		std::cout << "                                            ███    █████████    █████████  ██████████                     " << std::endl;
-		std::cout << "                                           ░░░    ███░░░░░███  ███░░░░░███░░███░░░░███                    " << std::endl;
-		std::cout << "                                           █████ ░███    ░███ ░███    ░░░  ░███   ░░███                   " << std::endl;
-		std::cout << "                                          ░░███  ░███████████ ░░█████████  ░███    ░███                   " << std::endl;
-		std::cout << "                                           ░███  ░███░░░░░███  ░░░░░░░░███ ░███    ░███                   " << std::endl;
-		std::cout << "                                           ░███  ░███    ░███  ███    ░███ ░███    ███                    " << std::endl;
-		std::cout << "                                           ░███  █████   █████░░█████████  ██████████                     " << std::endl;
-		std::cout << "                                           ░███ ░░░░░   ░░░░░  ░░░░░░░░░  ░░░░░░░░░░                      " << std::endl;
-		std::cout << "                                       ███ ░███                                                           " << std::endl;
-		std::cout << "                                      ░░██████                                                            " << std::endl;
-		std::cout << "                                       ░░░░░░                                                             " << std::endl;		
+		std::cout << std::endl;
+		std::cout << std::endl;
+		std::cout << "                                          █████   █████████    █████████  ██████████                     " << std::endl;
+		std::cout << "                                         ░░███   ███░░░░░███  ███░░░░░███░░███░░░░███                    " << std::endl;
+		std::cout << "                                          ░███  ░███    ░███ ░███    ░░░  ░███   ░░███                   " << std::endl;
+		std::cout << "                                          ░███  ░███████████ ░░█████████  ░███    ░███                   " << std::endl;
+		std::cout << "                                          ░███  ░███░░░░░███  ░░░░░░░░███ ░███    ░███                   " << std::endl;
+		std::cout << "                                    ███   ░███  ░███    ░███  ███    ░███ ░███    ███                    " << std::endl;
+		std::cout << "                                   ░░████████   █████   █████░░█████████  ██████████                     " << std::endl;
+		std::cout << "                                    ░░░░░░░░   ░░░░░   ░░░░░  ░░░░░░░░░  ░░░░░░░░░░                      " << std::endl;
+		std::cout << "                                                                                                         " << std::endl;
+		std::cout << "                                              Joel's Atomistic Spin Dynamics                             " << std::endl;
+		std::cout << "                                              														   " << std::endl;	
+		std::cout << "                                              														   " << std::endl;		
+		std::cout << "                                              														   " << std::endl;	
 	}
 
 	//=======================================================================================================
