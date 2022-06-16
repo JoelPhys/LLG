@@ -8,7 +8,7 @@
 #include <vector>
 #include <cstdio>
 #include <iomanip>
-#include <string>
+#include <cstring>
 #include <sstream>
 
 // my header files
@@ -51,6 +51,8 @@ namespace fields {
 
 		type = params::cfg.lookup("ExternalField.Type").c_str();
 		libconfig::Setting& setting1 = params::cfg.lookup("ExternalField");
+
+		TITLE("EXTERNAL FIELD");
 
 		if (type == "Uniform") {
 			INFO_OUT("Field type:", type);

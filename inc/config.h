@@ -38,10 +38,6 @@
         extern std::vector<int> sublat_sites;
         extern std::vector<int> NmomentsSubLat;
 
-        extern int xdimS, ydimS, zdimS, start;
-        extern double dt_spinwaves;
-        extern double sg_spinwaves;
-
         //Rotation angle
         extern double angle;	
         
@@ -53,7 +49,6 @@
         
         //output file location
         extern std::string filepath;
-        extern std::string filepath_sw;
 
         // Jij SETTINGS
         extern std::string Jij_filename;
@@ -93,6 +88,7 @@
         extern libconfig::Config cfg;
 
         void banner();
+        void cfgmissing(std::string in);
         void intitialiseConfig(const char* cfg_filename);
         void readparams();
 

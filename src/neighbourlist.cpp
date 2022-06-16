@@ -50,7 +50,13 @@ namespace neigh {
 
     void ReadFile(){
 
-        TITLE("READING IN EXCHANGE FILE");
+        TITLE("EXCHANGE INFORMATION");
+		INFO_OUT("Exchange filename: ", params::Jij_filename);        
+		INFO_OUT("Exhchange Cutoff:", params::JijCutoff);
+		INFO_OUT("Exhchange Energy Minimum:", params::Jij_min << " (" << params::Jij_units << ")");
+		if (params::Jijhalf == true) {INFO_OUT("Have Jij values been doubled", "Yes");}
+		else if (params::Jijhalf == false) {INFO_OUT("Have Jij values been doubled", "No");}
+
 
         std::ifstream input(params::Jij_filename);
         if (!input){
@@ -116,7 +122,7 @@ namespace neigh {
                     std::cout << "WARNING: Unasigned Jij cutoff flag" << std::endl;
                 }
             }
-            std::cout << "Jij input file has been read in successfully" << std::endl;
+            INFO_OUT("Has the Jij input file has been read in successfully:","Yes");
         }
         else if (params::format == "diag"){
             double a, b, c, d, e, f, g, h;
@@ -174,11 +180,10 @@ namespace neigh {
                 Jijy[i] = Jijy[i] * 2;
                 Jijz[i] = Jijz[i] * 2;
             }
-            std::cout << "Jij values have been doubled" << std::endl;
+            INFO_OUT("Have Jij values been doubled","Yes");
         }
         else if (params::Jijhalf == false) {
-            std::cout << "Jij values have NOT been doubled" << std::endl;
-
+            INFO_OUT("Have Jij values been doubled","No");
         }
         else {
             std::cout << "WARNING: Unasigned Jij double flag" << std::endl;

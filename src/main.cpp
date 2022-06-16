@@ -56,7 +56,7 @@ int main(int argc, char* argv[]){
 	// heun::init();
 	util::init();
 
-	if (params::simtype == "spinwaves"){
+	if (params::simtype == "Spinwaves"){
 		spinwaves::init();
 	}
 	// ======================================================================================================== //
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]){
 	double tau = 0;
 
 	int c;
-	c = params::dt_spinwaves / params::dt;
+	c = spinwaves::dt_spinwaves / params::dt;
 
 	util::InitMagFile(Temp);
 	util::InitFldFile(Temp);
@@ -138,7 +138,7 @@ int main(int argc, char* argv[]){
 	for (int i = 0; i < params::Nt; i++){
 
 		#ifdef CUDA
-		if (i ==  params::Nt / 2) {
+		if (i ==  5001) {
 			std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
 			cufuncs::cuRotation();
 		}
@@ -179,9 +179,9 @@ int main(int argc, char* argv[]){
 			if (params::simtype == "DW"){		
 				util::OutputDWtoFile(i);
 			}
-			if (params::simtype == "spinwaves"){
-				if ((i >= params::start)){
-					spinwaves::file_spnwvs << spinwaves::icount * params::dt_spinwaves << "\t";
+			if (params::simtype == "Spinwaves"){
+				if ((i >= spinwaves::start)){
+					spinwaves::file_spnwvs << spinwaves::icount * spinwaves::dt_spinwaves << "\t";
 					spinwaves::FFTspace();      
 				}
 			}
@@ -208,7 +208,7 @@ int main(int argc, char* argv[]){
 	}
 
 	// Carry out time FFT once simulation is complete
-	if (params::simtype == "spinwaves"){
+	if (params::simtype == "Spinwaves"){
 	spinwaves::FFTtime();
 	}
 						

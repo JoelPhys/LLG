@@ -5,8 +5,10 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+#include <cstring>
 #include <iostream>
 #include <algorithm>
+#include <sys/stat.h>
 
 // my header files
 #include "../inc/geom.h"
@@ -31,10 +33,10 @@ namespace spinwaves {
 
 	// initialise arrays
 	Array3D<double> stcf;
+	Array<fftw_complex> stcfT;
+	Array<fftw_complex> FFTstcfT;
 	Array3D<fftw_complex> FFTstcf;
 	Array2D<fftw_complex> FFTstcfarray;
-	Array<fftw_complex> FFTstcfT;
-	Array<fftw_complex> stcfT;
 
 	//Testing for Mn2Au
 	Array4D<fftw_complex> FFTstcfarray_test;
@@ -49,9 +51,16 @@ namespace spinwaves {
 	int icount;
 
 	// variables for Hamming Windowing function
-	double windowing = 0;
 	double hammA = 0.54;
 	double hammB = 0.46;
+	double windowing = 0;
+
+	// config variables
+	int start;
+	double dt_spinwaves;
+	double sg_spinwaves;
+	std::string filepath_sw;
+
 
 	double norm;
 
@@ -64,17 +73,63 @@ namespace spinwaves {
 	int kpath_length;
 
 	// testing with 1d
+	fftw_plan Slat1d;
 	Array<double> stcf1d;
 	Array<fftw_complex> FFTstcf1d;
-	fftw_plan Slat1d;
 
 	void init(){
 
+		TITLE("SPINWAVES");
+
+		//=======================================================================================================
+		// A few bits for Spinwaves =============================================================================
+		//=======================================================================================================
+
+		// Check if spinwaves timestep is missing.
+		// If it is missing, set to magnetisation output step. 	
+		if (!params::cfg.exists("Spinwaves.TimeStep")){
+			dt_spinwaves = params::outputstep;
+			INFO_OUT("Spinwave timestep is missing, assigning same value as output magnetisation:", dt_spinwaves << " [s]");
+		}
+		else {
+			dt_spinwaves = params::cfg.lookup("Spinwaves.TimeStep");
+			INFO_OUT("Spinwaves output timestep:", dt_spinwaves << " [s]");
+		}
+
+		params::cfgmissing("Spinwaves.smoothing");			
+		sg_spinwaves = params::cfg.lookup("Spinwaves.smoothing");
+
 	
+		params::cfgmissing("Spinwaves.filepath");        		    
+		filepath_sw = params::cfg.lookup("Spinwaves.filepath").c_str();   
+
+		struct stat buffer;
+		if (stat(filepath_sw.c_str(), &buffer) != 0) {
+    		std::cout << "ERROR: Spinwaves output directory does not exist!" << std::endl;;
+			exit(0);
+		}	
+
+		params::cfgmissing("Spinwaves.StartTime");		
+		start = params::cfg.lookup("Spinwaves.StartTime");
+
 		// Read kpath from config file
 		libconfig::Setting& setting = params::cfg.lookup("Spinwaves");
 		std::string swtext;
-
+		
+		//Check paths exists
+		if (!setting.exists("kpathx")){
+			std::cout << "ERROR: kpathx does not exist. Exiting." << std::endl;
+			exit(0);
+		}
+		if (!setting.exists("kpathy")){
+			std::cout << "ERROR: kpathy does not exist. Exiting." << std::endl;
+			exit(0);
+		}
+		if (!setting.exists("kpathz")){
+			std::cout << "ERROR: kpathz does not exist. Exiting." << std::endl;
+			exit(0);
+		}
+	
 		// Check if kpaths are the same lengths
 		if ((setting["kpathx"].getLength() == setting["kpathy"].getLength()) && (setting["kpathy"].getLength() == setting["kpathz"].getLength())){
 
@@ -95,8 +150,8 @@ namespace spinwaves {
 		}
 
 		// calculate number of points in time array
-		Npoints  = ceil((params::Nt - params::start) / (params::dt_spinwaves / params::dt));
-		INFO_OUT("number of timepoints for spinwaves = ", Npoints);
+		Npoints  = ceil((params::Nt - start) / (dt_spinwaves / params::dt));
+		INFO_OUT("number of timepoints for spinwaves:", Npoints);
 		
 		
 		icount = 0;
@@ -204,11 +259,11 @@ namespace spinwaves {
 
  		double j1, kpoint;
 		double os1, os2, os[icount/2], freq;
-		double freqstep = (1/params::dt_spinwaves) / icount; 
+		double freqstep = (1.0/dt_spinwaves) / icount; 
 
 		// Create output file for peaks
 		std::stringstream peakstring;
-		peakstring << params::filepath_sw << "peaks.txt";
+		peakstring << filepath_sw << "peaks.txt";
 		std::ofstream peaksout;
 		peaksout.open(peakstring.str());
 		peaksout << std::setprecision(10);
@@ -417,7 +472,7 @@ namespace spinwaves {
 
 				// Create output files for k vectors
 				std::stringstream sstr2;
-				sstr2 << params::filepath_sw;
+				sstr2 << filepath_sw;
 				sstr2 << "kx" << std::setw(4) << std::setfill('0') << counter;
 				// sstr2 << "ky" << std::setw(4) << std::setfill('0') << b;
 				// sstr2 << "kz" << std::setw(4) << std::setfill('0') << c;
@@ -456,7 +511,7 @@ namespace spinwaves {
 				double mag = sqrt(ai*ai + bi*bi + ci*ci);
 				xout += mag;
 
-				peaksout << xout << " " << index * ( 1 / (params::dt_spinwaves * Npoints)) << "\n";
+				peaksout << xout << " " << index * ( 1.0 / (dt_spinwaves * Npoints)) << "\n";
 				counter++;
 
 				for (int kk = 0; kk < icount/2; kk++){
@@ -468,7 +523,7 @@ namespace spinwaves {
 				int n = icount/2;
 				int s = icount/2 + icount/2 - 1;
 				int mean = icount/4;
-				double sg = params::sg_spinwaves;
+				double sg = sg_spinwaves;
 				double sum = 0;
 				double g[n];
 				double w[s];

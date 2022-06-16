@@ -328,7 +328,8 @@ namespace util {
 		}
 
 		//output total energy
-		std::cout << "\t | \t" << E;
+		//std::cout << "\t | \t" << E;
+		
 		std::cout << "\n";
 	}
 

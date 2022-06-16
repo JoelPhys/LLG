@@ -49,13 +49,13 @@ namespace cuglob {
 		struct cudaDeviceProp properties;
 		cudaGetDeviceProperties(&properties, device);
 		TITLE("CUDA DEVICE PROPERTIES");
-		std::cout.width(75); std::cout << std::left << "Device name:"; std::cout << properties.name << std::endl;
-		std::cout.width(75); std::cout << std::left << "Memory Clock Rate (KHz):"; std::cout << properties.memoryClockRate << std::endl;
-    	std::cout.width(75); std::cout << std::left << "Memory Bus Width (bits):"; std::cout << properties.memoryBusWidth << std::endl;
-    	std::cout.width(75); std::cout << std::left << "Peak Memory Bandwidth (GB/s):"; std::cout << 2.0*properties.memoryClockRate*(properties.memoryBusWidth/8)/1.0e6 << std::endl;
-		std::cout.width(75); std::cout << std::left << "multiprocessors:"; std::cout << properties.multiProcessorCount << std::endl;
-		std::cout.width(75); std::cout << std::left << "max threads per processor:"; std::cout << properties.maxThreadsPerMultiProcessor << std::endl;
-		std::cout.width(75); std::cout << std::left << "max threads per block:"; std::cout << properties.maxThreadsPerBlock << std::endl;	
+		INFO_OUT("Device name:", properties.name);
+		INFO_OUT("Memory Clock Rate (KHz):", properties.memoryClockRate);
+    	INFO_OUT("Memory Bus Width (bits):", properties.memoryBusWidth);
+    	INFO_OUT("Peak Memory Bandwidth (GB/s):", 2.0*properties.memoryClockRate*(properties.memoryBusWidth/8)/1.0e6);
+		INFO_OUT("multiprocessors:", properties.multiProcessorCount);
+		INFO_OUT("max threads per processor:", properties.maxThreadsPerMultiProcessor);
+		INFO_OUT("max threads per block:", properties.maxThreadsPerBlock);	
 		tpb = properties.maxThreadsPerBlock;
 		bpg = (params::Nspins + tpb - 1) / tpb;
 
@@ -270,8 +270,6 @@ namespace cuglob {
 		CUDA_CALL(cudaMemcpy(dsimspin, &neigh::simspin[0], sizeof(int) * neigh::nsimspin, cudaMemcpyHostToDevice));	
 
 		//testing
-		std::cout << neigh::jind.size() << std::endl;
-		std::cout << neigh::Jijx_prime.size() << std::endl;
 		CUDA_CALL(cudaMemcpy(djind, &neigh::jind[0], sizeof(int) * neigh::jind.size(), cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(dJx_new, &neigh::Jijx[0], sizeof(double) * neigh::Jijx.size(), cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(dJy_new, &neigh::Jijy[0], sizeof(double) * neigh::Jijy.size(), cudaMemcpyHostToDevice));

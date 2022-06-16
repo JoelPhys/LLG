@@ -8,7 +8,6 @@
 #include <vector>
 #include <cstdio>
 #include <iomanip>
-#include <string>
 #include <cstring>
 #include <sstream>
 #include "../inc/mathfuncs.h"
@@ -44,7 +43,7 @@ namespace params {
 	int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat;
 	int Idx, Idy, Idz; // For integer lattice
 	double a1, b1, c1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
-	int xdimS, ydimS, zdimS, start;
+	int start;
 	double dt_spinwaves;
 	double sg_spinwaves;
 	double angle;
@@ -269,13 +268,21 @@ namespace params {
 			INFO_OUT("Temperature Gradient:", temp_gradient << "[K / unit cell]");
 		}
 
+		// Lattice parameters
+		cfgmissing("LatticeVectors.a");
+		cfgmissing("LatticeVectors.b");
+		cfgmissing("LatticeVectors.c");	
+		a1 = cfg.lookup("LatticeVectors.a");
+		b1 = cfg.lookup("LatticeVectors.b");
+		c1 = cfg.lookup("LatticeVectors.c");
+
 		// Print key parameters to log file
 		TITLE("MATERIAL CONSTANTS");
 		// INFO_OUT("Damping constant:",lambda);
 		// INFO_OUT("Magnetic Moment:", mu_s << " (mu_b)");
-		INFO_OUT("Lattice Parameter, a:", a1 << " (m)");
-		INFO_OUT("Lattice Parameter, b:", b1 << " (m)");
-		INFO_OUT("Lattice Parameter, c:", c1 << " (m)");
+		INFO_OUT("Lattice Parameter, a:", a1*1e9 << " [nm]");
+		INFO_OUT("Lattice Parameter, b:", b1*1e9 << " [nm]");
+		INFO_OUT("Lattice Parameter, c:", c1*1e9 << " [nm]");
 		INFO_OUT("Timestep:", dt << " (s)");
 		INFO_OUT("Number of timesteps:", Nt);
 		INFO_OUT("Outputting every ", outputstep << " timesteps");
@@ -399,14 +406,6 @@ namespace params {
 		// Read Lattice Vectors and constants ===================================================================
 		//=======================================================================================================
 
-		// lattice constants
-		cfgmissing("LatticeVectors.a");
-		cfgmissing("LatticeVectors.b");
-		cfgmissing("LatticeVectors.c");	
-		a1 = cfg.lookup("LatticeVectors.a");
-		b1 = cfg.lookup("LatticeVectors.b");
-		c1 = cfg.lookup("LatticeVectors.c");
-
 		for (int v = 0; v < 3; v++){
 
 			std::stringstream sstr1;
@@ -420,7 +419,6 @@ namespace params {
 			Plat[v][2] = setting[str1.c_str()][2];
 			INFO_OUT("Lattice Vectors:", std::fixed << std::setprecision(5) << Plat[v][0] << " " << Plat[v][1] << " " << Plat[v][2]);
 		}
-
 		//=======================================================================================================
 		// Read Initial Magnetisation Vectors ===================================================================
 		//=======================================================================================================
@@ -440,6 +438,7 @@ namespace params {
 			initm[v][2] = setting[str2.c_str()][2];
 			INFO_OUT("Initial Magnestaion Vectors:", std::fixed << std::setprecision(5) << initm[v][0] << " " << initm[v][1] << " " << initm[v][2]);
 		}
+		std::cout.unsetf(std::ios_base::fixed);
 
 		//=======================================================================================================
 		// Read Sublat vector ===================================================================================
@@ -455,8 +454,6 @@ namespace params {
 			NmomentsSubLat[sublat_sites[v]] += 1*Lx*Ly*Lz;
 
 		}
-
-		std::cout << NmomentsSubLat[0] << " " << NmomentsSubLat[1] << " " << NmomentsSubLat[2] << std::endl;
 
 		//Cubic Anisotropy
 		cfgmissing("Cubic_Anisotropy.d_c");
@@ -502,12 +499,9 @@ namespace params {
 		// Rest of parameters ===================================================================================
 		//=======================================================================================================
 
-		cfgmissing("Util.OutputToTerminal");		
-		cfgmissing("Spinwaves.StartTime");			
+		cfgmissing("Util.OutputToTerminal");			
 		cfgmissing("Util.afmflag");  				
 		cfgmissing("Exchange.Format");  			
-		cfgmissing("Spinwaves.TimeStep");
-		cfgmissing("Spinwaves.smoothing");			
 		cfgmissing("Exchange.InputFile");			
 		cfgmissing("Exchange.Units");   			
 		cfgmissing("Exchange.Cutoff");    			
@@ -516,11 +510,8 @@ namespace params {
 		cfgmissing("Exchange.CutoffEnergy");    	
 		cfgmissing("Exchange.ibtoq");  	
 		OutputToTerminal = cfg.lookup("Util.OutputToTerminal");
-		start = cfg.lookup("Spinwaves.StartTime");
 		afmflag = cfg.lookup("Util.afmflag").c_str();  
 		format = cfg.lookup("Exchange.Format").c_str();  
-		dt_spinwaves = cfg.lookup("Spinwaves.TimeStep");
-		sg_spinwaves = cfg.lookup("Spinwaves.smoothing");
 		Jij_filename = cfg.lookup("Exchange.InputFile").c_str();
 		Jij_units = cfg.lookup("Exchange.Units").c_str();   
 		JijCutoff = cfg.lookup("Exchange.Cutoff");    
@@ -528,13 +519,6 @@ namespace params {
 		Jijhalf = cfg.lookup("Exchange.Double_Jij");    
 		Jij_min = cfg.lookup("Exchange.CutoffEnergy");    
 		ibtoq = cfg.lookup("Exchange.ibtoq");  			
-
-		TITLE("EXCHANGE FILE INFO");
-		INFO_OUT("Exchange filename: ", params::Jij_filename);        
-		INFO_OUT("Exhchange Cutoff:", JijCutoff);
-		INFO_OUT("Exhchange Energy Minimum:", Jij_min << " (" << Jij_units << ")");
-		if (Jijhalf == true) {INFO_OUT("Have Jij values been doubled", "Yes");}
-		else if (Jijhalf == false) {INFO_OUT("Have Jij values been doubled", "No");}
 
 
 	}

@@ -112,10 +112,10 @@ namespace cuthermal {
     void curand_generator(){
 	std::time_t result = std::time(nullptr);
 	int seed = static_cast<int>(result);
-    std::cout << "time since epoch  = " << result << " (s)" << std::endl;
+    INFO_OUT("time since epoch:",result << " [s]");
 	CURAND_CALL(curandCreateGenerator(&gen,CURAND_RNG_PSEUDO_MTGP32));
     CURAND_CALL(curandSetPseudoRandomGeneratorSeed(gen, seed));
-	std::cout << "Curand Seed = " << seed << std::endl;
+	INFO_OUT("Curand Seed = ",seed);
 
     atexit(destroy_generator);
     }
