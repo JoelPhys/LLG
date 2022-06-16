@@ -88,11 +88,12 @@ namespace spinwaves {
 		// Check if spinwaves timestep is missing.
 		// If it is missing, set to magnetisation output step. 	
 		if (!params::cfg.exists("Spinwaves.TimeStep")){
-			dt_spinwaves = params::outputstep;
+			dt_spinwaves = params::outputstep * params::dt;
 			INFO_OUT("Spinwave timestep is missing, assigning same value as output magnetisation:", dt_spinwaves << " [s]");
 		}
 		else {
 			dt_spinwaves = params::cfg.lookup("Spinwaves.TimeStep");
+			dt_spinwaves *= params::dt;
 			INFO_OUT("Spinwaves output timestep:", dt_spinwaves << " [s]");
 		}
 
@@ -225,18 +226,7 @@ namespace spinwaves {
 		//windowing function
 		windowing = hammA - hammB * cos((2 * M_PI * icount) / (Npoints  - 1));     
 
-		// for (int j = 0; j < params::Lx/2+1; j++){
-
-		// //     if (j < kpts){
-		// //         FFTstcfarray(icount,j)[REAL] = windowing * FFTstcf(j,0,0)[REAL];
-		// //         FFTstcfarray(icount,j)[IMAG] = windowing * FFTstcf(j,0,0)[IMAG];
-		// //         file_spnwvs << FFTstcf(j,0,0)[REAL] << " " << FFTstcf(j,0,0)[IMAG] << "\t";
-
-		//     // TESTING MN2AU
-		//     FFTstcfarray(icount,j)[REAL] = windowing * FFTstcf1d(j)[REAL];
-		//     FFTstcfarray(icount,j)[IMAG] = windowing * FFTstcf1d(j)[IMAG];
-		//     // file_spnwvs << FFTstcf1d(j)[REAL] << " " << FFTstcf1d(j)[IMAG] << "\t";
-		// }
+		file_spnwvs << icount * dt_spinwaves << "\t";
 
 		for (int j = 0; j < geom::Ix; j++){
 			for (int l = 0; l < geom::Iy; l++){

@@ -43,9 +43,6 @@ namespace params {
 	int Lx, Ly, Lz, Nq, ax, ay, az, zdimC, Nspins, Nmoments, Nsublat;
 	int Idx, Idy, Idz; // For integer lattice
 	double a1, b1, c1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
-	int start;
-	double dt_spinwaves;
-	double sg_spinwaves;
 	double angle;
 	std::vector<int> sublat_sites;
 	std::vector<int> NmomentsSubLat;

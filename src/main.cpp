@@ -145,15 +145,15 @@ int main(int argc, char* argv[]){
 		#endif
 
 
-		if (i == 5000){
-			for (int l = 0; l < params::Nq; l++){
-				params::lambda[l] = 0.0;
-				params::thermal_const[l] = 0.0;
-				params::lambdaPrime[l] = 1 / (1+(params::lambda[l]*params::lambda[l]));
-				cuglob::copy_damp_to_device();
-				cuglob::copy_temp_to_device(Temp);
-			}
-		}
+		//if (i == 5000){
+		//	for (int l = 0; l < params::Nq; l++){
+		//		params::lambda[l] = 0.0;
+		//		params::thermal_const[l] = 0.0;
+		//		params::lambdaPrime[l] = 1 / (1+(params::lambda[l]*params::lambda[l]));
+		//		cuglob::copy_damp_to_device();
+		//		cuglob::copy_temp_to_device(Temp);
+		//	}
+		//}
 		
 		if ((i % params::OutputLatticeStep == 0) && (i != 0) && (i >= params::OutputLatticeStart) ){
 			if (params::OutputLattice == true){
