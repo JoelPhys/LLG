@@ -455,6 +455,12 @@ namespace params {
 			NmomentsSubLat[sublat_sites[v]] += 1*Lx*Ly*Lz;
 
 		}
+		
+		// Output number of magnetic moments in each sublattice.
+		for (int v = 0; v < Nsublat; v++){
+			lmtext = "Number of Moments in Sublattice " + std::to_string(v) + ":";   		
+			INFO_OUT(lmtext, NmomentsSubLat[v]);
+		}
 
 		//Cubic Anisotropy
 		cfgmissing("Cubic_Anisotropy.d_c");

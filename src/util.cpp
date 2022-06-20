@@ -421,7 +421,7 @@ namespace util {
 		fldfile << i << " ";
 		fldfile << fields::H_appx[0] << " ";
 		fldfile << fields::H_appy[0] << " ";
-		fldfile << fields::H_appz[0] << std::endl;
+		fldfile << fields::H_appz[0] << "\n";
 	}
 
 	void startclock(){

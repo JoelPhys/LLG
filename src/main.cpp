@@ -197,7 +197,7 @@ int main(int argc, char* argv[]){
 			cufuncs::integration(static_cast<double>(i));
 			// cufields::testing(i);
 		#else	
-			// heun::integration(thermal_fluct);
+			heun::integration();
 		#endif
 
 	}

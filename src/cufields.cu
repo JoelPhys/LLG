@@ -29,7 +29,7 @@ namespace cufields {
 
 	}
 
-	__global__ void uniform_staggered(int N, double x, double y, double z, double *Hapx, double *Hapy, double *Hapz, int *dsublat_sites, int nsites){
+	__global__ void uniform_staggered(int nsites, int *dsublat_sites, int N, double x, double y, double z, double *Hapx, double *Hapy, double *Hapz){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -72,7 +72,7 @@ namespace cufields {
 
 	}
 
-		__global__ void square_pulse_staggered(int N, double time, double start_time, double end_time, double height, double *Hapx, double *Hapy, double *Hapz){
+		__global__ void square_pulse_staggered(int nsites, int *dsublat_sites, int N, double time, double start_time, double end_time, double height, double *Hapx, double *Hapy, double *Hapz){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -80,13 +80,14 @@ namespace cufields {
 
 			if ((time >= start_time) && (time < end_time)){
 					//if (( i % 4 == 0) || (i % 4 == 2)) {
-					if ((i % 8 == 0) || (i % 8 == 3) || (i % 8 == 5) || (i % 8 == 6)){
+				int sublatsites = dsublat_sites[i % nsites];
+			
+				if (sublatsites == 0){
 						Hapx[i] = 0.0;
 						Hapy[i] = 0.0;
 						Hapz[i] = height;  
 					}
-					//else if (( i % 4 == 1) || (i % 4 == 3)) {
-					else if ((i % 8 == 1) || (i % 8 == 2) || (i % 8 == 4) || (i % 8 == 7)){
+				else if (sublatsites == 1){
 						Hapx[i] = 0.0;
 						Hapy[i] = 0.0;
 						Hapz[i] = -1.0 * height;  
@@ -120,7 +121,7 @@ namespace cufields {
 
 	}
 
-		__global__ void gaussian_pulse_staggered(int N, double time, double height, double std_dev, double centre_pos,  double *Hapx, double *Hapy, double *Hapz){
+		__global__ void gaussian_pulse_staggered(int nsites, int *dsublat_sites, int N, double time, double height, double std_dev, double centre_pos,  double *Hapx, double *Hapy, double *Hapz){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -128,12 +129,15 @@ namespace cufields {
 		gauss = height * exp(-1.0 * (((time - centre_pos) * (time - centre_pos))/(2.0 * std_dev * std_dev)));
 
 		if (i < N){
-			if (( i % 4 == 0) || (i % 4 == 2)) {
+			
+			int sublatsites = dsublat_sites[i % nsites]; 
+			
+			if (sublatsites == 0) {
 				Hapx[i] = 0.0;
 				Hapy[i] = gauss;
 				Hapz[i] = 0.0;  
 			}
-			else if (( i % 4 == 1) || (i % 4 == 3)) {
+			else if (sublatsites == 1) {
 				Hapx[i] = 0.0;
 				Hapy[i] = -1.0 * gauss;
 				Hapz[i] = 0.0;  
@@ -159,7 +163,7 @@ namespace cufields {
 
 	}
 
-	__global__ void multi_cycle_pulse_staggered(int N, double time, double height, double std_dev, double centre_pos, double freq, double *Hapx, double *Hapy, double *Hapz){
+	__global__ void multi_cycle_pulse_staggered(int nsites, int *dsublat_sites, int N, double time, double height, double std_dev, double centre_pos, double freq, double *Hapx, double *Hapy, double *Hapz){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -168,12 +172,14 @@ namespace cufields {
 
 		if (i < N){
  
-			if (( i % 4 == 0) || (i % 4 == 2)) {
+			int sublatsites = dsublat_sites[i % nsites];
+			
+			if (sublatsites == 0){
 				Hapx[i] = 0.0;
 				Hapy[i] = gauss;
 				Hapz[i] = 0.0;  
 			}
-			else if (( i % 4 == 1) || (i % 4 == 3)) {
+			else if (sublatsites == 1){
 				Hapx[i] = 0.0;
 				Hapy[i] = -1.0 * gauss;
 				Hapz[i] = 0.0;  
@@ -191,13 +197,31 @@ namespace cufields {
 		gauss = height * sin(2.0*M_PI*freq*time);
 
 		if (i < N){
-			if (( i % 4 == 0) || (i % 4 == 2)) {
-				Hapx[i] = 1.0;
+			Hapx[i] = 0.0;
+			Hapy[i] = gauss;
+			Hapz[i] = 0.0;  
+		}
+
+
+	}
+
+	__global__ void sine_pulse_staggered(int nsites, int *dsublat_sites, int N, double time, double height, double freq, double *Hapx, double *Hapy, double *Hapz){
+
+		const int i = blockDim.x*blockIdx.x + threadIdx.x;
+
+		double gauss;
+		gauss = height * sin(2.0*M_PI*freq*time);
+
+		if (i < N){
+			int sublatsites = dsublat_sites[i % nsites];
+
+			if (sublatsites == 0){
+				Hapx[i] = 0.0;
 				Hapy[i] = gauss;
 				Hapz[i] = 0.0;  
 			}
-			else if (( i % 4 == 1) || (i % 4 == 3)) {
-				Hapx[i] = -1.0;
+			else if (sublatsites == 1){
+				Hapx[i] = 0.0;
 				Hapy[i] = -1.0 * gauss;
 				Hapz[i] = 0.0;  
 			}
