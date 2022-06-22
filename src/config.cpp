@@ -362,7 +362,7 @@ namespace params {
 				sublat_sites[q] = f12;
 
 				// count number of sites within sublattices
-				NmomentsSubLat[f12]++;
+				NmomentsSubLat[f12] += Lx*Ly*Lz;
 
 				// Sort out magnetic moments
 				mu_s[q] *= mu_b;
