@@ -67,7 +67,7 @@
         extern std::string zbound;
         
         extern std::vector< std::vector<double> > sites;
-        extern std::vector< std::vector<double> > Isites; // For integer lattice
+        extern std::vector< std::vector<int> > Isites; // For integer lattice
         extern std::vector< std::vector<double> > initm; // For integer lattice
 
         // Temperature

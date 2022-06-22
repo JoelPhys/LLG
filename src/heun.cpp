@@ -68,7 +68,7 @@ namespace heun {
 
     }
 
-    void integration(double Thermal_Fluct){
+    void integration(){
 
         for (int c = 0; c < neigh::simspin.size(); c++){
 
@@ -78,9 +78,9 @@ namespace heun {
                 guassian_vals[k] = distribution(generator);
             }
 
-            H_thermal(a,0) = guassian_vals[0] * Thermal_Fluct;
-            H_thermal(a,1) = guassian_vals[1] * Thermal_Fluct;
-            H_thermal(a,2) = guassian_vals[2] * Thermal_Fluct;
+            H_thermal(a,0) = guassian_vals[0] * thermal::thermal_fluct[a];
+            H_thermal(a,1) = guassian_vals[1] * thermal::thermal_fluct[a];
+            H_thermal(a,2) = guassian_vals[2] * thermal::thermal_fluct[a];
 
             // Uniaxial anisotropy
             H_uni[0] = params::dxup * spins::sx1d(a);

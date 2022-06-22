@@ -206,7 +206,7 @@ namespace spinwaves {
 						lval = l + params::Isites[q][0];
 						mval = m + params::Isites[q][1];
 						nval = n + params::Isites[q][2];
-						stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)) + spins::sz1d(geom::Scount(lval,mval,nval)) * spins::sz1d(geom::Scount(lval,mval,nval));
+						stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)) + spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval));
 					}
 				}
 			}
@@ -294,9 +294,9 @@ namespace spinwaves {
 			
 			// x component
 			if (kpathx[p+1] > kpathx[p]){
-				if (p == 0) {from[0] = static_cast<int>(kpathx[p] * params::Lx);}
-				if (p >= 1) {from[0] = static_cast<int>(kpathx[p] * params::Lx)+1;}
-				to[0] = static_cast<int>(kpathx[p+1] * params::Lx);
+				if (p == 0) {from[0] = static_cast<int>(kpathx[p] * params::Lx * params::Idx);}
+				if (p >= 1) {from[0] = static_cast<int>(kpathx[p] * params::Lx * params::Idx)+1;}
+				to[0] = static_cast<int>(kpathx[p+1] * params::Lx * params::Idx);
 				in[0] = 1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
 			}
 			else if (kpathx[p+1] == kpathx[p]){
