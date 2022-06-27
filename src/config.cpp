@@ -554,6 +554,7 @@ namespace params {
 		if (OutputLattice == true){
 			cfgmissing("Util.OutputLatticeStep");	
 			cfgmissing("Util.OutputLatticeFilepath");			
+			cfgmissing("Util.OutputLatticeStart");			
 			OutputLatticeStep = cfg.lookup("Util.OutputLatticeStep");  
 			OutputLatticeStart = cfg.lookup("Util.OutputLatticeStart");  
 			OutputLatticeFilepath = cfg.lookup("Util.OutputLatticeFilepath").c_str();  

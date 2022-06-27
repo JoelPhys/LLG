@@ -379,12 +379,16 @@ namespace util {
 			for (int j = 0; j < params::Ly; j++){
 				for (int k = 0; k < params::Lz; k++){
 					for (int q = 0; q < params::Nq; q++){
-						latfile << geom::latticeX(i,j,k,q) << " ";
-						latfile << geom::latticeY(i,j,k,q) << " ";
-						latfile << geom::latticeZ(i,j,k,q) << " ";
-						latfile << spins::sx1d(geom::LatCount(i,j,k,q)) << " ";
-						latfile << spins::sy1d(geom::LatCount(i,j,k,q)) << " ";
-						latfile << spins::sz1d(geom::LatCount(i,j,k,q)) << "\n";
+
+						//temp fix for 1d chains
+						if ((q == 0) && (j == 0) && (k == 0)){ 
+							latfile << geom::latticeX(i,j,k,q) << " ";
+							latfile << geom::latticeY(i,j,k,q) << " ";
+							latfile << geom::latticeZ(i,j,k,q) << " ";
+							latfile << spins::sx1d(geom::LatCount(i,j,k,q)) << " ";
+							latfile << spins::sy1d(geom::LatCount(i,j,k,q)) << " ";
+							latfile << spins::sz1d(geom::LatCount(i,j,k,q)) << "\n";
+						}
 					}
 				}
 			}

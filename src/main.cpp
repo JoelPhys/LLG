@@ -155,7 +155,7 @@ int main(int argc, char* argv[]){
 		//	}
 		//}
 		
-		if ((i % params::OutputLatticeStep == 0) && (i != 0) && (i >= params::OutputLatticeStart) ){
+		if ((i % params::OutputLatticeStep == 0) && (i >= params::OutputLatticeStart) ){
 			if (params::OutputLattice == true){
 				util::OutputLatticetoFile(Temp);
 			}

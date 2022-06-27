@@ -10,6 +10,7 @@
 #include "../inc/config.h"
 #include "../inc/array4d.h"
 #include "../inc/array3d.h"
+#include "../inc/defines.h"
 #include "../inc/mathfuncs.h"
 
 namespace geom {
@@ -27,8 +28,9 @@ namespace geom {
     Array<int> xlayer;
     Array<int> ylayer;
     Array<int> zlayer;
+    Array<int> block;
 
-    int Ix, Iy, Iz, IzC;
+    int Ix, Iy, Iz, IzC, nblocks;
 
     //testing for hedgehog
     Array<double> surfx;
@@ -59,6 +61,18 @@ namespace geom {
         ylayer.IFill(0);
         zlayer.IFill(0);
 
+
+        // Discretise into micromagnetic cells
+        int bx = 2;
+        int by = 2;
+        int bz = 2;
+        int blockx, blocky, blockz;
+        block.resize(params::Nspins);
+        int nblockx = params::Lx/bx;
+        int nblocky = params::Ly/by;
+        int nblockz = params::Lz/bz;
+        nblocks = (nblockx)*(nblocky)*(nblockz);
+
         for (int x = 0; x < params::Lx; ++x){ 
             Cy = 0;          
             for (int y = 0; y < params::Ly; ++y){     
@@ -72,7 +86,15 @@ namespace geom {
                         xlayer(counter) = x;
                         ylayer(counter) = y;
                         zlayer(counter) = z;
+
+                        // For micromagnetic cells
+                        blockx = x / bx;
+                        blocky = y / by;
+                        blockz = z / bz;
+                        block(counter) =  blockz + blocky*nblockz + blockx*nblocky*nblockz;
+                        
                         counter++;
+
                     }
                     Cz++;
                 }

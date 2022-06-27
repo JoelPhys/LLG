@@ -112,8 +112,8 @@ namespace cufields {
 
 		if (i < N){
 
-			Hapx[i] = gauss;
-			Hapy[i] = 0.0;
+			Hapx[i] = 0.0;
+			Hapy[i] = gauss;
 			Hapz[i] = 0.0; 
 
 		}

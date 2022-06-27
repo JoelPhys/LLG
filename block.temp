@@ -1,0 +1,38 @@
+// Online C++ compiler to run C++ program online
+#include <iostream>
+
+int main() {
+    
+    int Lx = 1;
+    int Ly = 6;
+    int Lz = 6;
+    int Nq = 1;
+    int dx = 1;
+    int dy = 2;
+    int dz = 2;
+    int blockx, blocky, blockz, block;
+    int c = 0;
+    
+    int nblockx = Lx/dx;
+    int nblocky = Ly/dy;
+    int nblockz = Lz/dz;
+    
+    for (int x = 0; x < Lx; x++){
+        for (int y = 0; y < Ly; y++){
+            for (int z = 0; z < Lz; z++){
+                for (int q = 0; q < Nq; q++){
+                    
+                    blockx = x / dx;
+                    blocky = y / dy;
+                    blockz = z / dz;
+                    
+                    block =  blockz + blocky*nblockz + blockx*nblocky*nblockz;
+                    
+                    std::cout << blockx << " " << blocky << " " << blockz << " " << c << " " <<block << std::endl;
+                    
+                                        c++;
+                }
+            }
+        }
+    }
+}

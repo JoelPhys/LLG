@@ -18,6 +18,7 @@
         extern Array4D<int> LatCount;
         extern Array<int> lw;
         extern Array<int> rw;
+        extern Array<int> block;
         
         extern Array<int> xlayer;
         extern Array<int> ylayer;
@@ -28,7 +29,7 @@
         extern Array<double> surfy;
         extern Array<double> surfz;
 
-        extern int Ix, Iy, Iz, IzC;
+        extern int Ix, Iy, Iz, IzC, nblocks;
         extern int latXsize, latYsize, latZsize, latZsizeS;
 
         void CreateLattice();     
