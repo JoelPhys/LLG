@@ -63,9 +63,16 @@ namespace geom {
 
 
         // Discretise into micromagnetic cells
-        int bx = 2;
-        int by = 2;
-        int bz = 2;
+        int bx;
+        int by;
+        int bz;
+        bx = params::cfg.lookup("Util.blockx");
+        by = params::cfg.lookup("Util.blockx");
+        bz = params::cfg.lookup("Util.blockx");
+        INFO_OUT("blockx:", bx);
+        INFO_OUT("blocky:", by);
+        INFO_OUT("blockz:", bz);
+
         int blockx, blocky, blockz;
         block.resize(params::Nspins);
         int nblockx = params::Lx/bx;

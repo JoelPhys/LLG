@@ -300,8 +300,8 @@ namespace spinwaves {
 				in[0] = 1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
 			}
 			else if (kpathx[p+1] == kpathx[p]){
-				from[0] = static_cast<int>(kpathx[p] * params::Lx);
-				to[0]   = static_cast<int>(kpathx[p] * params::Lx)+1;
+				from[0] = static_cast<int>(kpathx[p] * params::Lx * params::Idx);
+				to[0]   = static_cast<int>(kpathx[p] * params::Lx * params::Idx)+1;
 				in[0]   = 0;
 				if (from[0] != 0){
 					from[0] += -1;
@@ -316,9 +316,9 @@ namespace spinwaves {
 
 			// y component
 			if (kpathy[p+1] > kpathy[p]){
-				if (p == 0) {from[1] = static_cast<int>(kpathy[p] * params::Ly);}
-				if (p >= 1) {from[1] = static_cast<int>(kpathy[p] * params::Ly)+1;}
-				to[1] = static_cast<int>(kpathy[p+1] * params::Ly);
+				if (p == 0) {from[1] = static_cast<int>(kpathy[p] * params::Ly * params::Idy);}
+				if (p >= 1) {from[1] = static_cast<int>(kpathy[p] * params::Ly * params::Idy)+1;}
+				to[1] = static_cast<int>(kpathy[p+1] * params::Ly * params::Idy);
 				in[1] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
 			else if (kpathy[p+1] == kpathy[p]){
