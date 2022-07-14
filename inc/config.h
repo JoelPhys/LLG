@@ -26,8 +26,8 @@
         extern std::vector<double> INVmu_s;
 
         // Uniaxial Anisotropy
-        extern double dxu, dyu, dzu;
-        extern double dxup, dyup, dzup;
+        extern std::vector<double> dxu, dyu, dzu;
+        extern std::vector<double> dxup, dyup, dzup;
 
         // Uniaxial Anisotropy
         extern double dzc, dzcp;

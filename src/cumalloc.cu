@@ -34,6 +34,9 @@ namespace cuglob {
 
 	// Damping
 	double *c_lambda, *c_lambdap;
+		
+	// Unaxiail anisotropy array
+	double *danix, *daniy, *daniz;
 
 	//testing
 	double *dJx_new, *dJy_new, *dJz_new;
@@ -160,6 +163,11 @@ namespace cuglob {
 		CUDA_CALL(cudaMemset(c_lambda,  0.0, sizeof(double) * params::Nq));
 		CUDA_CALL(cudaMemset(c_lambdap, 0.0, sizeof(double) * params::Nq));
 
+		// Unaxiail Anisotropy Constants
+		CUDA_CALL(cudaMalloc((void**)&danix, sizeof(double)*params::Nq));
+		CUDA_CALL(cudaMalloc((void**)&daniy, sizeof(double)*params::Nq));
+		CUDA_CALL(cudaMalloc((void**)&daniz, sizeof(double)*params::Nq));
+
 		//Sublattice ordering
 		CUDA_CALL(cudaMalloc((void**)&dsublat_sites, sizeof(int)*params::Nq));
 		CUDA_CALL(cudaMemset(dsublat_sites,  0.0, sizeof(int) * params::Nq));
@@ -222,8 +230,12 @@ namespace cuglob {
 	void copy_damp_to_device(){
 		CUDA_CALL(cudaMemcpy(c_lambda,  &params::lambda[0], sizeof(double) * params::Nq, cudaMemcpyHostToDevice));
 		CUDA_CALL(cudaMemcpy(c_lambdap, &params::lambdaPrime[0], sizeof(double) * params::Nq, cudaMemcpyHostToDevice));
-
+	
+		CUDA_CALL(cudaMemcpy(danix,  &params::dxup[0], sizeof(double) * params::Nq, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(daniy,  &params::dyup[0], sizeof(double) * params::Nq, cudaMemcpyHostToDevice));
+		CUDA_CALL(cudaMemcpy(daniz,  &params::dzup[0], sizeof(double) * params::Nq, cudaMemcpyHostToDevice));
 	}
+
 
 	void copy_temp_to_device(double equilibium_temp){
 		Array<double> rTe; 

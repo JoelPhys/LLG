@@ -121,7 +121,7 @@ namespace cuheun {
 		}
 	}
 
-			__global__ void cuHeun1(int *djind, int N, double time, int *dsimspin, double *lambda, double *lambdap, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz, double *dEx, double *dEy, double *dEz){
+			__global__ void cuHeun1(int *djind, int N, double time, int *dsimspin, double *danix, double *daniy, double *daniz, double *lambda, double *lambdap, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz, double *dEx, double *dEy, double *dEz){
 
 				const int c = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -143,9 +143,9 @@ namespace cuheun {
 					Htz[a] = static_cast<double>(gvalsz1[a]) * Thermal_Fluct[a];
 
 					double Huni[3];
-					Huni[0] = c_dxup * dSx1d[a]; 
-					Huni[1] = c_dyup * dSy1d[a]; 
-					Huni[2] = c_dzup * dSz1d[a]; 
+					Huni[0] = danix[siteincell] * dSx1d[a]; 
+					Huni[1] = daniy[siteincell] * dSy1d[a]; 
+					Huni[2] = daniz[siteincell] * dSz1d[a]; 
 
 					// testing unisotropy for multilayers
 					// if ((a % c_Nq == 0) || (a % c_Nq == 1) || (a % c_Nq == 2)){
@@ -208,7 +208,7 @@ namespace cuheun {
 				} 
 			}
 
-			__global__ void cuHeun2(int *djind, int N, double time, int *dsimspin, double *lambda, double *lambdap, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
+			__global__ void cuHeun2(int *djind, int N, double time, int *dsimspin, double *danix, double *daniy, double *daniz, double *lambda, double *lambdap, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
 				const int c = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -225,9 +225,9 @@ namespace cuheun {
 					//}
 
 					double Huni_dash[3];
-					Huni_dash[0] = c_dxup * Sdashnx[a];
-					Huni_dash[1] = c_dyup * Sdashny[a];
-					Huni_dash[2]=  c_dzup * Sdashnz[a];
+					Huni_dash[0] = danix[siteincell] * Sdashnx[a];
+					Huni_dash[1] = daniy[siteincell] * Sdashny[a];
+					Huni_dash[2]=  daniz[siteincell] * Sdashnz[a];
 
 					// if ((a % c_Nq == 0) || (a % c_Nq == 1) || (a % c_Nq == 2)){
 					// 	Huni_dash[0] = c_dxup * Sdashnx[a] / 1.8548e-23; //2mu_b 

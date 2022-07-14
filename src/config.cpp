@@ -34,8 +34,8 @@ namespace params {
 	std::vector<double> INVmu_s;
 
 	// Uniaxial Anisotropy
-	double dxu, dyu, dzu;
-	double dzup, dxup, dyup;
+	std::vector<double> dxu, dyu, dzu;
+	std::vector<double> dzup, dxup, dyup;
 
 	//Cubic Anisotropy
 	double dzc, dzcp;
@@ -301,6 +301,14 @@ namespace params {
 		lambda.resize(Nq);
 		mu_s.resize(Nq);
 		sublat_sites.resize(Nq);
+		dxu.resize(Nq);		
+		dyu.resize(Nq);
+		dzu.resize(Nq);
+		dxup.resize(Nq);		
+		dyup.resize(Nq);
+		dzup.resize(Nq);
+	
+
 
 		//=======================================================================================================
 		// Read Lattice Vectors and constants ===================================================================
@@ -334,12 +342,12 @@ namespace params {
 			}
 			
 			// variables for reading matfile
-			double f1,f2,f3,f4,f5,f9,f10,f11;
+			double f1,f2,f3,f4,f5,f9,f10,f11,f13,f14,f15;
 			int f6,f7,f8,f12;
 
 			int q =0;
 
-			while (matfile >> f1 >> f2 >> f3 >> f4 >> f5 >> f6 >> f7 >> f8 >> f9 >> f10 >> f11 >> f12)
+			while (matfile >> f1 >> f2 >> f3 >> f4 >> f5 >> f6 >> f7 >> f8 >> f9 >> f10 >> f11 >> f12 >> f13 >> f14 >> f15)
             {
 			
 				//resize 2D std::vectors
@@ -360,6 +368,9 @@ namespace params {
 				initm[q][1] = f10;
 				initm[q][2] = f11;
 				sublat_sites[q] = f12;
+				dxu[q] = f13; 
+                dyu[q] = f14; 
+                dzu[q] = f15; 
 
 				// count number of sites within sublattices
 				NmomentsSubLat[f12] += Lx*Ly*Lz;
@@ -371,6 +382,11 @@ namespace params {
 				// Thermal parameters
 				thermal_const[q] = sqrt( (2.0 * lambda[q] * k_B)  / (mu_s[q] * dtau) );
 				lambdaPrime[q] = 1.0 / (1.0+(lambda[q]*lambda[q]));
+	
+				// Uniaxial Anisotropy
+				dxup[q] = 2*dxu[q] / mu_s[q];
+				dyup[q] = 2*dyu[q] / mu_s[q];
+				dzup[q] = 2*dzu[q] / mu_s[q];
 
 				// Increment through sites in unit cell
 				q++;
@@ -487,7 +503,7 @@ namespace params {
 			//=======================================================================================================
 			// Read Sublat vector ===================================================================================
 			//=======================================================================================================
-
+			cfgmissing("Geom.sublat_sites");
 			for (int v = 0; v < Nq; v++){
 				libconfig::Setting& setting = cfg.lookup("Geom");   
 				sublat_sites[v] = setting["sublat_sites"][v];
@@ -508,40 +524,45 @@ namespace params {
 			//=======================================================================================================
 			cfgmissing("Uniaxial_Anisotropy.d_x");			
 			cfgmissing("Uniaxial_Anisotropy.d_y");			
-			cfgmissing("Uniaxial_Anisotropy.d_z");
-			dxu = cfg.lookup("Uniaxial_Anisotropy.d_x");
-			dyu = cfg.lookup("Uniaxial_Anisotropy.d_y");
-			dzu = cfg.lookup("Uniaxial_Anisotropy.d_z");			
-			dxup = 2 * ( dxu / mu_s[0] );
-			dyup = 2 * ( dyu / mu_s[0] );	
-			dzup = 2 * ( dzu / mu_s[0] );
-
-			//Cubic Anisotropy
+			cfgmissing("Uniaxial_Anisotropy.d_z");	
 			cfgmissing("Cubic_Anisotropy.d_c");
-			dzc = cfg.lookup("Cubic_Anisotropy.d_c");
-			dzcp = 2 * ( dzc / mu_s[0] );
-		}
+			libconfig::Setting& setting = cfg.lookup("Uniaxial_Anisotropy");   
+			
+			if (setting["d_x"].getLength() != Nq){ std::cout << "ERROR: ani not same length as number of sites. Exiting." << std::endl; exit(0);}
+			if (setting["d_y"].getLength() != Nq){ std::cout << "ERROR: ani not same length as number of sites. Exiting." << std::endl; exit(0);}
+			if (setting["d_z"].getLength() != Nq){ std::cout << "ERROR: ani not same length as number of sites. Exiting." << std::endl; exit(0);}
+			
+			for (int v = 0; v < Nq; v++){	
+					
+				dxu[v] = setting["d_x"][v];
+				dyu[v] = setting["d_y"][v];
+				dzu[v] = setting["d_z"][v];			
+				dxup[v] = 2 * ( dxu[v] / mu_s[v] );
+				dyup[v] = 2 * ( dyu[v] / mu_s[v] );	
+				dzup[v] = 2 * ( dzu[v] / mu_s[v] );
 
-		INFO_OUT("Uniaxial Anisotropy Energy:", "[" << dxu << " , " << dyu << " , " << dzu << "] [J]");
-		INFO_OUT("Uniaxial Anisotropy Field:", "[" << dxup << " , " << dyup << " , " << dzup << "] [J]");
-		INFO_OUT("Cubic Anisotropy:", dzc << " [J]");
+				//Cubic Anisotropy
+				dzc = cfg.lookup("Cubic_Anisotropy.d_c");
+				dzcp = 2 * ( dzc / mu_s[0] );
+
+				// Print Anisotropy to terminal
+				lmtext = "Uniaxial Anisotropy Energy for site " + std::to_string(v) + ":";
+				INFO_OUT(lmtext, "[" << dxu[v] << " , " << dyu[v] << " , " << dzu[v] << "] [J]");
+				lmtext = "Uniaxial Anisotropy Field for site " + std::to_string(v) + ":";
+				INFO_OUT(lmtext, "[" << dxup[v] << " , " << dyup[v] << " , " << dzup[v] << "] [T]");
+			}
+
+				INFO_OUT("Cubic Anisotropy:", dzc << " [J]");
 		//=======================================================================================================
 		// Check filepaths exist ================================================================================
 		//=======================================================================================================
 
-		cfgmissing("Spinwaves.filepath");        		
 		cfgmissing("Util.filepath");
 		filepath = cfg.lookup("Util.filepath").c_str();      
-		filepath_sw = cfg.lookup("Spinwaves.filepath").c_str();   
 
 		struct stat buffer;
 		if (stat(filepath.c_str(), &buffer) != 0) {
-				std::cout << "ERROR: Output directory does not exist!" << std::endl;
-			exit(0);
-		}
-
-		if (stat(filepath_sw.c_str(), &buffer) != 0) {
-    		std::cout << "ERROR: Spinwaves output directory does not exist!" << std::endl;;
+				std::cout << "ERROR: Magnetisation output directory does not exist!" << std::endl;
 			exit(0);
 		}
 
@@ -589,4 +610,5 @@ namespace params {
 
 	}
 
+}
 }

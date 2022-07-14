@@ -22,6 +22,9 @@ namespace cuglob {
 	// Damping
 	extern double *c_lambda, *c_lambdap;
 
+	// Unaxiail anisotropy array
+	extern double *danix, *daniy, *daniz;
+
 	//testing
 	extern double *dJx_new, *dJy_new, *dJz_new;
 	extern int *djind;
