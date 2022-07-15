@@ -552,33 +552,36 @@ namespace params {
 				INFO_OUT(lmtext, "[" << dxup[v] << " , " << dyup[v] << " , " << dzup[v] << "] [T]");
 			}
 
-				INFO_OUT("Cubic Anisotropy:", dzc << " [J]");
-		//=======================================================================================================
-		// Check filepaths exist ================================================================================
-		//=======================================================================================================
+			INFO_OUT("Cubic Anisotropy:", dzc << " [J]");
+			//=======================================================================================================
+			// Check filepaths exist ================================================================================
+			//=======================================================================================================
 
-		cfgmissing("Util.filepath");
-		filepath = cfg.lookup("Util.filepath").c_str();      
+			cfgmissing("Util.filepath");
+			filepath = cfg.lookup("Util.filepath").c_str();      
 
-		struct stat buffer;
-		if (stat(filepath.c_str(), &buffer) != 0) {
-				std::cout << "ERROR: Magnetisation output directory does not exist!" << std::endl;
-			exit(0);
-		}
+			struct stat buffer;
+			if (stat(filepath.c_str(), &buffer) != 0) {
+					std::cout << "ERROR: Magnetisation output directory does not exist!" << std::endl;
+				exit(0);
+			}
 
-		//=======================================================================================================
-		// Output of Lattice ====================================================================================
-		//=======================================================================================================
+			//=======================================================================================================
+			// Output of Lattice ====================================================================================
+			//=======================================================================================================
 
-		cfgmissing("Util.OutputLattice");		
-		OutputLattice = cfg.lookup("Util.OutputLattice");
-		if (OutputLattice == true){
-			cfgmissing("Util.OutputLatticeStep");	
-			cfgmissing("Util.OutputLatticeFilepath");			
-			cfgmissing("Util.OutputLatticeStart");			
-			OutputLatticeStep = cfg.lookup("Util.OutputLatticeStep");  
-			OutputLatticeStart = cfg.lookup("Util.OutputLatticeStart");  
-			OutputLatticeFilepath = cfg.lookup("Util.OutputLatticeFilepath").c_str();  
+			cfgmissing("Util.OutputLattice");		
+			OutputLattice = cfg.lookup("Util.OutputLattice");
+			if (OutputLattice == true){
+				cfgmissing("Util.OutputLatticeStep");	
+				cfgmissing("Util.OutputLatticeFilepath");			
+				cfgmissing("Util.OutputLatticeStart");			
+				OutputLatticeStep = cfg.lookup("Util.OutputLatticeStep");  
+				OutputLatticeStart = cfg.lookup("Util.OutputLatticeStart");  
+				OutputLatticeFilepath = cfg.lookup("Util.OutputLatticeFilepath").c_str();  
+			}
+
+
 		}
 
 
@@ -607,8 +610,5 @@ namespace params {
 		Jij_min = cfg.lookup("Exchange.CutoffEnergy");    
 		ibtoq = cfg.lookup("Exchange.ibtoq");  			
 
-
 	}
-
-}
 }
