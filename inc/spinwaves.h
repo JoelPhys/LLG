@@ -10,7 +10,8 @@
 	    extern int start;
         extern int icount;
         extern double dt_spinwaves;        
-        extern std::ofstream file_spnwvs;
+		extern int int_dt_spinwaves;
+		extern std::ofstream file_spnwvs;
 
         //intiialise arrays
         void init();

@@ -154,14 +154,15 @@ int main(int argc, char* argv[]){
 		//		cuglob::copy_temp_to_device(Temp);
 		//	}
 		//}
-		
+	
+		// Output Lattice subroutine	
 		if ((i % params::OutputLatticeStep == 0) && (i >= params::OutputLatticeStart) ){
 			if (params::OutputLattice == true){
 				util::OutputLatticetoFile(Temp);
 			}
 		}
 
-
+		// Magnetisation subroutine
 		if (i % params::outputstep == 0){
 			#ifdef CUDA
 			cuglob::copy_spins_to_host();
@@ -179,10 +180,26 @@ int main(int argc, char* argv[]){
 			if (params::simtype == "DW"){		
 				util::OutputDWtoFile(i);
 			}
-			if (params::simtype == "Spinwaves"){
-				if ((i >= spinwaves::start)){
-					spinwaves::file_spnwvs << spinwaves::icount * spinwaves::dt_spinwaves << "\t";
-					spinwaves::FFTspace();      
+		}
+
+
+		// Spinwaves subroutine
+		if (params::simtype == "Spinwaves"){	
+			if ((i >= spinwaves::start)){
+				if (i % spinwaves::int_dt_spinwaves == 0){
+					if (i % params::outputstep == 0){
+						spinwaves::file_spnwvs << spinwaves::icount * spinwaves::dt_spinwaves << "\t";
+						spinwaves::FFTspace();      
+					}
+					else {
+						#ifdef CUDA
+						cuglob::copy_spins_to_host();
+						cuglob::copy_field_to_host();
+						cuglob::copy_energy_to_host();
+						#endif
+						spinwaves::file_spnwvs << spinwaves::icount * spinwaves::dt_spinwaves << "\t";
+						spinwaves::FFTspace();      
+					}
 				}
 			}
 		}

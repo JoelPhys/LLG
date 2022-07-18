@@ -59,6 +59,7 @@ namespace spinwaves {
 	int start;
 	double dt_spinwaves;
 	double sg_spinwaves;
+	int int_dt_spinwaves;
 	std::string filepath_sw;
 
 
@@ -96,6 +97,11 @@ namespace spinwaves {
 			dt_spinwaves *= params::dt;
 			INFO_OUT("Spinwaves output timestep:", dt_spinwaves << " [s]");
 		}
+		
+		// for use when using booleans to output spinwaves
+		int_dt_spinwaves = dt_spinwaves / params::dt; 
+
+
 
 		params::cfgmissing("Spinwaves.smoothing");			
 		sg_spinwaves = params::cfg.lookup("Spinwaves.smoothing");
