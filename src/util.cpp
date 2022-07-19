@@ -483,7 +483,7 @@ namespace util {
 		
 		
 		std::cout << count << std::endl;
-		if (count != params::Lx*params::Ly*params::Lz){
+		if (count != params::Lx*params::Ly*params::Lz*params::Nq){
 			std::cout << "ERROR: Wrong number of spins in file. Exiting." << std::endl;
 			exit(0);
 		}
