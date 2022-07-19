@@ -380,15 +380,15 @@ namespace util {
 				for (int k = 0; k < params::Lz; k++){
 					for (int q = 0; q < params::Nq; q++){
 
-						//temp fix for 1d chains
-						if ((q == 0) && (j == 0) && (k == 0)){ 
-							latfile << geom::latticeX(i,j,k,q) << " ";
-							latfile << geom::latticeY(i,j,k,q) << " ";
-							latfile << geom::latticeZ(i,j,k,q) << " ";
-							latfile << spins::sx1d(geom::LatCount(i,j,k,q)) << " ";
-							latfile << spins::sy1d(geom::LatCount(i,j,k,q)) << " ";
-							latfile << spins::sz1d(geom::LatCount(i,j,k,q)) << "\n";
-						}
+						latfile << i << " " << j << " " << k << " " << q << " ";
+						//latfile << geom::latticeX(i,j,k,q) << " ";
+						//latfile << geom::latticeY(i,j,k,q) << " ";
+						//latfile << geom::latticeZ(i,j,k,q) << " ";
+						latfile << spins::sx1d(geom::LatCount(i,j,k,q)) << " ";
+						latfile << spins::sy1d(geom::LatCount(i,j,k,q)) << " ";
+						latfile << spins::sz1d(geom::LatCount(i,j,k,q)) << "\n";
+					
+					
 					}
 				}
 			}
@@ -456,19 +456,32 @@ namespace util {
 		}
 
 		double sx, sy, sz;
-		int posx, posy, posz;
+		int posx, posy, posz, posq;
 		int count = 0;
 
 		// Loop through file
-		while (equilibrationfile >> posx >> posy >> posz >> sx >> sy >> sz){
-			
+		//while (equilibrationfile >> posx >> posy >> posz >> sx >> sy >> sz){
+		//	
+		//	for (int q = 0; q < params::Nq; q++){
+		//		spins::sx1d(geom::LatCount(posx,posy,posz,q)) = sx;
+		//		spins::sy1d(geom::LatCount(posx,posy,posz,q)) = sy;
+		//		spins::sz1d(geom::LatCount(posx,posy,posz,q)) = sz;
+		//	}
+		//	count++;
+		//}
+		
+		while (equilibrationfile >> posx >> posy >> posz >> posq >> sx >> sy >> sz){
+		
 			for (int q = 0; q < params::Nq; q++){
-				spins::sx1d(geom::LatCount(posx,posy,posz,q)) = sx;
-				spins::sy1d(geom::LatCount(posx,posy,posz,q)) = sy;
-				spins::sz1d(geom::LatCount(posx,posy,posz,q)) = sz;
+				spins::sx1d(geom::LatCount(posx,posy,posz,posq)) = sx;
+				spins::sy1d(geom::LatCount(posx,posy,posz,posq)) = sy;
+				spins::sz1d(geom::LatCount(posx,posy,posz,posq)) = sz;
 			}
 			count++;
 		}
+
+		
+		
 		std::cout << count << std::endl;
 		if (count != params::Lx*params::Ly*params::Lz){
 			std::cout << "ERROR: Wrong number of spins in file. Exiting." << std::endl;

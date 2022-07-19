@@ -226,7 +226,7 @@ int main(int argc, char* argv[]){
 
 	// Carry out time FFT once simulation is complete
 	if (params::simtype == "Spinwaves"){
-	spinwaves::FFTtime();
+		spinwaves::FFTtime();
 	}
 						
 	TITLE("FINISHED");
