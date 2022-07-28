@@ -244,9 +244,9 @@ namespace cuheun {
 					//Hcub_dash[0] = c_dzcp * Sdashnx[a] * Sdashnx[a] * Sdashnx[a];
 					//Hcub_dash[1] = c_dzcp * Sdashny[a] * Sdashny[a] * Sdashny[a];
 					//Hcub_dash[2]=  c_dzcp * Sdashnz[a] * Sdashnz[a] * Sdashnz[a];
-					Hcub[0] =     0.01034580865 * Sdashnx[a] * Sdashnx[a] * Sdashnx[a]; 
-					Hcub[1] =     0.01034580865 * Sdashny[a] * Sdashny[a] * Sdashny[a]; 
-					Hcub[2] = 2 * 0.01034580865 * Sdashnz[a] * Sdashnz[a] * Sdashnz[a];
+					Hcub_dash[0] =     0.01034580865 * Sdashnx[a] * Sdashnx[a] * Sdashnx[a]; 
+					Hcub_dash[1] =     0.01034580865 * Sdashny[a] * Sdashny[a] * Sdashny[a]; 
+					Hcub_dash[2] = 2 * 0.01034580865 * Sdashnz[a] * Sdashnz[a] * Sdashnz[a];
 
 
 					double Hex_dash[3] = {0.0, 0.0, 0.0};
