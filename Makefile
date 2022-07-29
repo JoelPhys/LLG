@@ -20,6 +20,7 @@ obj/fields.o \
 obj/geom.o \
 obj/defects.o \
 obj/error.o \
+obj/thermal.o \
 obj/spinwaves.o \
 obj/util.o \
 obj/main.o

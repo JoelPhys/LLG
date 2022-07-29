@@ -19,6 +19,7 @@
 #include "../inc/array.h"
 #include "../inc/config.h"
 #include "../inc/fields.h"
+#include "../inc/thermal.h"
 #include "../inc/defects.h"
 #include "../inc/defines.h"
 #include "../inc/array2d.h"
@@ -64,7 +65,7 @@ int main(int argc, char* argv[]){
 	// ======= Temperature ==================================================================================== //
 	const double Temp = (atof(argv[2]));
 	// const double thermal_fluct = params::thermal_const * sqrt(Temp);
-	INFO_OUT("Temperature: ", Temp << "(K)");
+	INFO_OUT("Initial Temperature: ", Temp << "(K)");
 	// INFO_OUT("Thermal Fluct: ", thermal_fluct);
 	// ========================================================================================================= //
 
@@ -88,6 +89,9 @@ int main(int argc, char* argv[]){
 	if (params::simtype == "DW"){
 		geom::initdw();
 	}
+
+	// Initialise Thermal stuff
+	thermal::initthermal(Temp);
 
 	neigh::ReadFile();
 	neigh::InteractionMatrix();
@@ -180,6 +184,12 @@ int main(int argc, char* argv[]){
 			if (params::simtype == "DW"){		
 				util::OutputDWtoFile(i);
 			}
+
+			// If using two-temperature model - output temperature profile to file
+			if (thermal::temptype == "ttm"){
+				thermal::ttm(static_cast<double>(i)*params::dt);
+				thermal::ttmtofile();
+			}
 		}
 
 
@@ -208,7 +218,7 @@ int main(int argc, char* argv[]){
 		tau = tau + params::dtau;
 
 		#ifdef CUDA
-			cufuncs::cuTemperature(params::temptype, static_cast<double>(i) * params::dt, params::ttm_start);
+			cufuncs::cuTemperature(thermal::temptype, static_cast<double>(i) * params::dt, thermal::ttm_start);
 			cufuncs::cuFields(fields::type, static_cast<double>(i)  * params::dt, fields::start_time, fields::end_time, fields::height);
 			cuthermal::gen_thermal_noise();
 			cufuncs::integration(static_cast<double>(i));
@@ -233,6 +243,9 @@ int main(int argc, char* argv[]){
 	util::endclock();
 	util::CloseMagFile();
 
+	if (thermal::temptype == "ttm"){
+		thermal::closettmfile();
+	}
 
 	return 0;
 }

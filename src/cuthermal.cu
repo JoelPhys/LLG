@@ -8,6 +8,7 @@
 // my header files
 #include "../inc/geom.h"
 #include "../inc/array.h"
+#include "../inc/thermal.h"
 #include "../inc/config.h"
 #include "../inc/defines.h"
 #include "../inc/cudefine.h"
@@ -101,7 +102,7 @@ namespace cuthermal {
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_oneOvr2dz), &oneOvr2dz, sizeof(double)));
 
         // Constants for thermal gradient
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_grad), &params::temp_gradient, sizeof(double)));
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_grad), &thermal::temp_gradient, sizeof(double)));
     }
 
     void destroy_generator(){

@@ -77,11 +77,6 @@ namespace params {
 	std::vector< std::vector<int> > Isites;
 	std::vector< std::vector<double> > initm;
 
-	//Temperature
-	std::string temptype;
-	double ttm_start;
-	double temp_gradient;
-
 	// Output Lattice
 	bool OutputLattice = false;		
 	int OutputLatticeStep = 10000000;
@@ -243,24 +238,7 @@ namespace params {
 		xbound = cfg.lookup("Geom.BoundaryConditionsX").c_str(); 
 		ybound = cfg.lookup("Geom.BoundaryConditionsY").c_str(); 
 		zbound = cfg.lookup("Geom.BoundaryConditionsZ").c_str(); 
-
-		//Temparature
-		cfgmissing("Temperature.method");					
-		cfgmissing("Temperature.ttm_start");				
-		temptype = cfg.lookup("Temperature.method").c_str();
-		ttm_start = cfg.lookup("Temperature.ttm_start");
-		if ((temptype == "uniform_gradient") && (cfg.exists("Temperature.gradient") == 0)){
-			std::cout << "ERROR: Method is uniform_gradient but no gradient value has been provided" << std::endl;
-			std::cout << "EXITING SIMULATION" << std::endl;
-			exit(0);
-		}
-		else if ((temptype == "uniform_gradient")){
-			double temp_gradient_km = cfg.lookup("Temperature.gradient");
-			INFO_OUT("Temperature Gradient:", temp_gradient_km << "[K/m]");
-			temp_gradient = temp_gradient_km * a1;
-			INFO_OUT("Temperature Gradient:", temp_gradient << "[K / unit cell]");
-		}
-
+		
 		// Lattice parameters
 		cfgmissing("LatticeVectors.a");
 		cfgmissing("LatticeVectors.b");
@@ -287,8 +265,6 @@ namespace params {
 		INFO_OUT("Number of sites in unit cell:", Nq);
 		INFO_OUT("Number of sublattices:", Nsublat);
 		INFO_OUT("Boundary Conditions:", "[" << xbound << " , " << ybound << " , " << zbound << "]");
-		INFO_OUT("Temperature method: ", temptype);
-		INFO_OUT("two temperature model start time: ", ttm_start);
 
 		// resize std::vectors 
 		lambdaPrime.resize(Nq);

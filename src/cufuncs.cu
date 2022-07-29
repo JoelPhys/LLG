@@ -10,6 +10,7 @@
 #include "../inc/geom.h"
 #include "../inc/cudefine.h"
 #include "../inc/neighbourlist.h"
+#include "../inc/thermal.h"
 #include "../inc/fields.h"
 #include "../inc/config.h"
 #include "../inc/cuheun.h"
@@ -93,7 +94,7 @@ namespace cufuncs {
 			cuthermal::ttf<<<cuglob::bpg,cuglob::tpb>>>(time - ttm_start, params::Nspins, cuthermal::dconst, cuthermal::dtfa, cuthermal::Te, cuthermal::dzlayer);
 		}
 		else if (type == "uniform_gradient"){
-			cuthermal::ttfg<<<cuglob::bpg,cuglob::tpb>>>(time - ttm_start, params::Nspins, cuthermal::dconst, cuthermal::dtfa, cuthermal::Te, cuthermal::dxlayer, params::temp_gradient);
+			cuthermal::ttfg<<<cuglob::bpg,cuglob::tpb>>>(time - ttm_start, params::Nspins, cuthermal::dconst, cuthermal::dtfa, cuthermal::Te, cuthermal::dxlayer, thermal::temp_gradient);
 		}
 	}
 	
