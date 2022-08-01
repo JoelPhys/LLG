@@ -187,9 +187,8 @@ int main(int argc, char* argv[]){
 
 			// If using two-temperature model - output temperature profile to file
 			if (thermal::temptype == "ttm"){
-				thermal::ttmtofile();
+				thermal::ttmtofile(static_cast<double>(i) * params::dt);
 			}
-			cuthermal::testing(i);
 		}
 
 

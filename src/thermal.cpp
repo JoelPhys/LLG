@@ -152,10 +152,10 @@ namespace thermal {
 
 	}
 
-	void ttmtofile(){
+	void ttmtofile(double time){
 
 		// Output to temp file
-		tempfile << Te[0] << " " << Tp[0] << "\n";	
+		tempfile << time << " " << P_it[0] << " " << Te[0] << " " << Tp[0] << "\n";	
 
 	}
 

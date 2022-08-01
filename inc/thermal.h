@@ -39,7 +39,7 @@ namespace thermal {
 	// functions
 	void initthermal(double temp);
 	void ttm(double time);
-	void ttmtofile();
+	void ttmtofile(double time);
     void closettmfile();
 	//void ReadThermalFile();
 }
