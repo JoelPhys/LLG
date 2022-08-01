@@ -422,7 +422,7 @@ namespace util {
 	}
 
 	void OutputFldToFile(int i){
-		fldfile << i << " ";
+		fldfile << static_cast<double>(i) * params::dt << " ";
 		fldfile << fields::H_appx[0] << " ";
 		fldfile << fields::H_appy[0] << " ";
 		fldfile << fields::H_appz[0] << "\n";

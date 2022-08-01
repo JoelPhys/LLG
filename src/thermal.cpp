@@ -98,14 +98,14 @@ namespace thermal {
         	oneOvr2dz  = 1./(2.0*params::c1);
 
 			// Output ttm variables to log
-			INFO_OUT("ttm variable gamma_e: ", gamma_e);   
-            INFO_OUT("ttm variable Cp: ", Cp);        
-            INFO_OUT("ttm variable kappa_0: ", kappa_0);  
-            INFO_OUT("ttm variable delta: ", delta);  
-            INFO_OUT("ttm variable Gep: ", Gep);     
-            INFO_OUT("ttm variable P_0: ", P_0);    
-            INFO_OUT("ttm variable t0: ", t0);   
-            INFO_OUT("ttm variable tau: ", tau); 
+			INFO_OUT("ttm variable gamma_e: ", gamma_e << " [J/m^3/K^2]");   
+            INFO_OUT("ttm variable Cp: ", Cp << " [J/m^3/K]");        
+            INFO_OUT("ttm variable kappa_0: ", kappa_0 << " [J/m/K/s]");  
+            INFO_OUT("ttm variable delta: ", delta << " [m]");  
+            INFO_OUT("ttm variable Gep: ", Gep << " [J/m^3/s/K]");     
+            INFO_OUT("ttm variable P_0: ", P_0 << " [J/m^3/s]");    
+            INFO_OUT("ttm variable t0: ", t0 << " [s]");   
+            INFO_OUT("ttm variable tau: ", tau << " [s]"); 
 
 
 			// Sort out temp profile file

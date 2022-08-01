@@ -50,19 +50,6 @@ namespace cuthermal {
 
     void init_cuthermal(double equilibrium_temp){
 
-
-		std::cout << thermal::gamma_e << std::endl;           
-		std::cout << thermal::Cp << std::endl;                
-		std::cout << thermal::kappa_0 << std::endl;           
-		std::cout << thermal::delta << std::endl;             
-		std::cout << thermal::Gep << std::endl;               
-		std::cout << thermal::P_0 << std::endl;               
-		std::cout << thermal::t0 << std::endl;                
-		std::cout << thermal::tau << std::endl;               
-		std::cout << thermal::oneOvrdzdz << std::endl; 
-		std::cout << thermal::oneOvr2dz << std::endl; 
-
-
         // Constants two temperature model
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_gamma_e), &thermal::gamma_e, sizeof(double)));                        
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_Cp), &thermal::Cp, sizeof(double)));                                  
