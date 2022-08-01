@@ -35,8 +35,6 @@ namespace thermal {
     double P_0;               
     double t0;                
     double tau;               
-    double Nz;                
-    double dz;                
 	double oneOvrdzdz;
     double oneOvr2dz;
 	double Tpp1 = 0.0;
@@ -119,13 +117,16 @@ namespace thermal {
 	}
 	
 	void ttm(double time){
-
+	
         // loop over layes
-		for (int i = 0; i < params::Nspins; i++){
+		for (int i = 0; i < 3; i++){
 				
-			P_it[i]=P_0*exp(-((time-t0)/tau)*((time-t0)/tau));
-			Tep1=Te[0] + (params::dt/(gamma_e*Te[0]))*(Gep*(Tp[0]-Te[0]) + P_it[0] + kappa_0*( (Te[0]/Tp[0]) * 2.0*(Te[1]-Te[0])*oneOvrdzdz));
-			Tpp1=Tp[0]+(params::dt*Gep/Cp)*(Te[0]-Tp[0]);
+			//P_it[i]=P_0*exp(-((time-t0)/tau)*((time-t0)/tau));
+			//Tep1=Te[0] + (params::dt/(gamma_e*Te[0]))*(Gep*(Tp[0]-Te[0]) + P_it[0] + kappa_0*( (Te[0]/Tp[0]) * 2.0*(Te[1]-Te[0])*oneOvrdzdz));
+			//Tpp1=Tp[0]+(params::dt*Gep/Cp)*(Te[0]-Tp[0]);
+			  P_it[i]=P_0*exp(-((time-t0)/tau)*((time-t0)/tau));
+              Tep1=Te[0] + (params::dt/(gamma_e*Te[0]))*(Gep*(Tp[0]-Te[0]) + P_it[0] + kappa_0*( (Te[0]/Tp[0]) * 2.0*(Te[1]-Te[0])*oneOvrdzdz));
+              Tpp1=Tp[0]+(params::dt*Gep/Cp)*(Te[0]-Tp[0]);
 
 			// }
 			// if (i == Nz-1)

@@ -187,9 +187,9 @@ int main(int argc, char* argv[]){
 
 			// If using two-temperature model - output temperature profile to file
 			if (thermal::temptype == "ttm"){
-				thermal::ttm(static_cast<double>(i)*params::dt);
 				thermal::ttmtofile();
 			}
+			cuthermal::testing(i);
 		}
 
 
@@ -216,6 +216,10 @@ int main(int argc, char* argv[]){
 
 		t = t + params::dt;
 		tau = tau + params::dtau;
+
+		if (thermal::temptype == "ttm"){	
+			thermal::ttm(static_cast<double>(i)*params::dt);
+		}
 
 		#ifdef CUDA
 			cufuncs::cuTemperature(thermal::temptype, static_cast<double>(i) * params::dt, thermal::ttm_start);

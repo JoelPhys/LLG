@@ -24,6 +24,19 @@ namespace thermal {
     extern int nsteps;
     extern int nz;
 	
+	// Two-temperature model global variables
+	extern double gamma_e;           
+    extern double Cp;                
+    extern double kappa_0;           
+    extern double delta;             
+    extern double Gep;               
+    extern double P_0;               
+    extern double t0;                
+    extern double tau;               
+	extern double oneOvrdzdz;
+    extern double oneOvr2dz;
+	
+	// functions
 	void initthermal(double temp);
 	void ttm(double time);
 	void ttmtofile();

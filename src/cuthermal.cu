@@ -16,23 +16,6 @@
 namespace cuthermal {
 
 
-
-    //two temperature model variables
-    double gamma_e;
-    double Cp;
-    double kappa_0;
-    double delta;
-    double Gep;
-    double P_0;
-    double t0;
-    double tau;
-    int    Nz;
-    double dz;
-    double dt;
-    double Tinit;
-    double oneOvrdzdz;
-    double oneOvr2dz;
-
     // two temperature model constants
     __constant__ double c_gamma_e;
 	__constant__ double c_Cp;
@@ -45,7 +28,6 @@ namespace cuthermal {
 	__constant__ double c_Nz;
 	__constant__ double c_dz;
     __constant__ double c_dt;
-    __constant__ double c_Tinit;
     __constant__ double c_oneOvrdzdz;
     __constant__ double c_oneOvr2dz;
     // __constant__ double c_thermal_const;
@@ -68,38 +50,34 @@ namespace cuthermal {
 
     void init_cuthermal(double equilibrium_temp){
 
-        //two temperature model variables
-        gamma_e=1e3;                //gamma_e defines the electron specific heat through, C_e = gamma_e * T_e. [J/m^3/K^2]
-        Cp=3e6;                       //Specific heat of phonons. [J/m^3/K]
-        kappa_0=11.0;                 //kappa_0 defines the thermal heat conductivity (kappa) through, kappa = kappa_0 * T_e/T_p [J/m/K/s]
-        delta=20.0e-9;                //Penetration depth of laser. [m]
-        Gep=10e17;                    //Electron-phonon coupling [ J/m^3/s/K]
-        P_0=2.5e21;                   //Pump fluence prefactor, P_0. P(z,t)=P_0*exp(-((t-t0)/tau)**2)*exp(-z/delta) [ J/m^3/s]
-        t0=5000e-15;                   //Pump temporal offset [s]
-        tau=4500e-16;                   //Pump temporal full width half max [s]
-        Nz=100;                       //number of unit cells in z-direction (assumed uniform heating perpendicular [unit cells in z]
-        dz=0.3e-9;                    //lattice constant (or difference between planes) [m]
-        dt=1e-16;                     //Timestep [s]
-        Tinit=equilibrium_temp;
-        oneOvrdzdz=1./(dz*dz);
-        oneOvr2dz=1./(2.0*dz);
+
+		std::cout << thermal::gamma_e << std::endl;           
+		std::cout << thermal::Cp << std::endl;                
+		std::cout << thermal::kappa_0 << std::endl;           
+		std::cout << thermal::delta << std::endl;             
+		std::cout << thermal::Gep << std::endl;               
+		std::cout << thermal::P_0 << std::endl;               
+		std::cout << thermal::t0 << std::endl;                
+		std::cout << thermal::tau << std::endl;               
+		std::cout << thermal::oneOvrdzdz << std::endl; 
+		std::cout << thermal::oneOvr2dz << std::endl; 
+
 
         // Constants two temperature model
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_gamma_e), &gamma_e, sizeof(double)));                        
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Cp), &Cp, sizeof(double)));                                  
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_kappa_0), &kappa_0, sizeof(double)));                        
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_delta), &delta, sizeof(double)));                            
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Gep), &Gep, sizeof(double)));                                
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_P_0), &P_0, sizeof(double)));                                
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_t0), &t0, sizeof(double)));                                  
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_tau), &tau, sizeof(double)));                                
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nz), &Nz, sizeof(int)));                                     
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_dz), &dz, sizeof(double)));                                  
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_gamma_e), &thermal::gamma_e, sizeof(double)));                        
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Cp), &thermal::Cp, sizeof(double)));                                  
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_kappa_0), &thermal::kappa_0, sizeof(double)));                        
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_delta), &thermal::delta, sizeof(double)));                            
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Gep), &thermal::Gep, sizeof(double)));                                
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_P_0), &thermal::P_0, sizeof(double)));                                
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_t0), &thermal::t0, sizeof(double)));                                  
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_tau), &thermal::tau, sizeof(double)));                                
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nz), &params::Lz, sizeof(int)));                                     
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_dz), &params::c1, sizeof(double)));                                  
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_dt), &params::dt, sizeof(double)));                          
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_Nq), &params::Nq, sizeof(int)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_Tinit), &Tinit, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_oneOvrdzdz), &oneOvrdzdz, sizeof(double)));
-        CUDA_CALL(cudaMemcpyToSymbol(*(&c_oneOvr2dz), &oneOvr2dz, sizeof(double)));
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_oneOvrdzdz), &thermal::oneOvrdzdz, sizeof(double)));
+        CUDA_CALL(cudaMemcpyToSymbol(*(&c_oneOvr2dz), &thermal::oneOvr2dz, sizeof(double)));
 
         // Constants for thermal gradient
         CUDA_CALL(cudaMemcpyToSymbol(*(&c_grad), &thermal::temp_gradient, sizeof(double)));
@@ -135,7 +113,7 @@ namespace cuthermal {
 
             double Tep1;
             double Tpp1;
-            double z;
+            //double z;
 
             // if (i == 0)
             // {
@@ -194,7 +172,7 @@ namespace cuthermal {
 		testingx.resize(params::Lz);
 		CUDA_CALL(cudaMemcpy(testingx.ptr(), Te, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 	    std::cout << i << " ";
-        std::cout << testingx(0) << std::endl;	
+        std::cout << testingx(0) << " " << testingx(1) << std::endl;	
 	}
 
 

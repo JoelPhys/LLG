@@ -79,6 +79,7 @@ namespace cufuncs {
 	
 
 	void cuTemperature(std::string type, double time, double ttm_start){
+		
 		if (type == "ttm"){
 			if (time < ttm_start){
 
