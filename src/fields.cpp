@@ -180,6 +180,30 @@ namespace fields {
 
 
 	}
+	
+	void multi_cycle_pulse_staggered(double time){
+
+		gauss = height * exp(-1.0 * (((time - centre_pos) * (time - centre_pos))/(2.0 * std_dev * std_dev))) * sin(2.0*M_PI*freq*(time - centre_pos));
+
+		for (int i = 0; i < params::Nspins; i++){
+			
+			int sublatsites = params::sublat_sites[i % params::Nq];
+			
+			if (sublatsites == 0){
+				H_appx[i] = cos(0.25*M_PI)*gauss;
+				H_appy[i] = cos(0.25*M_PI)*gauss;
+				H_appz[i] = 0.0;  
+			}
+			else if (sublatsites == 1){
+				H_appx[i] = -1.0 *cos(0.25*M_PI)* gauss;
+				H_appy[i] = -1.0 *cos(0.25*M_PI)* gauss;
+				H_appz[i] = 0.0;  
+			}
+		}
+
+
+	}
+
 
 	void calculate(double time){
 		if (type == "Uniform"){
@@ -196,6 +220,13 @@ namespace fields {
 		}
 		else if (type == "Multi_Cycle_Pulse"){
 			multi_cycle_pulse(time);
+		}
+		else if (type == "Multi_Cycle_Pulse_Staggered"){
+			multi_cycle_pulse_staggered(time);
+		}
+		else {
+			std::cout << "ERROR. Field type not programmed in src/fields.cpp. Exiting." << std::endl;
+			exit(0);
 		}
 	}
 

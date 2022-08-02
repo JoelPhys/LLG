@@ -134,12 +134,6 @@ int main(int argc, char* argv[]){
 	TITLE("SIMULATION STARTING");
 	util::startclock();
 
-	#ifdef CUDA
-		cufuncs::cuFields(fields::type, static_cast<double>(0)  * params::dt, fields::start_time, fields::end_time, fields::height);
-		cufuncs::integration(static_cast<double>(0));
-	#endif
-
-		
 	// ========== LOOP THROUGH TIMESTEPS ================================================================ //
 	for (int i = 0; i < params::Nt; i++){
 
@@ -205,8 +199,8 @@ int main(int argc, char* argv[]){
 					else {
 						#ifdef CUDA
 						cuglob::copy_spins_to_host();
-						cuglob::copy_field_to_host();
-						cuglob::copy_energy_to_host();
+						//cuglob::copy_field_to_host();
+						//cuglob::copy_energy_to_host();
 						#endif
 						spinwaves::file_spnwvs << spinwaves::icount * spinwaves::dt_spinwaves << "\t";
 						spinwaves::FFTspace();      
@@ -220,9 +214,10 @@ int main(int argc, char* argv[]){
 		tau = tau + params::dtau;
 
 
-		// Calculate temperature on cpu. This is done even when integrating on GPU for outputting to file
+		// Calculate temperature and fields on cpu. This is done even when integrating on GPU for outputting to file
 		thermal::cputemperature(static_cast<double>(i) * params::dt);
-		
+		fields::calculate(static_cast<double>(i) * params::dt);	
+
 		#ifdef CUDA
 			cufuncs::cuTemperature(thermal::temptype, static_cast<double>(i) * params::dt, thermal::ttm_start);
 			cufuncs::cuFields(fields::type, static_cast<double>(i)  * params::dt, fields::start_time, fields::end_time, fields::height);

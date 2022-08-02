@@ -175,13 +175,13 @@ namespace cufields {
 			int sublatsites = dsublat_sites[i % nsites];
 			
 			if (sublatsites == 0){
-				Hapx[i] = 0.0;
-				Hapy[i] = gauss;
+				Hapx[i] = cos(0.25*M_PI)*gauss;
+				Hapy[i] = cos(0.25*M_PI)*gauss;
 				Hapz[i] = 0.0;  
 			}
 			else if (sublatsites == 1){
-				Hapx[i] = 0.0;
-				Hapy[i] = -1.0 * gauss;
+				Hapx[i] = -1.0 * cos(0.25*M_PI)*gauss;
+				Hapy[i] = -1.0 * cos(0.25*M_PI)*gauss;
 				Hapz[i] = 0.0;  
 			}
 		}
