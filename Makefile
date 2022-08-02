@@ -23,6 +23,7 @@ obj/error.o \
 obj/thermal.o \
 obj/spinwaves.o \
 obj/util.o \
+obj/heun.o \
 obj/main.o
 
 OBJNVCC = \

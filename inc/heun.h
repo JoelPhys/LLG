@@ -9,7 +9,7 @@ namespace heun {
 
     // Functions
     void init();
-    void integration(double Thermal_Fluct);
+    void integration();
 
 }
 

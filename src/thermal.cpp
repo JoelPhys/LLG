@@ -25,8 +25,8 @@ namespace thermal {
     std::vector<double> Te;        // electron temp
     std::vector<double> P_it;        // pump power
     std::vector<double> Tp;        // phonon temp
-
-     //two temperature model variables
+    
+	//two temperature model variables
     double gamma_e;           
     double Cp;                
     double kappa_0;           
@@ -46,9 +46,9 @@ namespace thermal {
     void initthermal(double temp){
 		
 		// Resize arrays
-		Te.resize(params::Nspins,temp);   
-        P_it.resize(params::Nspins,0.0); 
-        Tp.resize(params::Nspins,temp);   
+		Te.resize(params::Lz,temp);   
+        P_it.resize(params::Lz,0.0); 
+        Tp.resize(params::Lz,temp);   
 		
 		// Temparature
 		params::cfgmissing("Temperature.method");					
@@ -119,7 +119,7 @@ namespace thermal {
 	void ttm(double time){
 	
         // loop over layes
-		for (int i = 0; i < 3; i++){
+		for (int i = 0; i < params::Lz; i++){
 				
 			//P_it[i]=P_0*exp(-((time-t0)/tau)*((time-t0)/tau));
 			//Tep1=Te[0] + (params::dt/(gamma_e*Te[0]))*(Gep*(Tp[0]-Te[0]) + P_it[0] + kappa_0*( (Te[0]/Tp[0]) * 2.0*(Te[1]-Te[0])*oneOvrdzdz));
@@ -151,6 +151,24 @@ namespace thermal {
     	}
 
 	}
+
+	void cputemperature(double time){
+		
+		if (temptype == "ttm"){
+			ttm(time);
+		}
+		else if (temptype == "constant"){
+
+		}
+		else if (temptype == "uniform_gradient") {
+
+		}
+		else {
+			std::cout << "ERROR: Unknown temptype. Exiting." << std::endl;
+			exit(0);
+		}
+	}
+
 
 	void ttmtofile(double time){
 

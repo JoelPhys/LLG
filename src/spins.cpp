@@ -26,10 +26,6 @@ namespace spins {
     Array<double> surfy;
     Array<double> surfz;
 
-    Array<int> lw;
-    Array<int> rw;
-    Array<int> zlayer;
-
     Array<double> randbx;
     Array<double> randby;
     Array<double> randbz;

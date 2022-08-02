@@ -44,6 +44,13 @@
 
 int main(int argc, char* argv[]){
 
+	// ======= Temperature ==================================================================================== //
+	const double Temp = (atof(argv[2]));
+	// const double thermal_fluct = params::thermal_const * sqrt(Temp);
+	INFO_OUT("Initial Temperature: ", Temp << "(K)");
+	// INFO_OUT("Thermal Fluct: ", thermal_fluct);
+	// ========================================================================================================= //
+
 	// functions ============================================================================================== //
 	params::banner();
 	params::intitialiseConfig(argv[1]); 
@@ -54,20 +61,13 @@ int main(int argc, char* argv[]){
 	geom::CountDistinct();
 	geom::CreateIntLattice();
 	defects::init();
-	// heun::init();
+	heun::init();
 	util::init();
 
 	if (params::simtype == "Spinwaves"){
 		spinwaves::init();
 	}
 	// ======================================================================================================== //
-
-	// ======= Temperature ==================================================================================== //
-	const double Temp = (atof(argv[2]));
-	// const double thermal_fluct = params::thermal_const * sqrt(Temp);
-	INFO_OUT("Initial Temperature: ", Temp << "(K)");
-	// INFO_OUT("Thermal Fluct: ", thermal_fluct);
-	// ========================================================================================================= //
 
 	// ======= Initiliase Spin Position ======================================================================== //
 	spins::populate();
@@ -95,6 +95,8 @@ int main(int argc, char* argv[]){
 
 	neigh::ReadFile();
 	neigh::InteractionMatrix();
+	heun::init();
+
 
 	#ifdef CUDA
 	std::cout << "CUDA Simulation" << std::endl;
@@ -213,13 +215,14 @@ int main(int argc, char* argv[]){
 			}
 		}
 
+		// Increment time
 		t = t + params::dt;
 		tau = tau + params::dtau;
 
-		if (thermal::temptype == "ttm"){	
-			thermal::ttm(static_cast<double>(i)*params::dt);
-		}
 
+		// Calculate temperature on cpu. This is done even when integrating on GPU for outputting to file
+		thermal::cputemperature(static_cast<double>(i) * params::dt);
+		
 		#ifdef CUDA
 			cufuncs::cuTemperature(thermal::temptype, static_cast<double>(i) * params::dt, thermal::ttm_start);
 			cufuncs::cuFields(fields::type, static_cast<double>(i)  * params::dt, fields::start_time, fields::end_time, fields::height);

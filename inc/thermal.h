@@ -17,9 +17,9 @@ namespace thermal {
 	// Define global variables
     extern std::vector<double> ttime;     // time
     extern std::vector<double> tz;        // z plane
-    extern std::vector<double> te;        // electron temp
-    extern std::vector<double> pp;        // pump power
-    extern std::vector<double> tp;        // phonon temp
+    extern std::vector<double> Te;        // electron temp
+    extern std::vector<double> P_it;        // pump power
+    extern std::vector<double> Tp;        // phonon temp
 
     extern int nsteps;
     extern int nz;
@@ -41,6 +41,7 @@ namespace thermal {
 	void ttm(double time);
 	void ttmtofile(double time);
     void closettmfile();
+	void cputemperature(double time);
 	//void ReadThermalFile();
 }
 #endif
