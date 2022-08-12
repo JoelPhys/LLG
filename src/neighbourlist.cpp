@@ -192,10 +192,14 @@ namespace neigh {
 
     void InteractionMatrix() {
 
-        int NxP[length];
-        int NyP[length];
-        int NzP[length];
+        double NxP[length];
+        double NyP[length];
+        double NzP[length];
         double vecX, vecY, vecZ;
+        
+        // variables to check if Jij vector sits within integer unit cell
+        double near[3];
+        double close_to_int[3];
 
         if (params::changesign == "Y"){
             for (int i = 0; i < length; i++){
@@ -255,9 +259,36 @@ namespace neigh {
             vecY = Ny[i] + params::sites[ib[i]+params::ibtoq][1] - params::sites[jb[i]+params::ibtoq][1];
             vecZ = Nz[i] + params::sites[ib[i]+params::ibtoq][2] - params::sites[jb[i]+params::ibtoq][2];
 
-            NxP[i] = nearbyint((params::PlatINV[0][0] * vecX) + (params::PlatINV[0][1] * vecY) + (params::PlatINV[0][2] * vecZ));
-            NyP[i] = nearbyint((params::PlatINV[1][0] * vecX) + (params::PlatINV[1][1] * vecY) + (params::PlatINV[1][2] * vecZ));
-            NzP[i] = nearbyint((params::PlatINV[2][0] * vecX) + (params::PlatINV[2][1] * vecY) + (params::PlatINV[2][2] * vecZ));
+            NxP[i] = (params::PlatINV[0][0] * vecX) + (params::PlatINV[0][1] * vecY) + (params::PlatINV[0][2] * vecZ);
+            NyP[i] = (params::PlatINV[1][0] * vecX) + (params::PlatINV[1][1] * vecY) + (params::PlatINV[1][2] * vecZ);
+            NzP[i] = (params::PlatINV[2][0] * vecX) + (params::PlatINV[2][1] * vecY) + (params::PlatINV[2][2] * vecZ);
+
+            //NxP[i] = nearbyint((params::PlatINV[0][0] * vecX) + (params::PlatINV[0][1] * vecY) + (params::PlatINV[0][2] * vecZ));
+            //NyP[i] = nearbyint((params::PlatINV[1][0] * vecX) + (params::PlatINV[1][1] * vecY) + (params::PlatINV[1][2] * vecZ));
+            //NzP[i] = nearbyint((params::PlatINV[2][0] * vecX) + (params::PlatINV[2][1] * vecY) + (params::PlatINV[2][2] * vecZ));
+
+            //check that the exchange is an integer value of unit cells. If not, there's likely an issue with the lattice vectors
+
+
+            near[0] = nearbyint(NxP[i]);
+            near[1] = nearbyint(NyP[i]);
+            near[2] = nearbyint(NzP[i]);
+            close_to_int[0] = std::abs(near[0]-NxP[i]);
+            close_to_int[1] = std::abs(near[1]-NyP[i]);
+            close_to_int[2] = std::abs(near[2]-NzP[i]);
+
+            if ((close_to_int[0] > 0.001) || (close_to_int[1] > 0.001) || (close_to_int[2] > 0.001)){
+                std::cout << "ERROR:  Unable to map Jij vector to unit cell." << std::endl;
+                std::cout << "Jij unit cell position: " << NxP[i] << " " << NyP[i] << " " << NzP[i] << std::endl;
+                std::cout << "Jij values: " << Jijx[i] << " " << Jijy[i] << " " << Jijz[i] << std::endl;
+                std::cout << "Exiting. ";
+                std::cout << std::endl;
+                exit(0);
+            }
+
+            NxP[i] = nearbyint(NxP[i]);
+            NyP[i] = nearbyint(NyP[i]);
+            NzP[i] = nearbyint(NzP[i]);
 
         }
         
@@ -310,30 +341,30 @@ namespace neigh {
                                     if (q == ib[i]+params::ibtoq){
 
                                         if (params::xbound == "periodic"){
-                                            xval = modfunc(params::Lx, NxP[i] + x);
+                                            xval = modfunc(params::Lx, static_cast<int>(NxP[i]) + x);
                                         }
                                         else if ((params::xbound == "open") || (params::xbound == "fixed")) {
-                                            xval = NxP[i] + x;
+                                            xval = static_cast<int>(NxP[i]) + x;
                                         }
                                         else {
                                             std::cout << "ERROR: Unknown xbound " << std::endl;
                                             exit(0);
                                         }
                                         if (params::ybound == "periodic"){
-                                            yval = modfunc(params::Ly, NyP[i] + y);
+                                            yval = modfunc(params::Ly, static_cast<int>(NyP[i]) + y);
                                         }
                                         else if ((params::ybound == "open") || (params::ybound == "fixed")){
-                                            yval = NyP[i] + y; 
+                                            yval = static_cast<int>(NyP[i]) + y; 
                                         }
                                         else {
                                             std::cout << "ERROR: Unknown ybound " << std::endl;
                                             exit(0);
                                         }
                                         if (params::zbound == "periodic"){
-                                            zval = modfunc(params::Lz, NzP[i] + z);
+                                            zval = modfunc(params::Lz, static_cast<int>(NzP[i]) + z);
                                         }
                                         else if ((params::zbound == "open") || (params::zbound == "fixed")){
-                                            zval = NzP[i] + z; 
+                                            zval = static_cast<int>(NzP[i]) + z; 
                                         }
                                         else {
                                             std::cout << "ERROR: Unknown zbound " << std::endl;
@@ -400,30 +431,30 @@ namespace neigh {
                                     if (q == ib[i]+params::ibtoq){
 
                                         if (params::xbound == "periodic"){
-                                            xval = modfunc(params::Lx, NxP[i] + x);
+                                            xval = modfunc(params::Lx, static_cast<int>(NxP[i]) + x);
                                         }
                                         else if ((params::xbound == "open") || (params::xbound == "fixed")) {
-                                            xval = NxP[i] + x;
+                                            xval = static_cast<int>(NxP[i]) + x;
                                         }
                                         else {
                                             std::cout << "ERROR: Unknown xbound " << std::endl;
                                             exit(0);
                                         }
                                         if (params::ybound == "periodic"){
-                                            yval = modfunc(params::Ly, NyP[i] + y);
+                                            yval = modfunc(params::Ly, static_cast<int>(NyP[i]) + y);
                                         }
                                         else if ((params::ybound == "open") || (params::ybound == "fixed")){
-                                            yval = NyP[i] + y; 
+                                            yval = static_cast<int>(NyP[i]) + y; 
                                         }
                                         else {
                                             std::cout << "ERROR: Unknown ybound " << std::endl;
                                             exit(0);
                                         }
                                         if (params::zbound == "periodic"){
-                                            zval = modfunc(params::Lz, NzP[i] + z);
+                                            zval = modfunc(params::Lz, static_cast<int>(NzP[i]) + z);
                                         }
                                         else if ((params::zbound == "open") || (params::zbound == "fixed")){
-                                            zval = NzP[i] + z; 
+                                            zval = static_cast<int>(NzP[i]) + z; 
                                         }
                                         else {
                                             std::cout << "ERROR: Unknown zbound " << std::endl;
@@ -462,6 +493,14 @@ namespace neigh {
         for (int i = 0; i < adjncy.size() / (x_adj.size()-1); i++){
             Jijsize += (Jijx[i]);
         }
+
+		// Check x_adj is the same length as the number of spins
+		if (x_adj.size() != params::Nspins+1){
+			std::cout << "ERROR encountered at file " << __FILE__ << " at line " << __LINE__ << ": x_adj is not the same size as the number of atoms. Exiting." << std::endl;
+			std::cout << "x_adj size: " << x_adj.size() << "\n";
+		  	std::cout << "number of atoms: " << params::Nspins << std::endl;	
+			exit(0);
+		}
 
         INFO_OUT("length of x_adj:", x_adj.size());
         INFO_OUT("length of adjncy:", adjncy.size());
