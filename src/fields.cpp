@@ -33,6 +33,7 @@ namespace fields {
 	double height;
 	double freq;
 	double gauss;
+	double kpoint;
 	double cuniform[3];
 	int sublatsites;
 
@@ -125,6 +126,15 @@ namespace fields {
 			INFO_OUT("Magniture of pulse = ", height << " [T]");
 			INFO_OUT("Frequency of pulse = ", freq << " [Hz]");
 		}
+		else if (type == "Sine_Pulse_Spinwaves"){
+			INFO_OUT("Field type = ", type);
+			height = params::cfg.lookup("ExternalField.height");
+			freq = params::cfg.lookup("ExternalField.freq");
+			kpoint = params::cfg.lookup("ExternalField.kpoint");
+			INFO_OUT("Magniture of pulse:", height << " [T]");
+			INFO_OUT("Frequency of pulse:", freq << " [Hz]");
+			INFO_OUT("kpoint of pulse:", kpoint << " [pi]");
+	}
 		else {	
 			std::cout << "ERROR: Unknown Field type." << std::endl;
 			exit(0);

@@ -212,7 +212,7 @@ namespace spinwaves {
 						lval = l + params::Isites[q][0];
 						mval = m + params::Isites[q][1];
 						nval = n + params::Isites[q][2];
-						stcf(lval,mval,nval) = spins::sz1d(geom::Scount(lval,mval,nval)) * spins::sz1d(geom::Scount(lval,mval,nval)) + spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval));
+						stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)) + spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval));
 					}
 				}
 			}

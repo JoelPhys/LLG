@@ -19,6 +19,7 @@ namespace fields {
 	extern double std_dev;
 	extern double centre_pos;
 	extern double freq;
+	extern double kpoint;
 	extern std::string type;
 	extern double cuniform[3];
 

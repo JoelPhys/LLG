@@ -205,6 +205,23 @@ namespace cufields {
 
 	}
 
+	__global__ void sine_pulse_spinwave(int N, double time, double height, double freq, double kpoint, double *Hapx, double *Hapy, double *Hapz){
+
+		const int i = blockDim.x*blockIdx.x + threadIdx.x;
+
+		double gauss1, gauss2;
+		double sitepos =  4*((i/(4*100*1)) % 1)+ (i % 4); //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
+		gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+		gauss2 = height * cos(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+
+		if (i < N){
+			Hapx[i] = gauss2;
+			Hapy[i] = gauss1;
+			Hapz[i] = 0.0;  
+		}
+
+
+	}
 	__global__ void sine_pulse_staggered(int nsites, int *dsublat_sites, int N, double time, double height, double freq, double *Hapx, double *Hapy, double *Hapz){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
@@ -238,12 +255,12 @@ namespace cufields {
 		// testingy.resize(params::Nspins);
 		// testingz.resize(params::Nspins);
 
-		CUDA_CALL(cudaMemcpy(testingx.ptr(), cuglob::Hapx, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
+		CUDA_CALL(cudaMemcpy(testingx.ptr(), cuglob::Hapy, sizeof(double) * params::Nspins, cudaMemcpyDeviceToHost));
 		// CUDA_CALL(cudaMemcpy(testingy.ptr(), Hapy, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 		// CUDA_CALL(cudaMemcpy(testingz.ptr(), Hapz, sizeof(double) * params::Lz, cudaMemcpyDeviceToHost));
 
 	    std::cout << i << " ";
-	    for (int a = 0; a < 5; a++){
+	    for (int a = 0; a < 4; a++){
 		    std::cout << testingx(a) << " ";	
 	    }
 	    std::cout << std::endl;
