@@ -212,8 +212,9 @@ namespace spinwaves {
 						lval = l + params::Isites[q][0];
 						mval = m + params::Isites[q][1];
 						nval = n + params::Isites[q][2];
-						stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)) + spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval));
-					}
+						//stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)) + spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval));
+						stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)); 				
+}
 				}
 			}
 		}
@@ -221,19 +222,12 @@ namespace spinwaves {
 		// compute fft
 		fftw_execute(Slat);
 
-		// //TESTING WITH MN2AU DELETE IF NOT USING
-		// for (int l = 0; l < params::Lx; l++){
-		//     stcf1d(l) = spins::sx1d(geom::LatCount(l,1,1,0)) * spins::sx1d(geom::LatCount(l,1,1,0)) + spins::sz1d(geom::LatCount(l,1,1,0)) * spins::sz1d(geom::LatCount(l,1,1,0));
-		// }
-
-		// testing for Mn2Au
-		// fftw_execute(Slat1d);
-
 		//windowing function
 		windowing = hammA - hammB * cos((2 * M_PI * icount) / (Npoints  - 1));     
 
 		file_spnwvs << icount * dt_spinwaves << "\t";
 
+		// Stick space FFT into time array
 		for (int j = 0; j < geom::Ix; j++){
 			for (int l = 0; l < geom::Iy; l++){
 				for (int k = 0; k < geom::IzC; k++){
@@ -511,58 +505,58 @@ namespace spinwaves {
 				counter++;
 
 				for (int kk = 0; kk < icount/2; kk++){
-					os[kk] /= largest;
+					//os[kk] /= largest;
 					freq = kk * freqstep;
-					// kzout << os[kk] << "\n";
+					kzout << os[kk] << "\n";
 				}
 
-				int n = icount/2;
-				int s = icount/2 + icount/2 - 1;
-				int mean = icount/4;
-				double sg = sg_spinwaves;
-				double sum = 0;
-				double g[n];
-				double w[s];
+				//int n = icount/2;
+				//int s = icount/2 + icount/2 - 1;
+				//int mean = icount/4;
+				//double sg = sg_spinwaves;
+				//double sum = 0;
+				//double g[n];
+				//double w[s];
 
-				for (int i = 0; i < n; i++){     
-					g[i] = exp(-1 * ((i - mean) * (i - mean)) / (2 * sg * sg));
-					sum += g[i];
-				}
+				//for (int i = 0; i < n; i++){     
+				//	g[i] = exp(-1 * ((i - mean) * (i - mean)) / (2 * sg * sg));
+				//	sum += g[i];
+				//}
 
-				//Ensure sum of gaussian is 0
-				for (int i = 0; i < n; i++){
-					g[i] /= sum;         
-				}        
+				////Ensure sum of gaussian is 0
+				//for (int i = 0; i < n; i++){
+				//	g[i] /= sum;         
+				//}        
 
-				// Convolution
-				for (int k = 0; k < s; k++){
-					w[k] = 0;
+				//// Convolution
+				//for (int k = 0; k < s; k++){
+				//	w[k] = 0;
 
-					for (int i = 0; i < s; i++){
+				//	for (int i = 0; i < s; i++){
 
-						//w[k] += in[i] * g[i];
-						if (k-i >= 0 && k-i < n && i < n){
-							w[k] += os[i] * g[k-i];
-						}
-					}
+				//		//w[k] += in[i] * g[i];
+				//		if (k-i >= 0 && k-i < n && i < n){
+				//			w[k] += os[i] * g[k-i];
+				//		}
+				//	}
 
-				}
+				//}
 
-				largest = w[0];
-				for (int jj = 0; jj < s; jj++){
-					if (largest < w[jj]){
-						largest = w[jj];
-					}
-				}
-				for (int kk = 0; kk < s; kk++){
-					w[kk] /= largest;
-				}
+				//largest = w[0];
+				//for (int jj = 0; jj < s; jj++){
+				//	if (largest < w[jj]){
+				//		largest = w[jj];
+				//	}
+				//}
+				//for (int kk = 0; kk < s; kk++){
+				//	w[kk] /= largest;
+				//}
 
-				for (int kk = 0; kk < n; kk++){
-					if (kk - mean >= 0){
-						kzout << w[kk] << "\n";
-					}
-				}
+				//for (int kk = 0; kk < n; kk++){
+				//	if (kk - mean >= 0){
+				//		kzout << w[kk] << "\n";
+				//	}
+				//}
 
 				kzout << std::flush;
 				kzout.close(); 

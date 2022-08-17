@@ -33,6 +33,7 @@ namespace fields {
 	double height;
 	double freq;
 	double gauss;
+	double gauss2;
 	double kpoint;
 	double cuniform[3];
 	int sublatsites;
@@ -126,7 +127,7 @@ namespace fields {
 			INFO_OUT("Magniture of pulse = ", height << " [T]");
 			INFO_OUT("Frequency of pulse = ", freq << " [Hz]");
 		}
-		else if (type == "Sine_Pulse_Spinwaves"){
+		else if ((type == "Sine_Pulse_Linear") || (type == "Sine_Pulse_Circular")){
 			INFO_OUT("Field type = ", type);
 			height = params::cfg.lookup("ExternalField.height");
 			freq = params::cfg.lookup("ExternalField.freq");
@@ -214,6 +215,36 @@ namespace fields {
 
 	}
 
+	void sine_pulse_circular(double time){
+
+
+		for (int i = 0; i < params::Nspins; i++){
+		
+            gauss = height * sin(kpoint * M_PI * i + 2.0*M_PI*freq*time);
+            gauss2 = height * cos(kpoint * M_PI * i + 2.0*M_PI*freq*time);
+            H_appx[i] = gauss;
+            H_appy[i] = gauss2;
+            H_appz[i] = 0.0; 	
+		
+		}
+
+	}
+
+	void sine_pulse_linear(double time){
+
+
+		for (int i = 0; i < params::Nspins; i++){
+		
+            gauss = height * sin(kpoint * M_PI * i + 2.0*M_PI*freq*time);
+            H_appx[i] = gauss;
+            H_appy[i] = 0.0;
+            H_appz[i] = 0.0; 	
+		
+		}
+
+	}
+
+
 
 	void calculate(double time){
 		if (type == "Uniform"){
@@ -233,6 +264,12 @@ namespace fields {
 		}
 		else if (type == "Multi_Cycle_Pulse_Staggered"){
 			multi_cycle_pulse_staggered(time);
+		}
+		else if (type == "Sine_Pulse_Linear"){
+			sine_pulse_linear(time);	
+		}
+		else if (type == "Sine_Pulse_Circular"){
+			sine_pulse_circular(time);	
 		}
 		else {
 			std::cout << "ERROR. Field type not programmed in src/fields.cpp. Exiting." << std::endl;

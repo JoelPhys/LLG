@@ -205,16 +205,32 @@ namespace cufields {
 
 	}
 
-	__global__ void sine_pulse_spinwave(int N, double time, double height, double freq, double kpoint, double *Hapx, double *Hapy, double *Hapz){
+	__global__ void sine_pulse_linear(int N, double time, double height, double freq, double kpoint, double *Hapx, double *Hapy, double *Hapz){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
-		double gauss1, gauss2;
-		double sitepos =  4*((i/(4*100*1)) % 1)+ (i % 4); //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
-		gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
-		gauss2 = height * cos(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+		if (i < N){
+			double gauss1, gauss2;
+			double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
+			gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+			gauss2 = height * cos(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+			Hapx[i] = gauss1;
+			Hapy[i] = 0.0;
+			Hapz[i] = 0.0;  
+		}
+
+
+	}
+	
+	__global__ void sine_pulse_circular(int N, double time, double height, double freq, double kpoint, double *Hapx, double *Hapy, double *Hapz){
+
+		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
 		if (i < N){
+			double gauss1, gauss2;
+			double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
+			gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+			gauss2 = height * cos(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
 			Hapx[i] = gauss2;
 			Hapy[i] = gauss1;
 			Hapz[i] = 0.0;  
@@ -222,6 +238,8 @@ namespace cufields {
 
 
 	}
+
+
 	__global__ void sine_pulse_staggered(int nsites, int *dsublat_sites, int N, double time, double height, double freq, double *Hapx, double *Hapy, double *Hapz){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;

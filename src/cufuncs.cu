@@ -70,8 +70,11 @@ namespace cufuncs {
 		else if (type == "Sine_Pulse_Staggered"){
 			cufields::sine_pulse_staggered<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, params::Nspins, time, fields::height, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
-		else if (type == "Sine_Pulse_Spinwaves"){
-			cufields::sine_pulse_spinwave<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		else if (type == "Sine_Pulse_Circular"){
+			cufields::sine_pulse_circular<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+		}
+		else if (type == "Sine_Pulse_Linear"){
+			cufields::sine_pulse_linear<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 
 		else {

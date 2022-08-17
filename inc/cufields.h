@@ -22,7 +22,8 @@ namespace cufields {
     extern __global__ void multi_cycle_pulse_staggered(int, int *, int, double, double, double, double,  double, double *, double *, double *);
     extern __global__ void sine_pulse(int , double , double , double , double *, double *, double *);
     extern __global__ void sine_pulse_staggered(int, int *, int , double , double , double , double *, double *, double *);
-	extern __global__ void sine_pulse_spinwave(int , double , double , double , double , double *, double *, double *);
+	extern __global__ void sine_pulse_circular(int , double , double , double , double , double *, double *, double *);
+	extern __global__ void sine_pulse_linear(int , double , double , double , double , double *, double *, double *);
 
     void testing(int i);
 }
