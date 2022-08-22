@@ -311,6 +311,8 @@ namespace params {
 			std::string matfile_name = cfg.lookup("MaterialConsts.file");
 			std::ifstream matfile(matfile_name);
 
+			INFO_OUT("Unit cell File: ", matfile_name);
+
 			//Check file can be opened
 			if (!matfile.is_open()){
 				std::cout << "ERROR: Could not open mat file. Exiting." << std::endl;
@@ -320,12 +322,47 @@ namespace params {
 			// variables for reading matfile
 			double f1,f2,f3,f4,f5,f9,f10,f11,f13,f14,f15;
 			int f6,f7,f8,f12;
-
 			int q =0;
+
+			// Create table in log file
+			std::cout << std::setw(8) << "lambda";
+            std::cout << std::setw(8) << "mu_s";
+            std::cout << std::setw(8) << "posx";
+            std::cout << std::setw(8) << "posy";
+            std::cout << std::setw(8) << "posz";
+            std::cout << std::setw(8) << "iposx";
+            std::cout << std::setw(8) << "iposy";
+            std::cout << std::setw(8) << "iposz";
+            std::cout << std::setw(8) << "mx";
+            std::cout << std::setw(8) << "my";
+            std::cout << std::setw(8) << "mz";
+            std::cout << std::setw(8) << "sublat";
+            std::cout << std::setw(8) << "dx";
+            std::cout << std::setw(8) << "dy";
+            std::cout << std::setw(8) << "dy";
+            std::cout << std::endl;
 
 			while (matfile >> f1 >> f2 >> f3 >> f4 >> f5 >> f6 >> f7 >> f8 >> f9 >> f10 >> f11 >> f12 >> f13 >> f14 >> f15)
             {
-			
+
+				// Print values to log file		
+                std::cout << std::setprecision(4) << std::setw(8) << f1;
+                std::cout << std::setprecision(4) << std::setw(8) << f2;
+                std::cout << std::setprecision(4) << std::setw(8) << f3;
+                std::cout << std::setprecision(4) << std::setw(8) << f4;
+                std::cout << std::setprecision(4) << std::setw(8) << f5;
+                std::cout << std::setprecision(4) << std::setw(8) << f6;
+                std::cout << std::setprecision(4) << std::setw(8) << f7;
+                std::cout << std::setprecision(4) << std::setw(8) << f8;
+                std::cout << std::setprecision(4) << std::setw(8) << f9;
+                std::cout << std::setprecision(4) << std::setw(8) << f10;
+                std::cout << std::setprecision(4) << std::setw(8) << f11;
+                std::cout << std::setprecision(4) << std::setw(8) << f12;
+                std::cout << std::setprecision(4) << std::setw(8) << f13;
+                std::cout << std::setprecision(4) << std::setw(8) << f14;
+                std::cout << std::setprecision(4) << std::setw(8) << f15;
+                std::cout << std::endl;
+	
 				//resize 2D std::vectors
 				sites[q].resize(3);
 				Isites[q].resize(3);
