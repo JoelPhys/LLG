@@ -40,6 +40,7 @@ namespace fields {
 
 	double std_dev;
 	double centre_pos;
+	int npump;
 
 	void readfields(){
 
@@ -135,6 +136,18 @@ namespace fields {
 			INFO_OUT("Magniture of pulse:", height << " [T]");
 			INFO_OUT("Frequency of pulse:", freq << " [Hz]");
 			INFO_OUT("kpoint of pulse:", kpoint << " [pi]");
+	
+			// check if pumping upto a certain atom
+			if (params::cfg.exists("ExternalField.layer")){
+				npump = params::cfg.lookup("ExternalField.layer");
+			}			
+			else {
+				npump = params::Nspins;
+			}
+
+			// Print npump
+			INFO_OUT("pumping spins up to:", "N = " << params::Nspins);
+
 	}
 		else {	
 			std::cout << "ERROR: Unknown Field type." << std::endl;
@@ -233,7 +246,7 @@ namespace fields {
 	void sine_pulse_linear(double time){
 
 
-		for (int i = 0; i < params::Nspins; i++){
+		for (int i = 0; i < npump; i++){
 		
             gauss = height * sin(kpoint * M_PI * i + 2.0*M_PI*freq*time);
             H_appx[i] = gauss;

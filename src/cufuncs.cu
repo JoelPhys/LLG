@@ -74,7 +74,7 @@ namespace cufuncs {
 			cufields::sine_pulse_circular<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 		else if (type == "Sine_Pulse_Linear"){
-			cufields::sine_pulse_linear<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			cufields::sine_pulse_linear<<<cuglob::bpg,cuglob::tpb>>>(fields::npump, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 
 		else {

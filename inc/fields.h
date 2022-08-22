@@ -22,6 +22,7 @@ namespace fields {
 	extern double kpoint;
 	extern std::string type;
 	extern double cuniform[3];
+	extern int npump;
 
 	void readfields();
 	void square_pulse(double time);
