@@ -422,10 +422,19 @@ namespace util {
 	}
 
 	void OutputFldToFile(int i){
+	
+		// output time
 		fldfile << static_cast<double>(i) * params::dt << " ";
-		fldfile << fields::H_appx[0] << " ";
-		fldfile << fields::H_appy[0] << " ";
-		fldfile << fields::H_appz[0] << "\n";
+		
+		// Output Field for each sublattice
+		for (int i = 0; i < params::uniquesublat.size(); i++){
+
+			fldfile << fields::H_appx[params::uniquesublat[i]] << " ";
+			fldfile << fields::H_appy[params::uniquesublat[i]] << " ";
+			fldfile << fields::H_appz[params::uniquesublat[i]] << " ";
+		}
+
+		fldfile << "\n";
 	}
 
 	void startclock(){

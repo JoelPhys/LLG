@@ -48,6 +48,9 @@ namespace params {
 	std::vector<int> NmomentsSubLat;
 
 
+	// Array for finding first instance of sublat within unit clel
+	std::vector<int> uniquesublat;
+
 	//Boundary Conditions
 	std::string xbound;
 	std::string ybound;
@@ -567,6 +570,20 @@ namespace params {
 
 			INFO_OUT("Cubic Anisotropy:", dzc << " [J]");
 
+		}
+		
+		//=======================================================================================================
+		// Find the index of first instance of each sublat in unit cell =========================================
+		//=======================================================================================================
+
+		for (int j =0 ; j < Nsublat; j++){
+                for (int i = 0; i < sublat_sites.size(); i++){ 
+					if (j == sublat_sites[i]){
+           			     uniquesublat.push_back(i);
+           			     std::cout << j << " " << i << std::endl;
+           			     break;
+           			 }
+ 			   	}	
 		}
 		
 		//=======================================================================================================
