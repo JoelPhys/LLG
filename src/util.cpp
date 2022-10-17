@@ -428,7 +428,6 @@ namespace util {
 		
 		// Output Field for each sublattice
 		for (int i = 0; i < params::uniquesublat.size(); i++){
-
 			fldfile << fields::H_appx[params::uniquesublat[i]] << " ";
 			fldfile << fields::H_appy[params::uniquesublat[i]] << " ";
 			fldfile << fields::H_appz[params::uniquesublat[i]] << " ";

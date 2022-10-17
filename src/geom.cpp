@@ -66,9 +66,14 @@ namespace geom {
         int bx;
         int by;
         int bz;
-        bx = params::cfg.lookup("Util.blockx");
-        by = params::cfg.lookup("Util.blockx");
-        bz = params::cfg.lookup("Util.blockx");
+        
+		params::cfgmissing("Util.blockx");	
+		params::cfgmissing("Util.blocky");
+		params::cfgmissing("Util.blockz");		
+		
+		bx = params::cfg.lookup("Util.blockx");
+        by = params::cfg.lookup("Util.blocky");
+        bz = params::cfg.lookup("Util.blockz");
         INFO_OUT("blockx:", bx);
         INFO_OUT("blocky:", by);
         INFO_OUT("blockz:", bz);

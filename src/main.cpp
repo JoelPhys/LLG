@@ -102,6 +102,7 @@ int main(int argc, char* argv[]){
 	std::cout << "CUDA Simulation" << std::endl;
 	cuglob::device_info();
 	cuglob::allocate_heun_memory();
+	cufields::allocate_field_variables();
 	cuheun::allocate_heun_consts();
 	cuthermal::init_cuthermal(Temp);
 	cuglob::copy_temp_to_device(Temp);
@@ -137,12 +138,13 @@ int main(int argc, char* argv[]){
 	// ========== LOOP THROUGH TIMESTEPS ================================================================ //
 	for (int i = 0; i < params::Nt; i++){
 
-		#ifdef CUDA
-		if (i ==  5001) {
-			std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
-			cufuncs::cuRotation();
-		}
-		#endif
+        if (i ==  5001) {
+            std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
+        #ifdef CUDA
+            cufuncs::cuRotation();
+        #endif
+            heun::rotation();
+        } 
 
 
 		//if (i == 5000){
@@ -175,6 +177,7 @@ int main(int argc, char* argv[]){
 			if (params::OutputToTerminal == true){
 				util::OutputMagToTerm(i);
 			}
+			//std::cout << i*params::dt << " " << params::mu_s[0]*0.5*7.246e22*heun::spin_temp<< "\n";
 			util::OutputMagToFile(i);
 			util::OutputFldToFile(i);
 			if (params::simtype == "DW"){		
@@ -227,6 +230,7 @@ int main(int argc, char* argv[]){
 		#else	
 			heun::integration();
 		#endif
+
 
 	}
 	// ==================================================================================================== //

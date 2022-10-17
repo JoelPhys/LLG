@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <cstring>
 #include <sstream>
+#include <string>
 
 // my header files
 #include "../inc/mathfuncs.h"
@@ -37,10 +38,16 @@ namespace fields {
 	double kpoint;
 	double cuniform[3];
 	int sublatsites;
-
 	double std_dev;
 	double centre_pos;
 	int npump;
+
+	// field direction and magnitude
+	double direc_mag;
+	double direc[3];
+
+	// sublattice staggered order
+	std::vector<int> sublat_stag;
 
 	void readfields(){
 
@@ -57,19 +64,7 @@ namespace fields {
 
 		TITLE("EXTERNAL FIELD");
 
-		if (type == "Uniform") {
-			INFO_OUT("Field type:", type);
-			for (int a = 0; a < params::Nmoments; a++){
-				H_appx(a) = setting1["Field"][0];
-				H_appy(a) = setting1["Field"][1];
-				H_appz(a) = setting1["Field"][2];
-			}
-			cuniform[0] = static_cast<double>(setting1["Field"][0]);
-			cuniform[1] = static_cast<double>(setting1["Field"][1]);
-			cuniform[2] = static_cast<double>(setting1["Field"][2]);
-			INFO_OUT("Field values:", "[" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "] (T)");              
-		}
-		else if (type == "Uniform_Staggered") {
+		if (type == "Uniform_Staggered") {
 			INFO_OUT("Field type:", type);
 			for (int a = 0; a < params::Nmoments; a++){
 				
@@ -90,16 +85,19 @@ namespace fields {
 			cuniform[0] = static_cast<double>(setting1["Field"][0]);
 			cuniform[1] = static_cast<double>(setting1["Field"][1]);
 			cuniform[2] = static_cast<double>(setting1["Field"][2]);
-			INFO_OUT("Field values:", "[" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "] (T)");
+			INFO_OUT("Field values:", "[" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "] [T]");
 		}
-		else if ((type == "Square_Pulse") || (type == "Square_Pulse_Staggered")){
+		else if ((type == "Square_Pulse")){
 			INFO_OUT("Field type:", type);
 			height = params::cfg.lookup("ExternalField.height");
+			
+			params::cfgmissing("ExternalField.start_time");
+			params::cfgmissing("ExternalField.end_time");
 			start_time = params::cfg.lookup("ExternalField.start_time");
 			end_time = params::cfg.lookup("ExternalField.end_time");
 			INFO_OUT("Start time of pulse = ", start_time << " timesteps");
 			INFO_OUT("End time of pulse = ", end_time << " timesteps");
-			INFO_OUT("Magniture of pulse = ", height << " (T)");
+			INFO_OUT("Magniture of pulse = ", height << " [T]");
 		}
 		else if (type == "Gaussian_Pulse"){
 			INFO_OUT("Field type = ", type);
@@ -108,9 +106,9 @@ namespace fields {
 			std_dev = params::cfg.lookup("ExternalField.std_dev");
 			INFO_OUT("Central Position of Pulse = ", centre_pos << " timesteps");
 			INFO_OUT("Standard Deviation of Pulse = ", std_dev << " timesteps");
-			INFO_OUT("Magniture of pulse = ", height << " (T)");
+			INFO_OUT("Magniture of pulse = ", height << " [T]");
 		}
-		else if ((type == "Multi_Cycle_Pulse") || (type == "Multi_Cycle_Pulse_Staggered")){
+		else if ((type == "Multi_Cycle_Pulse")){
 			INFO_OUT("Field type = ", type);
 			height = params::cfg.lookup("ExternalField.height");
 			centre_pos = params::cfg.lookup("ExternalField.centre_pos");
@@ -121,7 +119,7 @@ namespace fields {
 			INFO_OUT("Magniture of pulse = ", height << " [T]");
 			INFO_OUT("Frequency of pulse = ", freq << " [Hz]");
 		}
-		else if ((type == "Sine_Pulse") || (type == "Sine_Pulse_Staggered")){
+		else if ((type == "Sine_Pulse")){
 			INFO_OUT("Field type = ", type);
 			height = params::cfg.lookup("ExternalField.height");
 			freq = params::cfg.lookup("ExternalField.freq");
@@ -146,13 +144,55 @@ namespace fields {
 			}
 
 			// Print npump
-			INFO_OUT("pumping spins up to:", "N = " << params::Nspins);
+			INFO_OUT("pumping spins up to:", "N = " << npump);
 
-	}
+		}
 		else {	
 			std::cout << "ERROR: Unknown Field type." << std::endl;
 			exit(0);
-		} 
+		}
+
+		// Calculate direction of field	
+		direc[0] = static_cast<double>(setting1["direction"][0]);
+		direc[1] = static_cast<double>(setting1["direction"][1]);
+		direc[2] = static_cast<double>(setting1["direction"][2]);
+		INFO_OUT("Field direction:", "[" << direc[0]<< " , " << direc[1]<< " , " << direc[2]<< "] [arb.]");              
+		
+		// Calculate magnitude of field along each direction	
+		direc_mag = 1.0 / sqrt((direc[0]*direc[0]) + (direc[1]*direc[1]) + (direc[2]*direc[2]));
+		INFO_OUT("Normalisation value of field along x,y,z:",direc_mag);	
+
+		// If the field is staggered, assign the field to the desired sublattice
+		int index_str, position;
+		std::string sublatstr;
+		sublat_stag.resize(params::Nsublat);
+
+		// Check setting exists in cfg file
+		params::cfgmissing("ExternalField.SublatStagger");
+		
+		// Check if sublattice staggering is the same length as the number of sublattices
+		if (setting1["SublatStagger"].getLength() != params::Nsublat){ 
+			std::cout << "ERROR: Sublattice Staggering is not the same length as number of sublattices. \n Exiting." << std::endl; 
+			exit(0);
+		}	
+
+		for (int sublat = 0; sublat < params::Nsublat; sublat++){
+			
+			// read sublat staggering from config file
+			sublat_stag[sublat] = static_cast<int>(setting1["SublatStagger"][sublat]);
+			
+			// print the field staggering to stdout
+			sublatstr = "Sublattice " + std::to_string(sublat) + " being multiplied by:";
+			INFO_OUT(sublatstr, sublat_stag[sublat]);
+					
+			// check if the staggering is 0,1,-1. If is isn't, exit the program.	
+			if ((sublat_stag[sublat] != 0) && (sublat_stag[sublat] != 1) && (sublat_stag[sublat] != -1)){
+				std::cout << "ERROR: Unexpected value for staggered field. \n";
+				std::cout << "sublat_stag[" << sublat << "] = "  << sublat_stag[sublat] << "\n";
+				std::cout << "Exiting. \n";
+				exit(0);
+			}
+		}
 
 	}
 
@@ -161,16 +201,10 @@ namespace fields {
 
 		if ((time >= start_time) && (time < end_time)){
 			for (int i = 0; i < params::Nspins; i++){
-				H_appx(i) = height;
-				H_appy(i) = 0.0;
-				H_appz(i) = 0.0;  
-			}
-		}	
-		else {
-			for (int i = 0; i < params::Nspins; i++){
-				H_appx(i) = 0.0;
-				H_appy(i) = 0.0;
-				H_appz(i) = 0.0; 
+				sublatsites = params::sublat_sites[i % params::Nq];
+				H_appx(i) = sublat_stag[sublatsites]*direc_mag*direc[0]*height;
+				H_appy(i) = sublat_stag[sublatsites]*direc_mag*direc[1]*height;
+				H_appz(i) = sublat_stag[sublatsites]*direc_mag*direc[2]*height;  
 			}
 		}
 
@@ -181,53 +215,33 @@ namespace fields {
 		gauss = height * exp(-1 * (((time - centre_pos) * (time - centre_pos))/(2 * std_dev * std_dev)));
 
 		for (int i = 0; i < params::Nspins; i++){
-
-			H_appx(i) = gauss;
-			H_appy(i) = 0.0;
-			H_appz(i) = 0.0; 
-
-		}
-
-	}
-
-	void multi_cycle_pulse(double time){
-
-		gauss = height * exp(-1 * (((time - centre_pos) * (time - centre_pos))/(2 * std_dev * std_dev))) * sin(2*M_PI*freq*(time - centre_pos));
-
-		for (int i = 0; i < params::Nspins; i++){
-
-			H_appx(i) = gauss;
-			H_appy(i) = 0.0;
-			H_appz(i) = 0.0; 
+			sublatsites = params::sublat_sites[i % params::Nq];
+			H_appx(i) = sublat_stag[sublatsites]*direc_mag*direc[0]*gauss;
+			H_appy(i) = sublat_stag[sublatsites]*direc_mag*direc[1]*gauss;
+			H_appz(i) = sublat_stag[sublatsites]*direc_mag*direc[2]*gauss;  
 
 		}
-
 
 	}
 	
-	void multi_cycle_pulse_staggered(double time){
+	void multi_cycle_pulse(double time){
 
 		gauss = height * exp(-1.0 * (((time - centre_pos) * (time - centre_pos))/(2.0 * std_dev * std_dev))) * sin(2.0*M_PI*freq*(time - centre_pos));
 
 		for (int i = 0; i < params::Nspins; i++){
 			
-			int sublatsites = params::sublat_sites[i % params::Nq];
+			sublatsites = params::sublat_sites[i % params::Nq];
 			
-			if (sublatsites == 0){
-				H_appx[i] = cos(0.25*M_PI)*gauss;
-				H_appy[i] = cos(0.25*M_PI)*gauss;
-				H_appz[i] = 0.0;  
-			}
-			else if (sublatsites == 1){
-				H_appx[i] = -1.0 *cos(0.25*M_PI)* gauss;
-				H_appy[i] = -1.0 *cos(0.25*M_PI)* gauss;
-				H_appz[i] = 0.0;  
-			}
+			H_appx[i] = sublat_stag[sublatsites]*direc_mag*direc[0]*gauss;
+			H_appy[i] = sublat_stag[sublatsites]*direc_mag*direc[1]*gauss;
+			H_appz[i] = sublat_stag[sublatsites]*direc_mag*direc[2]*gauss;  
+			
 		}
 
 
 	}
 
+	// TODO: Fix the polarisation of the fields
 	void sine_pulse_circular(double time){
 
 
@@ -249,9 +263,9 @@ namespace fields {
 		for (int i = 0; i < npump; i++){
 		
             gauss = height * sin(kpoint * M_PI * i + 2.0*M_PI*freq*time);
-            H_appx[i] = gauss;
-            H_appy[i] = 0.0;
-            H_appz[i] = 0.0; 	
+            H_appx[i] = direc_mag*direc[0]*gauss;
+            H_appy[i] = direc_mag*direc[1]*gauss;
+            H_appz[i] = direc_mag*direc[2]*gauss;
 		
 		}
 
@@ -263,9 +277,6 @@ namespace fields {
 		if (type == "Uniform"){
 			(time);
 		}
-		else if (type == "split"){
-			(time);
-		}
 		else if (type == "Square_Pulse"){
 			square_pulse(time);
 		}
@@ -274,9 +285,6 @@ namespace fields {
 		}
 		else if (type == "Multi_Cycle_Pulse"){
 			multi_cycle_pulse(time);
-		}
-		else if (type == "Multi_Cycle_Pulse_Staggered"){
-			multi_cycle_pulse_staggered(time);
 		}
 		else if (type == "Sine_Pulse_Linear"){
 			sine_pulse_linear(time);	

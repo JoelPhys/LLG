@@ -38,37 +38,19 @@ namespace cufuncs {
 
 	void cuFields(std::string type, double time, double start_time, double end_time, double height){
 		if (type == "Uniform"){
-			cufields::uniform<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, fields::cuniform[0], fields::cuniform[1], fields::cuniform[2], cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
-		}
-		else if (type == "Uniform_Staggered"){
-			cufields::uniform_staggered<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, params::Nspins, fields::cuniform[0], fields::cuniform[1], fields::cuniform[2], cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			cufields::uniform<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag, params::Nspins, fields::cuniform[0], fields::cuniform[1], fields::cuniform[2], cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 		else if (type == "Square_Pulse"){
-			cufields::square_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
-		}
-		else if (type == "Square_Pulse_Staggered"){
-			cufields::square_pulse_staggered<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			cufields::square_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag, params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 		else if (type == "Gaussian_Pulse"){
-			cufields::gaussian_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			cufields::gaussian_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag, params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 		else if (type == "Multi_Cycle_Pulse"){
-			cufields::multi_cycle_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
-		}
-		else if (type == "Square_Pulse_Staggered"){
-			cufields::square_pulse_staggered<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
-		}
-		else if (type == "Gaussian_Pulse_Staggered"){
-			cufields::gaussian_pulse_staggered<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, params::Nspins, time, fields::height, fields::std_dev, fields::centre_pos, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
-		}
-		else if (type == "Multi_Cycle_Pulse_Staggered"){
-			cufields::multi_cycle_pulse_staggered<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, params::Nspins, time, height, fields::std_dev, fields::centre_pos, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			cufields::multi_cycle_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag, params::Nspins, time, height, fields::std_dev, fields::centre_pos, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 		else if (type == "Sine_Pulse"){
-			cufields::sine_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
-		}
-		else if (type == "Sine_Pulse_Staggered"){
-			cufields::sine_pulse_staggered<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, params::Nspins, time, fields::height, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			cufields::sine_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag, params::Nspins, time, fields::height, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 		else if (type == "Sine_Pulse_Circular"){
 			cufields::sine_pulse_circular<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);

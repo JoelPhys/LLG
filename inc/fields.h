@@ -23,6 +23,9 @@ namespace fields {
 	extern std::string type;
 	extern double cuniform[3];
 	extern int npump;
+	extern double direc_mag;
+   	extern double direc[3];	
+	extern std::vector<int> sublat_stag;
 
 	void readfields();
 	void square_pulse(double time);

@@ -340,30 +340,30 @@ namespace params {
             std::cout << std::setw(8) << "my";
             std::cout << std::setw(8) << "mz";
             std::cout << std::setw(8) << "sublat";
-            std::cout << std::setw(8) << "dx";
-            std::cout << std::setw(8) << "dy";
-            std::cout << std::setw(8) << "dy";
+            std::cout << std::setw(12) << "dx";
+            std::cout << std::setw(12) << "dy";
+            std::cout << std::setw(12) << "dy";
             std::cout << std::endl;
 
 			while (matfile >> f1 >> f2 >> f3 >> f4 >> f5 >> f6 >> f7 >> f8 >> f9 >> f10 >> f11 >> f12 >> f13 >> f14 >> f15)
             {
 
 				// Print values to log file		
-                std::cout << std::setprecision(4) << std::setw(8) << f1;
-                std::cout << std::setprecision(4) << std::setw(8) << f2;
-                std::cout << std::setprecision(4) << std::setw(8) << f3;
-                std::cout << std::setprecision(4) << std::setw(8) << f4;
-                std::cout << std::setprecision(4) << std::setw(8) << f5;
-                std::cout << std::setprecision(4) << std::setw(8) << f6;
-                std::cout << std::setprecision(4) << std::setw(8) << f7;
-                std::cout << std::setprecision(4) << std::setw(8) << f8;
-                std::cout << std::setprecision(4) << std::setw(8) << f9;
-                std::cout << std::setprecision(4) << std::setw(8) << f10;
-                std::cout << std::setprecision(4) << std::setw(8) << f11;
-                std::cout << std::setprecision(4) << std::setw(8) << f12;
-                std::cout << std::setprecision(4) << std::setw(8) << f13;
-                std::cout << std::setprecision(4) << std::setw(8) << f14;
-                std::cout << std::setprecision(4) << std::setw(8) << f15;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8)  << f1;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8) << f2;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8) << f3;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8) << f4;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8) << f5;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8)  << f6;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8)  << f7;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8)  << f8;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8) << f9;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8) << f10;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8) << f11;
+                std::cout << std::fixed << std::setprecision(4) << std::setw(8)  << f12;
+                std::cout << std::scientific << std::setprecision(4) << std::setw(12) << f13;
+                std::cout << std::scientific << std::setprecision(4) << std::setw(12) << f14;
+                std::cout << std::scientific << std::setprecision(4) << std::setw(12) << f15;
                 std::cout << std::endl;
 	
 				//resize 2D std::vectors

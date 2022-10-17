@@ -11,17 +11,14 @@ namespace cufields {
     extern double start_time;
     extern double end_time;
     extern double height;
+	extern int *d_sublat_stag;
 
-    extern __global__ void uniform(int, double, double, double, double *, double *, double *);
-    extern __global__ void uniform_staggered(int, int *, int, double, double, double, double *, double *, double *);
-    extern __global__ void square_pulse(int, double, double, double, double, double *, double *, double *);
-    extern __global__ void square_pulse_staggered(int, int *, int, double, double, double, double, double *, double *, double *);
-	extern __global__ void gaussian_pulse(int, double, double, double, double,  double *, double *, double *);
-    extern __global__ void gaussian_pulse_staggered(int, int *, int, double, double, double, double,  double *, double *, double *);
-    extern __global__ void multi_cycle_pulse(int, double, double, double, double,  double, double *, double *, double *);
-    extern __global__ void multi_cycle_pulse_staggered(int, int *, int, double, double, double, double,  double, double *, double *, double *);
-    extern __global__ void sine_pulse(int , double , double , double , double *, double *, double *);
-    extern __global__ void sine_pulse_staggered(int, int *, int , double , double , double , double *, double *, double *);
+	void allocate_field_variables();
+    extern __global__ void uniform(int, int *, int *, int, double, double, double, double *, double *, double *);
+    extern __global__ void square_pulse(int, int*, int*, int, double, double, double, double, double *, double *, double *);
+	extern __global__ void gaussian_pulse(int, int *, int *, int, double, double, double, double,  double *, double *, double *);
+    extern __global__ void multi_cycle_pulse(int, int*, int*, int , double, double, double, double,  double, double *, double *, double *);
+    extern __global__ void sine_pulse(int , int *, int *, int, double , double , double , double *, double *, double *);
 	extern __global__ void sine_pulse_circular(int , double , double , double , double , double *, double *, double *);
 	extern __global__ void sine_pulse_linear(int , double , double , double , double , double *, double *, double *);
 

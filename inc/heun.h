@@ -1,15 +1,15 @@
 #ifndef _HEUN_H_
 #define _HEUN_H_
 
-#include "array2d.h"
-#include "array.h"
-
-
 namespace heun {
+
+	// External variables
+	extern double spin_temp;	
 
     // Functions
     void init();
-    void integration();
+ 	void rotation();
+ 	void integration();
 
 }
 

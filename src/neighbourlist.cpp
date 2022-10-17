@@ -279,7 +279,9 @@ namespace neigh {
 
             if ((close_to_int[0] > 0.001) || (close_to_int[1] > 0.001) || (close_to_int[2] > 0.001)){
                 std::cout << "ERROR:  Unable to map Jij vector to unit cell." << std::endl;
-                std::cout << "Jij unit cell position: " << NxP[i] << " " << NyP[i] << " " << NzP[i] << std::endl;
+				std::cout << "Line in Jij file: " << i+1 << std::endl;
+				std::cout << "Vectors: " << vecX << " " << vecY << " " << vecZ << std::endl;
+				std::cout << "Jij unit cell position: " << NxP[i] << " " << NyP[i] << " " << NzP[i] << std::endl;
                 std::cout << "Jij values: " << Jijx[i] << " " << Jijy[i] << " " << Jijz[i] << std::endl;
                 std::cout << "Exiting. ";
                 std::cout << std::endl;

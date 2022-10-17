@@ -38,6 +38,9 @@
         extern std::vector<int> sublat_sites;
         extern std::vector<int> NmomentsSubLat;
 
+		// Array for finding first instance of sublat within unit clel
+		extern std::vector<int> uniquesublat;
+
         //Rotation angle
         extern double angle;	
         
