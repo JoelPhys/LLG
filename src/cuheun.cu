@@ -120,7 +120,7 @@ namespace cuheun {
 		}
 	}
 
-			__global__ void cuHeun1(int *djind, int N, double time, int *dsimspin, double *danix, double *daniy, double *daniz, double *lambda, double *lambdap, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz, double *dEx, double *dEy, double *dEz){
+			__global__ void cuHeun1(int *djind, int N, double time, int *dsimspin, int *dsublat_sites, double *danix, double *daniy, double *daniz, double *lambda, double *lambdap, double *Thermal_Fluct, float *gvalsx1, float *gvalsy1, float *gvalsz1, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz, double *dEx, double *dEy, double *dEz){
 
 				const int c = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -129,6 +129,7 @@ namespace cuheun {
 					int a = dsimspin[c];
 
 					int siteincell = a % c_Nq; 
+					int sitesublat = dsublat_sites[siteincell];
 
 					Htx[a] = static_cast<double>(gvalsx1[a]) * Thermal_Fluct[a];
 					Hty[a] = static_cast<double>(gvalsy1[a]) * Thermal_Fluct[a];
@@ -140,17 +141,18 @@ namespace cuheun {
 					Huni[2] = daniz[siteincell] * dSz1d[a]; 
 
 					double Hcub[3];
-					//Hcub[0] =     0.01034580865 * dSx1d[a] * dSx1d[a] * dSx1d[a]; 
-					//Hcub[1] =     0.01034580865 * dSy1d[a] * dSy1d[a] * dSy1d[a]; 
-					//Hcub[2] = 2 * 0.01034580865 * dSz1d[a] * dSz1d[a] * dSz1d[a];
-					//Hcub[0] = 2.0 *  0.1787343119 * dSx1d[a] * dSy1d[a] * dSy1d[a]; // 2 * 0.04  meV / mu_s 
-					//Hcub[1] = 2.0 *  0.1787343119 * dSy1d[a] * dSx1d[a] * dSx1d[a]; // 2 * 0.04  meV / mu_s 
-					//Hcub[2] = 4.0 * -0.0670253669 * dSz1d[a] * dSz1d[a] * dSz1d[a]; // 4 * 0.015 meV / mu_s
-					Hcub[0] = 0.0;
-					Hcub[1] = 0.0;
-					Hcub[2] = 0.0;
+					if (sitesublat == 1 || sitesublat == 2){
+						Hcub[0] = 2.0 *  0.1787343119 * dSx1d[a] * dSy1d[a] * dSy1d[a]; // 2 * 0.04  meV / mu_s 
+						Hcub[1] = 2.0 *  0.1787343119 * dSy1d[a] * dSx1d[a] * dSx1d[a]; // 2 * 0.04  meV / mu_s 
+						Hcub[2] = 4.0 * -0.0670253669 * dSz1d[a] * dSz1d[a] * dSz1d[a]; // 4 * 0.015 meV / mu_s
+					}
+					else {
+						Hcub[0] = 0.0;
+						Hcub[1] = 0.0;
+						Hcub[2] = 0.0;
+					}
 
-					
+						
 					double Hex[3] = {0.0, 0.0, 0.0};
 					for (int b = dx_adj1[c]; b < dx_adj1[c+1]; b++){
 						Hex[0] += dJx_new[djind[b]] * (dSx1d[dadjncy1[b]]);
@@ -194,7 +196,7 @@ namespace cuheun {
 				} 
 			}
 
-			__global__ void cuHeun2(int *djind, int N, double time, int *dsimspin, double *danix, double *daniy, double *daniz, double *lambda, double *lambdap, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
+			__global__ void cuHeun2(int *djind, int N, double time, int *dsimspin, int *dsublat_sites, double *danix, double *daniy, double *daniz, double *lambda, double *lambdap, int *dx_adj1, int *dadjncy1, double *Htx, double *Hty, double *Htz, double *dSx1d, double *dSy1d, double *dSz1d, double *dJx_new, double *dJy_new, double *dJz_new, double *Hapx, double *Hapy, double *Hapz, double *DelSx,  double *DelSy, double *DelSz, double *Sdashnx, double *Sdashny, double *Sdashnz){
 
 				const int c = blockDim.x*blockIdx.x + threadIdx.x;
 
@@ -202,6 +204,7 @@ namespace cuheun {
 
 					int a = dsimspin[c];
 					int siteincell = a % c_Nq;
+					int sitesublat = dsublat_sites[siteincell];
 
 					double Huni_dash[3];
 					Huni_dash[0] = danix[siteincell] * Sdashnx[a];
@@ -209,19 +212,18 @@ namespace cuheun {
 					Huni_dash[2]=  daniz[siteincell] * Sdashnz[a];
 					
 					double Hcub_dash[3];
-					//Hcub_dash[0] = c_dzcp * Sdashnx[a] * Sdashnx[a] * Sdashnx[a];
-					//Hcub_dash[1] = c_dzcp * Sdashny[a] * Sdashny[a] * Sdashny[a];
-					//Hcub_dash[2]=  c_dzcp * Sdashnz[a] * Sdashnz[a] * Sdashnz[a];
-					//Hcub_dash[0] =     0.01034580865 * Sdashnx[a] * Sdashnx[a] * Sdashnx[a]; 
-					//Hcub_dash[1] =     0.01034580865 * Sdashny[a] * Sdashny[a] * Sdashny[a]; 
-					//Hcub_dash[2] = 2 * 0.01034580865 * Sdashnz[a] * Sdashnz[a] * Sdashnz[a];
-					//Hcub_dash[0] = 2.0 *  0.1787343119 * Sdashnx[a] * Sdashny[a] * Sdashny[a]; // 2 * 0.04  meV / mu_s 
-					//Hcub_dash[1] = 2.0 *  0.1787343119 * Sdashny[a] * Sdashnx[a] * Sdashnx[a]; // 2 * 0.04  meV / mu_s 
-					//Hcub_dash[2] = 4.0 * -0.0670253669 * Sdashnz[a] * Sdashnz[a] * Sdashnz[a]; // 4 * 0.015 meV / mu_s
-					Hcub_dash[0] = 0.0;
-					Hcub_dash[1] = 0.0;
-					Hcub_dash[2] = 0.0;
-						
+					if (sitesublat == 1 || sitesublat == 2){
+						Hcub_dash[0] = 2.0 *  0.1787343119 * Sdashnx[a] * Sdashny[a] * Sdashny[a]; // 2 * 0.04  meV / mu_s 
+						Hcub_dash[1] = 2.0 *  0.1787343119 * Sdashny[a] * Sdashnx[a] * Sdashnx[a]; // 2 * 0.04  meV / mu_s 
+						Hcub_dash[2] = 4.0 * -0.0670253669 * Sdashnz[a] * Sdashnz[a] * Sdashnz[a]; // 4 * 0.015 meV / mu_s
+					}
+					else {
+						Hcub_dash[0] = 0.0;
+						Hcub_dash[1] = 0.0;
+						Hcub_dash[2] = 0.0;
+					}
+
+				
 					// Exchange interaction prime	
 					double Hex_dash[3] = {0.0, 0.0, 0.0};
 					for (int b = dx_adj1[c]; b < dx_adj1[c+1]; b++){
