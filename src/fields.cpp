@@ -64,7 +64,7 @@ namespace fields {
 
 		TITLE("EXTERNAL FIELD");
 
-		if (type == "Uniform_Staggered") {
+		if (type == "Uniform") {
 			INFO_OUT("Field type:", type);
 			for (int a = 0; a < params::Nmoments; a++){
 				
