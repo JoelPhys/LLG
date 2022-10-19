@@ -64,24 +64,58 @@ namespace fields {
 
 		TITLE("EXTERNAL FIELD");
 
+		// Calculate direction of field	
+		direc[0] = static_cast<double>(setting1["direction"][0]);
+		direc[1] = static_cast<double>(setting1["direction"][1]);
+		direc[2] = static_cast<double>(setting1["direction"][2]);
+		INFO_OUT("Field direction:", "[" << direc[0]<< " , " << direc[1]<< " , " << direc[2]<< "] [arb.]");              
+		
+		// Calculate magnitude of field along each direction	
+		direc_mag = 1.0 / sqrt((direc[0]*direc[0]) + (direc[1]*direc[1]) + (direc[2]*direc[2]));
+		INFO_OUT("Normalisation value of field along x,y,z:",direc_mag);	
+
+		// If the field is staggered, assign the field to the desired sublattice
+		int index_str, position;
+		std::string sublatstr;
+		sublat_stag.resize(params::Nsublat);
+
+		// Check setting exists in cfg file
+		params::cfgmissing("ExternalField.SublatStagger");
+		
+		// Check if sublattice staggering is the same length as the number of sublattices
+		if (setting1["SublatStagger"].getLength() != params::Nsublat){ 
+			std::cout << "ERROR: Sublattice Staggering is not the same length as number of sublattices. \n Exiting." << std::endl; 
+			exit(0);
+		}	
+
+		for (int sublat = 0; sublat < params::Nsublat; sublat++){
+			
+			// read sublat staggering from config file
+			sublat_stag[sublat] = static_cast<int>(setting1["SublatStagger"][sublat]);
+			
+			// print the field staggering to stdout
+			sublatstr = "Sublattice " + std::to_string(sublat) + " being multiplied by:";
+			INFO_OUT(sublatstr, sublat_stag[sublat]);
+					
+			// check if the staggering is 0,1,-1. If is isn't, exit the program.	
+			if ((sublat_stag[sublat] != 0) && (sublat_stag[sublat] != 1) && (sublat_stag[sublat] != -1)){
+				std::cout << "ERROR: Unexpected value for staggered field. \n";
+				std::cout << "sublat_stag[" << sublat << "] = "  << sublat_stag[sublat] << "\n";
+				std::cout << "Exiting. \n";
+				exit(0);
+			}
+		}	
+
+		// Loop over the possible types of field
 		if (type == "Uniform") {
 			INFO_OUT("Field type:", type);
 			for (int a = 0; a < params::Nmoments; a++){
-				
 				sublatsites = params::sublat_sites[a % params::Nq];
-
-				if (sublatsites == 0){
-					H_appx(a) = setting1["Field"][0];
-					H_appy(a) = setting1["Field"][1];
-					H_appz(a) = setting1["Field"][2];
-				}
-				else if (sublatsites == 1){
-					H_appx(a) = -1.0 * static_cast<double>(setting1["Field"][0]);
-					H_appy(a) = -1.0 * static_cast<double>(setting1["Field"][1]);
-					H_appz(a) = -1.0 * static_cast<double>(setting1["Field"][2]);
-				}
-				else std::cout << "WARNING: unasigned modulo value  = " << modfunc(params::Nq,a) << std::endl;
+				H_appx(a) =sublat_stag[sublatsites]*setting1["Field"][0];
+				H_appy(a) =sublat_stag[sublatsites]*setting1["Field"][1];
+				H_appz(a) =sublat_stag[sublatsites]*setting1["Field"][2];
 			}
+			
 			cuniform[0] = static_cast<double>(setting1["Field"][0]);
 			cuniform[1] = static_cast<double>(setting1["Field"][1]);
 			cuniform[2] = static_cast<double>(setting1["Field"][2]);
@@ -152,47 +186,7 @@ namespace fields {
 			exit(0);
 		}
 
-		// Calculate direction of field	
-		direc[0] = static_cast<double>(setting1["direction"][0]);
-		direc[1] = static_cast<double>(setting1["direction"][1]);
-		direc[2] = static_cast<double>(setting1["direction"][2]);
-		INFO_OUT("Field direction:", "[" << direc[0]<< " , " << direc[1]<< " , " << direc[2]<< "] [arb.]");              
 		
-		// Calculate magnitude of field along each direction	
-		direc_mag = 1.0 / sqrt((direc[0]*direc[0]) + (direc[1]*direc[1]) + (direc[2]*direc[2]));
-		INFO_OUT("Normalisation value of field along x,y,z:",direc_mag);	
-
-		// If the field is staggered, assign the field to the desired sublattice
-		int index_str, position;
-		std::string sublatstr;
-		sublat_stag.resize(params::Nsublat);
-
-		// Check setting exists in cfg file
-		params::cfgmissing("ExternalField.SublatStagger");
-		
-		// Check if sublattice staggering is the same length as the number of sublattices
-		if (setting1["SublatStagger"].getLength() != params::Nsublat){ 
-			std::cout << "ERROR: Sublattice Staggering is not the same length as number of sublattices. \n Exiting." << std::endl; 
-			exit(0);
-		}	
-
-		for (int sublat = 0; sublat < params::Nsublat; sublat++){
-			
-			// read sublat staggering from config file
-			sublat_stag[sublat] = static_cast<int>(setting1["SublatStagger"][sublat]);
-			
-			// print the field staggering to stdout
-			sublatstr = "Sublattice " + std::to_string(sublat) + " being multiplied by:";
-			INFO_OUT(sublatstr, sublat_stag[sublat]);
-					
-			// check if the staggering is 0,1,-1. If is isn't, exit the program.	
-			if ((sublat_stag[sublat] != 0) && (sublat_stag[sublat] != 1) && (sublat_stag[sublat] != -1)){
-				std::cout << "ERROR: Unexpected value for staggered field. \n";
-				std::cout << "sublat_stag[" << sublat << "] = "  << sublat_stag[sublat] << "\n";
-				std::cout << "Exiting. \n";
-				exit(0);
-			}
-		}
 
 	}
 
@@ -274,10 +268,7 @@ namespace fields {
 
 
 	void calculate(double time){
-		if (type == "Uniform"){
-			(time);
-		}
-		else if (type == "Square_Pulse"){
+		if (type == "Square_Pulse"){
 			square_pulse(time);
 		}
 		else if (type == "Gaussian_Pulse"){
