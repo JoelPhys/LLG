@@ -283,6 +283,8 @@ namespace fields {
 		else if (type == "Sine_Pulse_Circular"){
 			sine_pulse_circular(time);	
 		}
+		else if (type == "Uniform"){
+		}
 		else {
 			std::cout << "ERROR. Field type not programmed in src/fields.cpp. Exiting." << std::endl;
 			exit(0);
