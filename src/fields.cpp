@@ -109,17 +109,17 @@ namespace fields {
 		// Loop over the possible types of field
 		if (type == "Uniform") {
 			INFO_OUT("Field type:", type);
-			for (int a = 0; a < params::Nmoments; a++){
-				sublatsites = params::sublat_sites[a % params::Nq];
-				H_appx(a) =sublat_stag[sublatsites]*setting1["Field"][0];
-				H_appy(a) =sublat_stag[sublatsites]*setting1["Field"][1];
-				H_appz(a) =sublat_stag[sublatsites]*setting1["Field"][2];
-			}
-			
 			cuniform[0] = static_cast<double>(setting1["Field"][0]);
 			cuniform[1] = static_cast<double>(setting1["Field"][1]);
 			cuniform[2] = static_cast<double>(setting1["Field"][2]);
-			INFO_OUT("Field values:", "[" << static_cast<double>(setting1["Field"][0]) << " , " << static_cast<double>(setting1["Field"][1]) << " , " << static_cast<double>(setting1["Field"][2]) << "] [T]");
+				for (int a = 0; a < params::Nmoments; a++){
+				sublatsites = params::sublat_sites[a % params::Nq];
+				H_appx(a) =sublat_stag[sublatsites]*cuniform[0];
+				H_appy(a) =sublat_stag[sublatsites]*cuniform[1];
+				H_appz(a) =sublat_stag[sublatsites]*cuniform[2];
+			}
+			
+			INFO_OUT("Field values:", "[" << cuniform[0] << " , " << cuniform[1] << " , " << cuniform[2] << "] [T]");
 		}
 		else if ((type == "Square_Pulse")){
 			INFO_OUT("Field type:", type);
