@@ -56,6 +56,10 @@ namespace cuglob {
 		INFO_OUT("Memory Clock Rate (KHz):", properties.memoryClockRate);
     	INFO_OUT("Memory Bus Width (bits):", properties.memoryBusWidth);
     	INFO_OUT("Peak Memory Bandwidth (GB/s):", 2.0*properties.memoryClockRate*(properties.memoryBusWidth/8)/1.0e6);
+		INFO_OUT("Total Device Global Memory (Mb):", properties.totalGlobalMem/1024/1024)
+		INFO_OUT("Total Device Constant Memory (Kb):", properties.totalConstMem/1024)
+		INFO_OUT("Device major.minor:", properties.major << "." << properties.minor)
+		INFO_OUT("Device registers per block:", properties.regsPerBlock);
 		INFO_OUT("multiprocessors:", properties.multiProcessorCount);
 		INFO_OUT("max threads per processor:", properties.maxThreadsPerMultiProcessor);
 		INFO_OUT("max threads per block:", properties.maxThreadsPerBlock);	
