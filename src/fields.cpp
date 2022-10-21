@@ -65,6 +65,7 @@ namespace fields {
 		TITLE("EXTERNAL FIELD");
 
 		// Calculate direction of field	
+		params::cfgmissing("ExternalField.direction");	
 		direc[0] = static_cast<double>(setting1["direction"][0]);
 		direc[1] = static_cast<double>(setting1["direction"][1]);
 		direc[2] = static_cast<double>(setting1["direction"][2]);
