@@ -44,13 +44,7 @@
 
 int main(int argc, char* argv[]){
 
-	// ======= Temperature ==================================================================================== //
-	const double Temp = (atof(argv[2]));
-	// const double thermal_fluct = params::thermal_const * sqrt(Temp);
-	INFO_OUT("Initial Temperature: ", Temp << "(K)");
-	// INFO_OUT("Thermal Fluct: ", thermal_fluct);
-	// ========================================================================================================= //
-
+	
 	// functions ============================================================================================== //
 	params::banner();
 	params::intitialiseConfig(argv[1]); 
@@ -90,8 +84,23 @@ int main(int argc, char* argv[]){
 		geom::initdw();
 	}
 
-	// Initialise Thermal stuff
+	// ======= Temperature ==================================================================================== //
+	TITLE("TEMPERATURE")
+	const double Temp = (atof(argv[2]));
+
+	// check if argument is a number
+	char *endptr;
+	int ok = endptr == argv[2] + strlen(argv[2]);
+	if (!ok) {
+		std::cout << "ERROR: Temperature is not a number. \nExiting." << std::endl;
+		exit(0);
+	}
+	
+	// Print temperature
+	INFO_OUT("Initial Temperature: ", Temp << " [K]");
 	thermal::initthermal(Temp);
+	// ========================================================================================================= //
+	
 
 	neigh::ReadFile();
 	neigh::InteractionMatrix();
