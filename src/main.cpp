@@ -90,6 +90,7 @@ int main(int argc, char* argv[]){
 
 	// check if argument is a number
 	char *endptr;
+	double d = strtod(argv[2], &endptr);
 	int ok = endptr == argv[2] + strlen(argv[2]);
 	if (!ok) {
 		std::cout << "ERROR: Temperature is not a number. \nExiting." << std::endl;
