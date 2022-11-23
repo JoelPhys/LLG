@@ -372,7 +372,7 @@ namespace util {
 	void OutputLatticetoFile(double temp){
 
 		std::stringstream sstr;
-		sstr << params::OutputLatticeFilepath << "temp_" << std::setw(4) << std::setfill('0') << temp << "_file_" << std::setw(2) << std::setfill('0') << lati << ".lat";
+		sstr << params::OutputLatticeFilepath << "temp_" << std::setw(4) << std::setfill('0') << temp << "_file_" << std::setw(4) << std::setfill('0') << lati << ".lat";
 		latfile.open(sstr.str());
 
 		for (int i = 0; i < params::Lx; i++){
