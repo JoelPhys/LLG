@@ -467,34 +467,71 @@ namespace util {
 		int posx, posy, posz, posq;
 		int count = 0;
 
+		// Check number of cols in file to see if input row is per atom OR per unit cell
+		std::string line;
+		getline(equilibrationfile,line);
+		std::stringstream s;
+		s << line;
+		int numcols = 0;
+		double value;
+		while(s >> value) numcols++;
+
+		// reset file to first line
+		equilibrationfile.clear();
+		equilibrationfile.seekg(0);
+
 		// Loop through file
-		//while (equilibrationfile >> posx >> posy >> posz >> sx >> sy >> sz){
-		//	
-		//	for (int q = 0; q < params::Nq; q++){
-		//		spins::sx1d(geom::LatCount(posx,posy,posz,q)) = sx;
-		//		spins::sy1d(geom::LatCount(posx,posy,posz,q)) = sy;
-		//		spins::sz1d(geom::LatCount(posx,posy,posz,q)) = sz;
-		//	}
-		//	count++;
-		//}
-		
-		while (equilibrationfile >> posx >> posy >> posz >> posq >> sx >> sy >> sz){
-		
-			for (int q = 0; q < params::Nq; q++){
+		if (numcols == 6){
+			
+			// output number of cols
+			std::cout << "Equilibration file is per UNIT CELL" << std::endl;
+			
+			// loop through file
+			while (equilibrationfile >> posx >> posy >> posz >> sx >> sy >> sz){
+				
+				for (int q = 0; q < params::Nq; q++){
+					spins::sx1d(geom::LatCount(posx,posy,posz,q)) = sx;
+					spins::sy1d(geom::LatCount(posx,posy,posz,q)) = sy;
+					spins::sz1d(geom::LatCount(posx,posy,posz,q)) = sz;
+				}
+				count++;
+			}
+			// check number of lines is equal to number of unit cells
+			if (count != params::Lx*params::Ly*params::Lz){
+				std::cout << "ERROR: Wrong number of spins in file. Exiting." << std::endl;
+				INFO_OUT("Number of lines in Equilibration File:", count);
+				INFO_OUT("Number of unit cells:", params::Lx*params::Ly*params::Lz);
+				exit(0);
+			}	
+		}
+		else if (numcols == 7){
+
+			// Output number of cols
+			std::cout << "Equilibration file is per ATOM" << std::endl;
+			
+			// loop through file
+			while (equilibrationfile >> posx >> posy >> posz >> posq >> sx >> sy >> sz){
+				
 				spins::sx1d(geom::LatCount(posx,posy,posz,posq)) = sx;
 				spins::sy1d(geom::LatCount(posx,posy,posz,posq)) = sy;
 				spins::sz1d(geom::LatCount(posx,posy,posz,posq)) = sz;
+				count++;
 			}
-			count++;
+			
+			// Check number of lines is equal to number of atoms
+			if (count != params::Lx*params::Ly*params::Lz*params::Nq){
+				std::cout << "ERROR: Wrong number of spins in file. Exiting." << std::endl;
+				exit(0);
+			}	
+		}
+		else {
+			std::cout << "Unknown Number of cols in equilibration file." << std::endl;
+			INFO_OUT("Number of cols:",numcols);
+			exit(0);
 		}
 
 		
 		
-		std::cout << count << std::endl;
-		if (count != params::Lx*params::Ly*params::Lz*params::Nq){
-			std::cout << "ERROR: Wrong number of spins in file. Exiting." << std::endl;
-			exit(0);
-		}
 
 		// close file
 		equilibrationfile.close();
