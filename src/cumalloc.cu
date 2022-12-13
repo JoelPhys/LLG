@@ -45,13 +45,41 @@ namespace cuglob {
 	//gpu variables
 	int tpb;
 	int bpg;
-	int device = 0;
 
 	void device_info(){
-		cudaGetDevice(&device);
-		struct cudaDeviceProp properties;
-		cudaGetDeviceProperties(&properties, device);
+		
 		TITLE("CUDA DEVICE PROPERTIES");
+		
+		
+		// Get number of available GPU devices
+		int devicesCount;
+		cudaGetDeviceCount(&devicesCount);
+		INFO_OUT("Number of available GPU devices:", devicesCount);	
+	
+		std::string devicename_str;
+		struct cudaDeviceProp properties;
+		
+		for (int i = 0; i < devicesCount; i++){
+			cudaGetDeviceProperties(&properties, i);
+			devicename_str = "Name of device " + std::to_string(i) + ":";	
+			INFO_OUT(devicename_str, properties.name);
+		}
+		
+		// check if device has been selected in config file	
+		int device = 0;	
+		if ((devicesCount != 1) && (params::cfg.exists("Util.gpu"))) {
+			device = params::cfg.lookup("Util.gpu");
+			INFO_OUT("GPU Device number as selected in config file (Index starts at 0):", device);
+		}
+		if ((devicesCount != 1) && (!params::cfg.exists("Util.gpu"))) {
+			std::cout << "More than one GPU has been found. No Specific GPU has been selected. \n";
+			std::cout << "GPU has been automatically assigned. \n";
+		}
+
+		cudaSetDevice(device);
+		cudaGetDeviceProperties(&properties, device);
+		
+		// print GPU information to stdout
 		INFO_OUT("Device name:", properties.name);
 		INFO_OUT("Memory Clock Rate (KHz):", properties.memoryClockRate);
     	INFO_OUT("Memory Bus Width (bits):", properties.memoryBusWidth);

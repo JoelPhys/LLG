@@ -612,6 +612,13 @@ namespace params {
 			OutputLatticeStep = cfg.lookup("Util.OutputLatticeStep");  
 			OutputLatticeStart = cfg.lookup("Util.OutputLatticeStart");  
 			OutputLatticeFilepath = cfg.lookup("Util.OutputLatticeFilepath").c_str();  
+
+	
+			struct stat buffer;
+			if (stat(OutputLatticeFilepath.c_str(), &buffer) != 0) {
+					std::cout << "ERROR: Lattice output \"" <<  OutputLatticeFilepath << "\" directory does not exist!" << std::endl;
+				exit(0);
+			}
 		}
 
 		//=======================================================================================================
