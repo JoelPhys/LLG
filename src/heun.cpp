@@ -58,8 +58,7 @@ namespace heun {
 
     // Random number generation for stochastic noise
     std::normal_distribution<double> distribution(0.0,1.0);
-    std::random_device device;
-    std::mt19937 generator(device());
+    std::mt19937 generator(params::seed);
 
     // ============================================================================= //
 
