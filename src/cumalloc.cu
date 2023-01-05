@@ -67,11 +67,11 @@ namespace cuglob {
 		
 		// check if device has been selected in config file	
 		int device = 0;	
-		if ((devicesCount != 1) && (params::cfg.exists("Util.gpu"))) {
-			device = params::cfg.lookup("Util.gpu");
+		if ((devicesCount != 1) && (params::cfg.exists("Cuda.gpu"))) {
+			device = params::cfg.lookup("Cuda.gpu");
 			INFO_OUT("GPU Device number as selected in config file (Index starts at 0):", device);
 		}
-		if ((devicesCount != 1) && (!params::cfg.exists("Util.gpu"))) {
+		if ((devicesCount != 1) && (!params::cfg.exists("Cuda.gpu"))) {
 			std::cout << "More than one GPU has been found. No Specific GPU has been selected. \n";
 			std::cout << "GPU has been automatically assigned. \n";
 		}
@@ -91,7 +91,23 @@ namespace cuglob {
 		INFO_OUT("multiprocessors:", properties.multiProcessorCount);
 		INFO_OUT("max threads per processor:", properties.maxThreadsPerMultiProcessor);
 		INFO_OUT("max threads per block:", properties.maxThreadsPerBlock);	
-		tpb = properties.maxThreadsPerBlock;
+		
+		
+		// check if threads per block has been specified in cfg file and is a multiple of 256
+		if (params::cfg.exists("Util.ThreadsPerBlock")){
+			tpb = params::cfg.lookup("Util.ThreadsPerBlock");
+			if (tpb % 256 != 0) { 
+				std::cout << "ERROR: ThreadsPerBlock is not a multiple of 256. \n";
+				std::cout << "Cuda.ThreadsPerBlock = " << tpb << std::endl;		
+				std::cout << "Exiting." << std::endl;
+				exit(0);	
+			}
+		}
+		else {
+			tpb = properties.maxThreadsPerBlock;
+			std::cout << "WARNING: Cuda.ThreadsPerBlock has not been specified in config file." << std::endl;
+			std::cout << "Setting to max ThreadsPerBlock on GPU." << std::endl;
+		}
 		bpg = (params::Nspins + tpb - 1) / tpb;
 
 		INFO_OUT("Simulation Threads Per Block:", tpb);

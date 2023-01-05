@@ -61,7 +61,10 @@
         extern double Jij_min;
         extern int ibtoq;
 
-        //atom sites
+		// Random Number Seed
+		extern int seed;
+
+		//atom sites
         extern double Plat[3][3];
 
         //Boundary Conditions

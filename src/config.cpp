@@ -1,21 +1,25 @@
-#include <iostream>
-#include <cstdlib>
-#include <fstream>
-#include <libconfig.h++>
-#include <sys/stat.h>
+// cpp header files
 #include <ctime>
 #include <cmath>
 #include <vector>
 #include <cstdio>
+#include <random>
+#include <cstdlib>
+#include <fstream>
 #include <iomanip>
 #include <cstring>
 #include <sstream>
-#include "../inc/mathfuncs.h"
-#include "../inc/array2d.h"
+#include <iostream>
+#include <sys/stat.h>
+#include <libconfig.h++>
+
+// my header files
 #include "../inc/array.h"
-#include "../inc/config.h"
 #include "../inc/error.h"
+#include "../inc/config.h"
+#include "../inc/array2d.h"
 #include "../inc/defines.h"
+#include "../inc/mathfuncs.h"
 
 namespace params {
 
@@ -62,6 +66,9 @@ namespace params {
 	std::string filepath;
 	std::string filepath_sw;
 	bool OutputToTerminal;
+
+	// Random Number Seed
+	int seed;
 
 	// Jij SETTINGS
 	std::string Jij_filename;
@@ -620,6 +627,21 @@ namespace params {
 				exit(0);
 			}
 		}
+	
+		//=======================================================================================================
+		// Random Number Seed ===================================================================================
+		//=======================================================================================================
+		if (cfg.exists("Util.Seed")){		
+				seed = cfg.lookup("Util.Seed");		
+		}	
+		else {
+			std::cout << "WARNING: Random Number Seed not specified in config file." << std::endl;
+			std::cout << "Using std::random_device to generate seed." << std::endl;
+			std::random_device device;
+			seed = device();
+		}	
+		
+		INFO_OUT("Random Number Seed:", seed);
 
 		//=======================================================================================================
 		// Rest of parameters ===================================================================================
