@@ -1,0 +1,9 @@
+GCC = g++
+NVCC = nvcc
+OPT = -O3
+CULIBS = -lcurand
+
+CONFIGLIB = /bask/projects/v/vocv5480-thz-magnets/joel/libs/libconfig-1.7.3/lib/.libs/libconfig++.a
+FFTW3LIB = -lfftw3
+
+CONFIGINC = -I/bask/projects/v/vocv5480-thz-magnets/joel/libs/libconfig-1.7.3/lib/
