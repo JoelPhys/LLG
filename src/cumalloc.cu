@@ -67,11 +67,11 @@ namespace cuglob {
 		
 		// check if device has been selected in config file	
 		int device = 0;	
-		if ((devicesCount != 1) && (params::cfg.exists("Cuda.gpu"))) {
-			device = params::cfg.lookup("Cuda.gpu");
+		if ((devicesCount != 1) && (params::cfg.exists("Util.gpu"))) {
+			device = params::cfg.lookup("Util.gpu");
 			INFO_OUT("GPU Device number as selected in config file (Index starts at 0):", device);
 		}
-		if ((devicesCount != 1) && (!params::cfg.exists("Cuda.gpu"))) {
+		if ((devicesCount != 1) && (!params::cfg.exists("Util.gpu"))) {
 			std::cout << "More than one GPU has been found. No Specific GPU has been selected. \n";
 			std::cout << "GPU has been automatically assigned. \n";
 		}
