@@ -81,7 +81,7 @@
         extern int OutputLatticeStep;
         extern int OutputLatticeStart;	
         extern std::string OutputLatticeFilepath;		
-
+		extern std::string OutputLatticeAverageOver;
         extern bool OutputToTerminal;
 
         extern double PlatINV[3][3];

@@ -10,6 +10,7 @@
 #include <cstring>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 #include <sys/stat.h>
 #include <libconfig.h++>
 
@@ -92,6 +93,7 @@ namespace params {
 	int OutputLatticeStep = 10000000;
 	int OutputLatticeStart = 10000000;	
 	std::string OutputLatticeFilepath;		
+	std::string OutputLatticeAverageOver = "false";
 
 	void banner(){
 		std::cout << std::endl;
@@ -619,6 +621,20 @@ namespace params {
 			OutputLatticeStep = cfg.lookup("Util.OutputLatticeStep");  
 			OutputLatticeStart = cfg.lookup("Util.OutputLatticeStart");  
 			OutputLatticeFilepath = cfg.lookup("Util.OutputLatticeFilepath").c_str();  
+
+			if (cfg.exists("Util.OutputLatticeAverageOver")){
+				std::vector<std::string> averagelist{"false","x","y","z","q"};
+				OutputLatticeAverageOver = cfg.lookup("Util.OutputLatticeAverageOver").c_str();
+				if (std::find(std::begin(averagelist), std::end(averagelist), OutputLatticeAverageOver) != std::end(averagelist)){
+					INFO_OUT("Averaging Lattice output over spin lattice component:",OutputLatticeAverageOver);
+				}	
+				else {
+					std::cout << "ERROR: Unknown Util.OutputLatticeAverageOver specified in config file. \n";
+					std::cout << "Util.OutputLatticeAverageOver = " << OutputLatticeAverageOver << std::endl;
+					std::cout << "Exiting." << std::endl;
+					exit(0);
+				}
+			}
 
 	
 			struct stat buffer;

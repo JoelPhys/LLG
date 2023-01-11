@@ -46,6 +46,9 @@ namespace util {
 	std::ofstream latfile;
 	int lati;
 
+	// for averaging over lattice
+	double avgx,avgy,avgz;
+
 	void init(){
 		Mt.resize(3);
 		M.resize(params::Nsublat,3);
@@ -374,25 +377,51 @@ namespace util {
 		std::stringstream sstr;
 		sstr << params::OutputLatticeFilepath << "temp_" << std::setw(4) << std::setfill('0') << temp << "_file_" << std::setw(4) << std::setfill('0') << lati << ".lat";
 		latfile.open(sstr.str());
+		
+		if (params::OutputLatticeAverageOver == "false"){
+			for (int i = 0; i < params::Lx; i++){
+				for (int j = 0; j < params::Ly; j++){
+					for (int k = 0; k < params::Lz; k++){
+						for (int q = 0; q < params::Nq; q++){
 
-		for (int i = 0; i < params::Lx; i++){
-			for (int j = 0; j < params::Ly; j++){
-				for (int k = 0; k < params::Lz; k++){
-					for (int q = 0; q < params::Nq; q++){
+						
+							
 
-						latfile << i << " " << j << " " << k << " " << q << " ";
-						//latfile << geom::latticeX(i,j,k,q) << " ";
-						//latfile << geom::latticeY(i,j,k,q) << " ";
-						//latfile << geom::latticeZ(i,j,k,q) << " ";
-						latfile << spins::sx1d(geom::LatCount(i,j,k,q)) << " ";
-						latfile << spins::sy1d(geom::LatCount(i,j,k,q)) << " ";
-						latfile << spins::sz1d(geom::LatCount(i,j,k,q)) << "\n";
-					
-					
+							latfile << i << " " << j << " " << k << " " << q << " ";
+							//latfile << geom::latticeX(i,j,k,q) << " ";
+							//latfile << geom::latticeY(i,j,k,q) << " ";
+							//latfile << geom::latticeZ(i,j,k,q) << " ";
+							latfile << spins::sx1d(geom::LatCount(i,j,k,q)) << " ";
+							latfile << spins::sy1d(geom::LatCount(i,j,k,q)) << " ";
+							latfile << spins::sz1d(geom::LatCount(i,j,k,q)) << "\n";
+						
+						
+						}
 					}
 				}
 			}
 		}
+		else if (params::OutputLatticeAverageOver == "x"){
+			OutputLatticeAverageOverX();
+		}	
+		else if (params::OutputLatticeAverageOver == "y"){
+			OutputLatticeAverageOverY();
+		}	
+		else if (params::OutputLatticeAverageOver == "z"){
+			OutputLatticeAverageOverZ();
+		}
+		else if (params::OutputLatticeAverageOver == "q"){
+			OutputLatticeAverageOverQ();
+		}
+        else {
+            std::cout << "ERROR: Unknown Util.OutputLatticeAverageOver specified in config file. \n";
+            std::cout << "Util.OutputLatticeAverageOver = " << params::OutputLatticeAverageOver << std::endl;
+            std::cout << "Exiting." << std::endl;
+            exit(0);
+        }
+	
+		// Reset averaging over components
+		avgx = 0.0;	avgy = 0.0;	avgz = 0.0;
 
 		lati++;
 		latfile << std::flush;
@@ -536,5 +565,101 @@ namespace util {
 		// close file
 		equilibrationfile.close();
 
+	}
+
+
+	void OutputLatticeAverageOverX(){
+
+		for (int j = 0; j < params::Ly; j++){
+			for (int k = 0; k < params::Lz; k++){
+				for (int q = 0; q < params::Nq; q++){				
+					for (int i = 0; i < params::Lx; i++){
+						avgx +=	spins::sx1d(geom::LatCount(i,j,k,q));
+						avgy +=	spins::sy1d(geom::LatCount(i,j,k,q));
+						avgz +=	spins::sz1d(geom::LatCount(i,j,k,q));
+					}
+					
+					// divive by number of layers along direction
+					latfile << j << " " << k << " " << q << " ";
+					latfile << avgx/params::Lx << " ";
+					latfile << avgy/params::Lx << " ";
+					latfile << avgz/params::Lx << "\n";
+					
+					// reset averages	
+					avgx = 0.0; avgy = 0; avgz = 0;
+				}
+			}
+		}
+	}
+
+	void OutputLatticeAverageOverY(){
+
+		for (int i = 0; i < params::Lx; i++){
+			for (int k = 0; k < params::Lz; k++){
+				for (int q = 0; q < params::Nq; q++){
+					for (int j = 0; j < params::Ly; j++){
+							avgx +=	spins::sx1d(geom::LatCount(i,j,k,q));
+							avgy +=	spins::sy1d(geom::LatCount(i,j,k,q));
+							avgz +=	spins::sz1d(geom::LatCount(i,j,k,q));
+					}
+
+					// divive by number of layers along direction
+					latfile << i << " " << k << " " << q << " ";
+					latfile << avgx/params::Ly << " ";
+					latfile << avgy/params::Ly << " ";
+					latfile << avgz/params::Ly << "\n";
+
+					// reset averages	
+					avgx = 0.0; avgy = 0; avgz = 0;
+				
+				}
+			}
+		}
+	}
+
+	void OutputLatticeAverageOverZ(){
+
+		for (int i = 0; i < params::Lx; i++){
+			for (int j = 0; j < params::Ly; j++){
+				for (int q = 0; q < params::Nq; q++){
+					for (int k = 0; k < params::Lz; k++){
+							avgx +=	spins::sx1d(geom::LatCount(i,j,k,q));
+							avgy +=	spins::sy1d(geom::LatCount(i,j,k,q));
+							avgz +=	spins::sz1d(geom::LatCount(i,j,k,q));
+					}
+					
+					// divive by number of layers along direction
+					latfile << i << " " << j << " " << q << " ";
+					latfile << avgx/params::Lz << " ";
+					latfile << avgy/params::Lz << " ";
+					latfile << avgz/params::Lz << "\n";
+
+					// reset averages	
+					avgx = 0.0; avgy = 0; avgz = 0;
+				}
+			}
+		}
+	}
+	
+	void OutputLatticeAverageOverQ(){
+
+		for (int i = 0; i < params::Lx; i++){
+			for (int j = 0; j < params::Ly; j++){
+				for (int k = 0; k < params::Lz; k++){
+					for (int q = 0; q < params::Nq; q++){
+							avgx +=	spins::sx1d(geom::LatCount(i,j,k,q));
+							avgy +=	spins::sy1d(geom::LatCount(i,j,k,q));
+							avgz +=	spins::sz1d(geom::LatCount(i,j,k,q));
+					}
+					latfile << i << " " << j << " " << k << " ";
+					latfile << avgx/params::Nq << " ";
+					latfile << avgy/params::Nq << " ";
+					latfile << avgz/params::Nq << "\n";
+
+					// reset averages	
+					avgx = 0.0; avgy = 0; avgz = 0;
+				}
+			}
+		}
 	}
 }

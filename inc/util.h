@@ -28,6 +28,10 @@ namespace util {
     void SumMag(int i);
     void OutputSumMag();
     void OutputLatticetoFile(double temp);
+    void OutputLatticeAverageOverX();
+    void OutputLatticeAverageOverY();
+    void OutputLatticeAverageOverZ();
+    void OutputLatticeAverageOverQ();
     void startclock();
     void endclock();
     void readexternalspins(std::string);
