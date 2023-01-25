@@ -202,7 +202,13 @@ namespace fields {
 				H_appz(i) = sublat_stag[sublatsites]*direc_mag*direc[2]*height;  
 			}
 		}
-
+		else {
+			for (int i = 0; i < params::Nspins; i++){
+				H_appx(i) = 0.0;
+				H_appy(i) = 0.0;
+				H_appz(i) = 0.0;  
+			}
+		}
 	}
 
 	void gaussian_pulse(double time){
