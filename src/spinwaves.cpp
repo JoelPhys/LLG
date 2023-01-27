@@ -338,8 +338,8 @@ namespace spinwaves {
 
 			// z component
 			if (kpathz[p+1] > kpathz[p]){
-				if (p == 0) {from[2] = static_cast<int>(kpathz[p] * params::Lz);}
-				if (p >= 1) {from[2] = static_cast<int>(kpathz[p] * params::Lz)+1;}
+				if (p == 0) {from[2] = static_cast<int>(kpathz[p] * params::Lz * params::Idz);}
+				if (p >= 1) {from[2] = static_cast<int>(kpathz[p] * params::Lz * params::Idz)+1;}
 				to[2] = static_cast<int>(kpathz[p+1] * params::Lz);
 				in[2] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
