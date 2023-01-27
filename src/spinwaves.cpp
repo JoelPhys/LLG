@@ -141,7 +141,8 @@ namespace spinwaves {
 		if ((setting["kpathx"].getLength() == setting["kpathy"].getLength()) && (setting["kpathy"].getLength() == setting["kpathz"].getLength())){
 
 			kpath_length = setting["kpathx"].getLength();
-
+			
+			INFO_OUT("kpath length: ", kpath_length);
 			// Add kpath from config file to cfg array
 			for (int v = 0; v < kpath_length; v++){
 				kpathx.push_back(setting["kpathx"][v]);
