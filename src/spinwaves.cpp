@@ -344,8 +344,8 @@ namespace spinwaves {
 				in[2] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
 			else if (kpathz[p+1] == kpathz[p]){
-				from[2] = static_cast<int>(kpathz[p] * params::Lz);
-				to[2] = static_cast<int>(kpathz[p] * params::Lz)+1;
+				from[2] = static_cast<int>(kpathz[p] * params::Lz * params::Idz);
+				to[2] = static_cast<int>(kpathz[p] * params::Lz * params::Idz)+1;
 				in[2] = 0;
 				if (from[2] != 0){
 					from[2] += -1;
