@@ -147,27 +147,27 @@ namespace heun {
             H_uni[2] = params::dzup[siteincell] * spins::sz1d(a);
 
             // Cubic Anisotropy
-            //H_cub[0] = params::dzcp * spins::sx1d(a) * spins::sx1d(a) * spins::sx1d(a);
-            //H_cub[1] = params::dzcp * spins::sy1d(a) * spins::sy1d(a) * spins::sy1d(a);
-            //H_cub[2] = params::dzcp * spins::sz1d(a) * spins::sz1d(a) * spins::sz1d(a);
+            H_cub[0] = params::dzcp * spins::sx1d(a) * spins::sx1d(a) * spins::sx1d(a);
+            H_cub[1] = params::dzcp * spins::sy1d(a) * spins::sy1d(a) * spins::sy1d(a);
+            H_cub[2] = params::dzcp * spins::sz1d(a) * spins::sz1d(a) * spins::sz1d(a);
 			//H_cub[0] = 2.0 *  0.1787343119 * spins::sx1d(a) * spins::sy1d(a) * spins::sy1d(a); // 2 * 0.04  meV / mu_s 
 			//H_cub[1] = 2.0 *  0.1787343119 * spins::sy1d(a) * spins::sx1d(a) * spins::sx1d(a); // 2 * 0.04  meV / mu_s 
 			//H_cub[2] = 4.0 * -0.0670253669 * spins::sz1d(a) * spins::sz1d(a) * spins::sz1d(a); // 4 * 0.015 meV / mu_s
-            if (sitesublat == 1 || sitesublat == 2){ 
-                    H_cub[0] = 2.0 *  0.1787343119 * spins::sx1d(a) * spins::sy1d(a) * spins::sy1d(a); // 2 * 0.04  meV / mu_s 
-                    H_cub[1] = 2.0 *  0.1787343119 * spins::sy1d(a) * spins::sx1d(a) * spins::sx1d(a); // 2 * 0.04  meV / mu_s 
-                    H_cub[2] = 4.0 * -0.0670253669 * spins::sz1d(a) * spins::sz1d(a) * spins::sz1d(a); // 4 * 0.015 meV / mu_s
-            }   
-            else {
-                    H_cub[0] = 0.0;
-                    H_cub[1] = 0.0;
-                    H_cub[2] = 0.0;
-            }
+            //if (sitesublat == 1 || sitesublat == 2){ 
+            //        H_cub[0] = 2.0 *  0.1787343119 * spins::sx1d(a) * spins::sy1d(a) * spins::sy1d(a); // 2 * 0.04  meV / mu_s 
+            //        H_cub[1] = 2.0 *  0.1787343119 * spins::sy1d(a) * spins::sx1d(a) * spins::sx1d(a); // 2 * 0.04  meV / mu_s 
+            //        H_cub[2] = 4.0 * -0.0670253669 * spins::sz1d(a) * spins::sz1d(a) * spins::sz1d(a); // 4 * 0.015 meV / mu_s
+            //}   
+            //else {
+            //        H_cub[0] = 0.0;
+            //        H_cub[1] = 0.0;
+            //        H_cub[2] = 0.0;
+            //}
          
-			// Exchange interaction
-            H_exch[0] = 0;
-            H_exch[1] = 0;
-            H_exch[2] = 0;
+			//// Exchange interaction
+            //H_exch[0] = 0;
+            //H_exch[1] = 0;
+            //H_exch[2] = 0;
 
             // counting = neigh::x_adj[a];
 
@@ -245,26 +245,26 @@ namespace heun {
             H_uni_dash[2]= params::dzup[siteincell] * S_dash_normedz1d(a);
 
             // Cubic Ansisotropy
-            //H_cub_dash[0]= params::dzcp * S_dash_normedx1d(a) * S_dash_normedx1d(a) * S_dash_normedx1d(a);
-            //H_cub_dash[1]= params::dzcp * S_dash_normedy1d(a) * S_dash_normedy1d(a) * S_dash_normedy1d(a);
-            //H_cub_dash[2]= params::dzcp * S_dash_normedz1d(a) * S_dash_normedz1d(a) * S_dash_normedz1d(a);
+            H_cub_dash[0]= params::dzcp * S_dash_normedx1d(a) * S_dash_normedx1d(a) * S_dash_normedx1d(a);
+            H_cub_dash[1]= params::dzcp * S_dash_normedy1d(a) * S_dash_normedy1d(a) * S_dash_normedy1d(a);
+            H_cub_dash[2]= params::dzcp * S_dash_normedz1d(a) * S_dash_normedz1d(a) * S_dash_normedz1d(a);
 			//H_cub_dash[0] = 2.0 *  0.1787343119 * S_dash_normedx1d(a) * S_dash_normedy1d(a) * S_dash_normedy1d(a); // 2 * 0.04  meV / mu_s 
 			//H_cub_dash[1] = 2.0 *  0.1787343119 * S_dash_normedy1d(a) * S_dash_normedx1d(a) * S_dash_normedx1d(a); // 2 * 0.04  meV / mu_s 
 			//H_cub_dash[2] = 4.0 * -0.0670253669 * S_dash_normedz1d(a) * S_dash_normedz1d(a) * S_dash_normedz1d(a); // 4 * 0.015 meV / mu_s
-			if (sitesublat == 1 || sitesublat == 2){
-                H_cub_dash[0] = 2.0 *  0.1787343119 * S_dash_normedx1d(a) * S_dash_normedy1d(a) * S_dash_normedy1d(a); // 2 * 0.04  meV / mu_s 
-                H_cub_dash[1] = 2.0 *  0.1787343119 * S_dash_normedy1d(a) * S_dash_normedx1d(a) * S_dash_normedx1d(a); // 2 * 0.04  meV / mu_s 
-                H_cub_dash[2] = 4.0 * -0.0670253669 * S_dash_normedz1d(a) * S_dash_normedz1d(a) * S_dash_normedz1d(a); // 4 * 0.015 meV / mu_s
-            }
-            else {
-                H_cub_dash[0] = 0.0;
-                H_cub_dash[1] = 0.0;
-                H_cub_dash[2] = 0.0;
-            }
+			//if (sitesublat == 1 || sitesublat == 2){
+            //    H_cub_dash[0] = 2.0 *  0.1787343119 * S_dash_normedx1d(a) * S_dash_normedy1d(a) * S_dash_normedy1d(a); // 2 * 0.04  meV / mu_s 
+            //    H_cub_dash[1] = 2.0 *  0.1787343119 * S_dash_normedy1d(a) * S_dash_normedx1d(a) * S_dash_normedx1d(a); // 2 * 0.04  meV / mu_s 
+            //    H_cub_dash[2] = 4.0 * -0.0670253669 * S_dash_normedz1d(a) * S_dash_normedz1d(a) * S_dash_normedz1d(a); // 4 * 0.015 meV / mu_s
+            //}
+            //else {
+            //    H_cub_dash[0] = 0.0;
+            //    H_cub_dash[1] = 0.0;
+            //    H_cub_dash[2] = 0.0;
+            //}
 
-			H_exch_dash[0] = 0;
-            H_exch_dash[1] = 0;
-            H_exch_dash[2] = 0;
+			//H_exch_dash[0] = 0;
+            //H_exch_dash[1] = 0;
+            //H_exch_dash[2] = 0;
 
             // Exchange interaction prime
             // counting = neigh::x_adj[a];

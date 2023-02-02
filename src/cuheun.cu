@@ -141,16 +141,20 @@ namespace cuheun {
 					Huni[2] = daniz[siteincell] * dSz1d[a]; 
 
 					double Hcub[3];
-					if (sitesublat == 1 || sitesublat == 2){
-						Hcub[0] = 2.0 *  0.1787343119 * dSx1d[a] * dSy1d[a] * dSy1d[a]; // 2 * 0.04  meV / mu_s 
-						Hcub[1] = 2.0 *  0.1787343119 * dSy1d[a] * dSx1d[a] * dSx1d[a]; // 2 * 0.04  meV / mu_s 
-						Hcub[2] = 4.0 * -0.0670253669 * dSz1d[a] * dSz1d[a] * dSz1d[a]; // 4 * 0.015 meV / mu_s
-					}
-					else {
-						Hcub[0] = 0.0;
-						Hcub[1] = 0.0;
-						Hcub[2] = 0.0;
-					}
+					Hcub[0] = c_dzcp * dSx1d[a] * dSx1d[a] * dSx1d[a]; 
+					Hcub[1] = c_dzcp * dSy1d[a] * dSy1d[a] * dSy1d[a]; 
+					Hcub[2] = c_dzcp * dSz1d[a] * dSz1d[a] * dSz1d[a]; 
+					
+					//if (sitesublat == 1 || sitesublat == 2){
+					//	Hcub[0] = 2.0 *  0.1787343119 * dSx1d[a] * dSy1d[a] * dSy1d[a]; // 2 * 0.04  meV / mu_s 
+					//	Hcub[1] = 2.0 *  0.1787343119 * dSy1d[a] * dSx1d[a] * dSx1d[a]; // 2 * 0.04  meV / mu_s 
+					//	Hcub[2] = 4.0 * -0.0670253669 * dSz1d[a] * dSz1d[a] * dSz1d[a]; // 4 * 0.015 meV / mu_s
+					//}
+					//else {
+					//	Hcub[0] = 0.0;
+					//	Hcub[1] = 0.0;
+					//	Hcub[2] = 0.0;
+					//}
 
 						
 					double Hex[3] = {0.0, 0.0, 0.0};
@@ -212,16 +216,19 @@ namespace cuheun {
 					Huni_dash[2]=  daniz[siteincell] * Sdashnz[a];
 					
 					double Hcub_dash[3];
-					if (sitesublat == 1 || sitesublat == 2){
-						Hcub_dash[0] = 2.0 *  0.1787343119 * Sdashnx[a] * Sdashny[a] * Sdashny[a]; // 2 * 0.04  meV / mu_s 
-						Hcub_dash[1] = 2.0 *  0.1787343119 * Sdashny[a] * Sdashnx[a] * Sdashnx[a]; // 2 * 0.04  meV / mu_s 
-						Hcub_dash[2] = 4.0 * -0.0670253669 * Sdashnz[a] * Sdashnz[a] * Sdashnz[a]; // 4 * 0.015 meV / mu_s
-					}
-					else {
-						Hcub_dash[0] = 0.0;
-						Hcub_dash[1] = 0.0;
-						Hcub_dash[2] = 0.0;
-					}
+					Hcub_dash[0] = c_dzcp * Sdashnx[a] * Sdashnx[a] * Sdashnx[a]; 
+					Hcub_dash[1] = c_dzcp * Sdashny[a] * Sdashny[a] * Sdashny[a]; 
+					Hcub_dash[2] = c_dzcp * Sdashnz[a] * Sdashnz[a] * Sdashnz[a]; 
+//if (sitesublat == 1 || sitesublat == 2){
+					//	Hcub_dash[0] = 2.0 *  0.1787343119 * Sdashnx[a] * Sdashny[a] * Sdashny[a]; // 2 * 0.04  meV / mu_s 
+					//	Hcub_dash[1] = 2.0 *  0.1787343119 * Sdashny[a] * Sdashnx[a] * Sdashnx[a]; // 2 * 0.04  meV / mu_s 
+					//	Hcub_dash[2] = 4.0 * -0.0670253669 * Sdashnz[a] * Sdashnz[a] * Sdashnz[a]; // 4 * 0.015 meV / mu_s
+					//}
+					//else {
+					//	Hcub_dash[0] = 0.0;
+					//	Hcub_dash[1] = 0.0;
+					//	Hcub_dash[2] = 0.0;
+					//}
 
 				
 					// Exchange interaction prime	
