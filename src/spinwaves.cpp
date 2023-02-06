@@ -310,8 +310,8 @@ namespace spinwaves {
 				}
 			}
 			else {
-				from[0] = static_cast<int>(kpathx[p] * params::Lx)-2;
-				to[0]   = static_cast<int>(kpathx[p+1] * params::Lx)-1;
+				from[0] = static_cast<int>(kpathx[p] * params::Lx * params::Idx)-2;
+				to[0]   = static_cast<int>(kpathx[p+1] * params::Lx * params::Idx)-1;
 				in[0]   = -1; //static_cast<int>(std::abs(kpathx[p+1] - kpathx[p])/(kpathx[p+1] - kpathx[p]));
 			}
 
@@ -323,8 +323,8 @@ namespace spinwaves {
 				in[1] = 1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
 			else if (kpathy[p+1] == kpathy[p]){
-				from[1] = static_cast<int>(kpathy[p] * params::Ly);
-				to[1] = static_cast<int>(kpathy[p] * params::Ly)+1;
+				from[1] = static_cast<int>(kpathy[p] * params::Ly * params::Idy);
+				to[1] = static_cast<int>(kpathy[p] * params::Ly * params::Idy)+1;
 				in[1] = 0;
 				if (from[1] != 0){
 					from[1] += -1;
@@ -332,8 +332,8 @@ namespace spinwaves {
 				}
 			}
 			else {
-				from[1] = static_cast<int>(kpathy[p] * params::Ly)-2;
-				to[1] = static_cast<int>(kpathy[p+1] * params::Ly)-1;
+				from[1] = static_cast<int>(kpathy[p] * params::Ly * params::Idy)-2;
+				to[1] = static_cast<int>(kpathy[p+1] * params::Ly * params::Idy)-1;
 				in[1] = -1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
 
@@ -354,8 +354,8 @@ namespace spinwaves {
 				}
 			}
 			else {
-				from[2] = static_cast<int>(kpathz[p] * params::Lz)-2;
-				to[2] = static_cast<int>(kpathz[p+1] * params::Lz)-1;
+				from[2] = static_cast<int>(kpathz[p] * params::Lz * params::Idz)-2;
+				to[2] = static_cast<int>(kpathz[p+1] * params::Lz * params::Idz)-1;
 				in[2] = -1; //static_cast<int>(std::abs(kpathy[p+1] - kpathy[p])/(kpathy[p+1] - kpathy[p]));
 			}
 			// DEBUGGER;
@@ -506,7 +506,7 @@ namespace spinwaves {
 				counter++;
 
 				for (int kk = 0; kk < icount/2; kk++){
-					//os[kk] /= largest;
+					os[kk] /= largest;
 					freq = kk * freqstep;
 					kzout << os[kk] << "\n";
 				}
