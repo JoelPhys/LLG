@@ -436,7 +436,7 @@ namespace util {
 			sumz(h) = 0.0;
 			for (int j =0; j < params::Ly; j++){
 				for (int k =0; k < params::Lz; k++){
-					lc = geom::LatCount(h,j,k,2);
+					lc = geom::LatCount(h,j,k,0);
 					sumx(h) += spins::sx1d(lc);
 					sumy(h) += spins::sy1d(lc);
 					sumz(h) += spins::sz1d(lc);

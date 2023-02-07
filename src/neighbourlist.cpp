@@ -497,7 +497,7 @@ namespace neigh {
         }
 
 		// Check x_adj is the same length as the number of spins
-		if (x_adj.size() != params::Nspins+1){
+		if (x_adj.size() != params::Nspins+1 && ((params::xbound != "fixed") || (params::xbound != "fixed") || (params::xbound != "fixed"))){
 			std::cout << "ERROR encountered at file " << __FILE__ << " at line " << __LINE__ << ": x_adj is not the same size as the number of atoms. Exiting." << std::endl;
 			std::cout << "x_adj size: " << x_adj.size() << "\n";
 		  	std::cout << "number of atoms: " << params::Nspins << std::endl;	

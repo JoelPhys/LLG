@@ -6,7 +6,7 @@
 
 // my header files
 #include "../inc/geom.h"
-#include "../inc/geom.h"
+#include "../inc/spins.h"
 #include "../inc/config.h"
 #include "../inc/array4d.h"
 #include "../inc/array3d.h"
@@ -177,75 +177,65 @@ namespace geom {
         }
     }
 
-
+//TODO: Move this to spins file
 void initdw(){
 
 		// lw.resize(params::Ly*params::Lz*params::Nq);
         
         // testing for hedgehogs - points on surface of cubic lattice 
-        int nsurface = (2*(params::Lx*params::Ly) + 2*(params::Lx*(params::Ly-2)) + 2*((params::Lx-2)*(params::Ly-2)))*params::Nq;
-
-        lw.resize(nsurface);
-        surfx.resize(nsurface);
-        surfy.resize(nsurface);
-        surfz.resize(nsurface);
-
+		//int nsurface = (2*(params::Lx*params::Ly) + 2*(params::Lx*(params::Ly-2)) + 2*((params::Lx-2)*(params::Ly-2)))*params::Nq;
+        //lw.resize(nsurface);
+        //surfx.resize(nsurface);
+        //surfy.resize(nsurface);
+        //surfz.resize(nsurface);
+		
+		lw.resize(params::Ly*params::Lz*params::Nq);
 		rw.resize(params::Ly*params::Lz*params::Nq);
 		lw.IFill(0);
 		rw.IFill(0);
-    
-        int inc = 0;
+        
+		int inc = 0;
         int test = 1;
-
-		// find all sites when x is 0
+		DEBUGGER;
+		// initialise domain wall along x-direction.
+		// set spins at either half of domain wall to anti-parallel alignment.
         for (int i = 0; i < params::Lx; i++){
             for (int j = 0; j < params::Ly; j++){
                 for (int k = 0; k < params::Lz; k++){
                     for (int q = 0; q < params::Nq; q++){
 
-                        if (params::afmflag == "Mn2Au"){
-                            if ((q == 0) || (q == 2)){
-                                lw(inc) = geom::LatCount(0,j,k,q);
-                                rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
-                            }
-                            else if ((q == 1) || (q == 3)){
-                                rw(inc) = geom::LatCount(0,j,k,q);
-                                lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
-                            }
-                            else {
-                                std::cout << "ERROR: Unable to assign domain wall \n";
-                                exit(0);
-                            }
-                        }
-                        else if (params::afmflag == "SC"){
-                            if ((q== 0) || (q == 3) || (q == 5) || (q == 6)) {
-                                lw(inc) = geom::LatCount(0,j,k,q);
-                                rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
-                            }
-                            else {
-                                rw(inc) = geom::LatCount(0,j,k,q);
-                                lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
-                            }
-                        }
-                        else {
-                            std::cout << "ERROR: Unable to assign domain wall \n";
-                            exit(0);
-                        }
-                        //testing for hedgehogs
-                        // if ((i == 0) || (j == 0) || (k == 0) || (i == params::Lx-1) || (j == params::Ly-1) || (k == params::Lz-1)){
-                        //     lw(inc) = geom::LatCount(i,j,k,q); 
-                        //     surfx(inc) = spins::sx1d(geom::LatCount(i,j,k,q));
-                        //     surfy(inc) = spins::sy1d(geom::LatCount(i,j,k,q));
-                        //     surfz(inc) = spins::sz1d(geom::LatCount(i,j,k,q));
-                        //     inc++;
-                        //     // std::cout << geom::LatCount(i,j,k,q) << std::endl;
-                        // }
+						// up spins in first half of lattice
+						if (i < params::Lx/2){
+							spins::sx1d(geom::LatCount(i,j,k,q)) = params::initm[q][0];
+                    	    spins::sy1d(geom::LatCount(i,j,k,q)) = params::initm[q][1];
+                    	    spins::sz1d(geom::LatCount(i,j,k,q)) = params::initm[q][2];                       
+                    	}
+						// down spins in second half of lattice
+                    	else if (i > params::Lx/2){
+							spins::sx1d(geom::LatCount(i,j,k,q)) = -1 * params::initm[q][0];
+                    	    spins::sy1d(geom::LatCount(i,j,k,q)) = -1 * params::initm[q][1];
+                    	    spins::sz1d(geom::LatCount(i,j,k,q)) = -1 * params::initm[q][2];                         
+                    	}
+						// spins in middle set to another orientation so that domain wall forms in middle of sample
+                    	else if (i == params::Lx/2){
+							spins::sx1d(geom::LatCount(i,j,k,q)) = 0.5;
+                    	    spins::sz1d(geom::LatCount(i,j,k,q)) = 0.5;                        
+                    	}
+
+						// for sublattice 1	
+                        //lw(inc) = geom::LatCount(0,j,k,q);
+                        //rw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+                        //
+						//// for sublattice 2
+						//rw(inc) = geom::LatCount(0,j,k,q);
+                        //lw(inc) = geom::LatCount(params::Lx-1,j,k,q);
+
                     }
                 }
             }
 		}
-
-        std::cout << "Initialised Domain Wall \n";
+        
+		std::cout << "Initialised Domain Wall \n";
 
 	}
 
