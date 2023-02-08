@@ -164,10 +164,10 @@ namespace heun {
             //        H_cub[2] = 0.0;
             //}
          
-			//// Exchange interaction
-            //H_exch[0] = 0;
-            //H_exch[1] = 0;
-            //H_exch[2] = 0;
+			// Exchange interaction
+            H_exch[0] = 0;
+            H_exch[1] = 0;
+            H_exch[2] = 0;
 
             // counting = neigh::x_adj[a];
 
@@ -262,9 +262,9 @@ namespace heun {
             //    H_cub_dash[2] = 0.0;
             //}
 
-			//H_exch_dash[0] = 0;
-            //H_exch_dash[1] = 0;
-            //H_exch_dash[2] = 0;
+			H_exch_dash[0] = 0;
+            H_exch_dash[1] = 0;
+            H_exch_dash[2] = 0;
 
             // Exchange interaction prime
             // counting = neigh::x_adj[a];
