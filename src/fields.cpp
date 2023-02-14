@@ -34,8 +34,10 @@ namespace fields {
 	double height;
 	double freq;
 	double gauss;
+	double gauss1;
 	double gauss2;
 	double kpoint;
+	double kstep;
 	double cuniform[3];
 	int sublatsites;
 	double std_dev;
@@ -248,10 +250,21 @@ namespace fields {
 
 		for (int i = 0; i < params::Nspins; i++){
 		
-            gauss = height * sin(kpoint * M_PI * i + 2.0*M_PI*freq*time);
-            gauss2 = height * cos(kpoint * M_PI * i + 2.0*M_PI*freq*time);
-            H_appx[i] = gauss;
-            H_appy[i] = gauss2;
+            sublatsites = params::sublat_sites[i % params::Nq];
+			//gauss = height * sin(kpoint * M_PI * i + 2.0*M_PI*freq*time);
+            //gauss2 = height * cos(kpoint * M_PI * i + 2.0*M_PI*freq*time);
+			
+			gauss1 = 0.0;
+			gauss2 = 0.0;	   
+			
+			for (int k = 0; k < params::Nspins; k++){
+				kstep = static_cast<double>(k)/static_cast<double>(params::Nspins);
+				gauss1 += sublat_stag[sublatsites] * sin( kstep * M_PI * i + 2.0*M_PI*freq*time);
+				gauss2 += sublat_stag[sublatsites] * cos( kstep * M_PI * i + 2.0*M_PI*freq*time);
+			}
+
+			H_appx[i] = height * gauss;
+            H_appy[i] = height * gauss2;
             H_appz[i] = 0.0; 	
 		
 		}
