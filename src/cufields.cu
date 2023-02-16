@@ -179,14 +179,29 @@ namespace cufields {
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
 		if (i < N){
-			double gauss1, gauss2;
+			double gauss1 = 0;
+			double gauss2 = 0;
 			double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
-			gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
-			gauss2 = height * cos(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+			double kstep;
+			for (int k = 0; k < N; k++){
+				kstep = static_cast<double>(k)/static_cast<double>(N);	
+				gauss1 = height * sin(kstep * M_PI * sitepos + 2.0*M_PI*freq*time);
+				gauss2 = height * cos(kstep * M_PI * sitepos + 2.0*M_PI*freq*time);
+			}
 			Hapx[i] = gauss2;
 			Hapy[i] = gauss1;
 			Hapz[i] = 0.0;  
 		}
+
+		//if (i < N){
+		//	double gauss1, gauss2;
+		//	double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
+		//	gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+		//	gauss2 = height * cos(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+		//	Hapx[i] = gauss2;
+		//	Hapy[i] = gauss1;
+		//	Hapz[i] = 0.0;  
+		//}
 
 
 	}
