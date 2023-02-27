@@ -277,9 +277,9 @@ namespace fields {
 		for (int i = 0; i < npump; i++){
 		
             gauss = height * sin(kpoint * M_PI * i + 2.0*M_PI*freq*time);
-            H_appx[i] = direc_mag*direc[0]*gauss;
-            H_appy[i] = direc_mag*direc[1]*gauss;
-            H_appz[i] = direc_mag*direc[2]*gauss;
+            H_appx[i] = sublat_stag[sublatsites] * direc_mag*direc[0]*gauss;
+            H_appy[i] = sublat_stag[sublatsites] * direc_mag*direc[1]*gauss;
+            H_appz[i] = sublat_stag[sublatsites] * direc_mag*direc[2]*gauss;
 		
 		}
 
