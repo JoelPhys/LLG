@@ -61,7 +61,7 @@ namespace spinwaves {
 	double sg_spinwaves;
 	int int_dt_spinwaves;
 	std::string filepath_sw;
-
+	bool normalise=false;
 
 	double norm;
 
@@ -101,7 +101,15 @@ namespace spinwaves {
 		// for use when using booleans to output spinwaves
 		int_dt_spinwaves = dt_spinwaves / params::dt; 
 
-
+		// check if normalising spinwave spectrum for eack k-point
+		if (params::cfg.exists("Spinwaves.normalise")){
+			normalise = params::cfg.lookup("Spinwaves.normalise");
+			INFO_OUT("Spinwave spectrum normalisation:",normalise);
+		}
+		else {
+			std::cout << "Spinwaves normalisation has not been specified in config file." << std::endl;
+			std::cout << "Setting to the default value of FALSE." << std::endl;
+		}
 
 		params::cfgmissing("Spinwaves.smoothing");			
 		sg_spinwaves = params::cfg.lookup("Spinwaves.smoothing");
@@ -505,10 +513,18 @@ namespace spinwaves {
 				peaksout << xout << " " << index * ( 1.0 / (dt_spinwaves * Npoints)) << "\n";
 				counter++;
 
-				for (int kk = 0; kk < icount/2; kk++){
-					os[kk] /= largest;
-					freq = kk * freqstep;
-					kzout << os[kk] << "\n";
+				if (normalise == true){
+					for (int kk = 0; kk < icount/2; kk++){
+						os[kk] /= largest;
+						freq = kk * freqstep;
+						kzout << os[kk] << "\n";
+					}
+				}
+				else {
+					for (int kk = 0; kk < icount/2; kk++){
+						freq = kk * freqstep;
+						kzout << os[kk] << "\n";
+					}
 				}
 
 				//int n = icount/2;
