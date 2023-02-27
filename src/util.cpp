@@ -456,10 +456,10 @@ namespace util {
 		fldfile << static_cast<double>(i) * params::dt << " ";
 		
 		// Output Field for each sublattice
-		for (int i = 0; i < params::uniquesublat.size(); i++){
-			fldfile << fields::H_appx[params::uniquesublat[i]] << " ";
-			fldfile << fields::H_appy[params::uniquesublat[i]] << " ";
-			fldfile << fields::H_appz[params::uniquesublat[i]] << " ";
+		for (int sublat = 0; sublat < params::uniquesublat.size(); sublat++){
+			fldfile << fields::H_appx[params::uniquesublat[sublat]] << " ";
+			fldfile << fields::H_appy[params::uniquesublat[sublat]] << " ";
+			fldfile << fields::H_appz[params::uniquesublat[sublat]] << " ";
 		}
 
 		fldfile << "\n";
