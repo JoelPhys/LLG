@@ -148,7 +148,7 @@ int main(int argc, char* argv[]){
 	// ========== LOOP THROUGH TIMESTEPS ================================================================ //
 	for (int i = 0; i < params::Nt; i++){
 
-        if (i ==  5001) {
+        if (i == 0) {
             std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
         #ifdef CUDA
             cufuncs::cuRotation();
@@ -168,11 +168,11 @@ int main(int argc, char* argv[]){
 		//}
 	
 		// Output Lattice subroutine	
-		if ((i % params::OutputLatticeStep == 0) && (i >= params::OutputLatticeStart) ){
-			if (params::OutputLattice == true){
-				util::OutputLatticetoFile(Temp);
-			}
-		}
+		//if ((i % params::OutputLatticeStep == 0) && (i >= params::OutputLatticeStart) ){
+		//	if (params::OutputLattice == true){
+		//		util::OutputLatticetoFile(Temp);
+		//	}
+		//}
 
 		// Magnetisation subroutine
 		if (i % params::outputstep == 0){
@@ -200,6 +200,12 @@ int main(int argc, char* argv[]){
 			}
 		}
 
+		// Output Lattice subroutine	
+		if ((i % params::OutputLatticeStep == 0) && (i >= params::OutputLatticeStart) ){
+			if (params::OutputLattice == true){
+				util::OutputLatticetoFile(Temp);
+			}
+		}
 
 		// Spinwaves subroutine
 		if (params::simtype == "Spinwaves"){	
