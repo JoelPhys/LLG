@@ -215,7 +215,7 @@ namespace fields {
 
 	void gaussian_pulse(double time){
 
-		gauss = height * exp(-1 * (((time - centre_pos) * (time - centre_pos))/(2 * std_dev * std_dev)));
+		gauss = height * exp(-1.0 * (((time - centre_pos) * (time - centre_pos))/(2.0 * std_dev * std_dev)));
 
 		for (int i = 0; i < params::Nspins; i++){
 			sublatsites = params::sublat_sites[i % params::Nq];
@@ -251,8 +251,8 @@ namespace fields {
 		for (int i = 0; i < params::Nspins; i++){
 		
             sublatsites = params::sublat_sites[i % params::Nq];
-			gauss = height * sin(kpoint * M_PI * i + 2.0*M_PI*freq*time);
-            gauss2 = height * cos(kpoint * M_PI * i + 2.0*M_PI*freq*time);
+			gauss = height * sin(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
+            gauss2 = height * cos(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
 			
 			//gauss1 = 0.0;
 			//gauss2 = 0.0;	   
@@ -280,7 +280,8 @@ namespace fields {
 
 		for (int i = 0; i < npump; i++){
 		
-            gauss = height * sin(kpoint * M_PI * i + 2.0*M_PI*freq*time);
+            sublatsites = params::sublat_sites[i % params::Nq];
+            gauss = height * sin(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
             H_appx[i] = sublat_stag[sublatsites] * direc_mag*direc[0]*gauss;
             H_appy[i] = sublat_stag[sublatsites] * direc_mag*direc[1]*gauss;
             H_appz[i] = sublat_stag[sublatsites] * direc_mag*direc[2]*gauss;
