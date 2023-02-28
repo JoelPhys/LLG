@@ -202,8 +202,8 @@ namespace cufields {
 			double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
 			gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
 			gauss2 = height * cos(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
-			Hapx[i] = d_sublat_stag[sublatsites]*gauss2;
-			Hapy[i] = d_sublat_stag[sublatsites]*gauss1;
+			Hapx[i] = d_sublat_stag[sublatsites]*gauss1;
+			Hapy[i] = d_sublat_stag[sublatsites]*gauss2;
 			Hapz[i] = d_sublat_stag[sublatsites]*0.0;  
 		}
 
