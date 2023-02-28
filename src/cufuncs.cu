@@ -53,10 +53,10 @@ namespace cufuncs {
 			cufields::sine_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag, params::Nspins, time, fields::height, fields::freq, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
 		}
 		else if (type == "Sine_Pulse_Circular"){
-			cufields::sine_pulse_circular<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			cufields::sine_pulse_circular<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag);
 		}
 		else if (type == "Sine_Pulse_Linear"){
-			cufields::sine_pulse_linear<<<cuglob::bpg,cuglob::tpb>>>(fields::npump, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			cufields::sine_pulse_linear<<<cuglob::bpg,cuglob::tpb>>>(fields::npump, time, fields::height, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag);
 		}
 
 		else {

@@ -24,6 +24,7 @@ namespace cufields {
 	__constant__ int c_direcx;
 	__constant__ int c_direcy;
 	__constant__ int c_direcz;
+	
 	int* d_sublat_stag;
 
 	void allocate_field_variables(){
@@ -157,51 +158,54 @@ namespace cufields {
 
 
 	// TODO: fix this section, not sure how to code up circular and linear fields at present
-	__global__ void sine_pulse_linear(int N, double time, double height, double freq, double kpoint, double *Hapx, double *Hapy, double *Hapz){
+	__global__ void sine_pulse_linear(int N, double time, double height, double freq, double kpoint, double *Hapx, double *Hapy, double *Hapz, int nsites, int *dsublat_sites, int *d_sublat_stag){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
 		if (i < N){
+			int sublatsites = dsublat_sites[i % nsites];
 			double gauss1;
 			double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
 			gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
-			Hapx[i] = gauss1;
-			Hapy[i] = 0.0;
-			Hapz[i] = 0.0;  
+			Hapx[i] = d_sublat_stag[sublatsites]*gauss1;
+			Hapy[i] = d_sublat_stag[sublatsites]*0.0;
+			Hapz[i] = d_sublat_stag[sublatsites]*0.0;  
 		}
 
 
 	}
 
 	// TODO: fix this section, not sure how to code up circular and linear fields at present
-	__global__ void sine_pulse_circular(int N, double time, double height, double freq, double kpoint, double *Hapx, double *Hapy, double *Hapz){
+	__global__ void sine_pulse_circular(int N, double time, double height, double freq, double kpoint, double *Hapx, double *Hapy, double *Hapz, int nsites, int *dsublat_sites, int *d_sublat_stag){
 
 		const int i = blockDim.x*blockIdx.x + threadIdx.x;
 
-		if (i < N){
-			double gauss1 = 0;
-			double gauss2 = 0;
-			double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
-			double kstep;
-			for (int k = 0; k < N; k++){
-				kstep = static_cast<double>(k)/static_cast<double>(N);	
-				gauss1 = height * sin(kstep * M_PI * sitepos + 2.0*M_PI*freq*time);
-				gauss2 = height * cos(kstep * M_PI * sitepos + 2.0*M_PI*freq*time);
-			}
-			Hapx[i] = gauss2;
-			Hapy[i] = gauss1;
-			Hapz[i] = 0.0;  
-		}
-
 		//if (i < N){
-		//	double gauss1, gauss2;
+		//	double gauss1 = 0;
+		//	double gauss2 = 0;
 		//	double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
-		//	gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
-		//	gauss2 = height * cos(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
-		//	Hapx[i] = gauss2;
-		//	Hapy[i] = gauss1;
+		//	double kstep;
+		//	for (int k = 0; k < N; k++){
+		//		kstep = static_cast<double>(k)/static_cast<double>(N);	
+		//		gauss1 += sin(kstep * M_PI * sitepos + 2.0*M_PI*freq*time);
+		//		gauss2 += cos(kstep * M_PI * sitepos + 2.0*M_PI*freq*time);
+		//	}
+		//	Hapx[i] = height * gauss2;
+		//	Hapy[i] = height * gauss1;
 		//	Hapz[i] = 0.0;  
 		//}
+
+		if (i < N){
+			int sublatsites = dsublat_sites[i % nsites];
+
+			double gauss1, gauss2;
+			double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
+			gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+			gauss2 = height * cos(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
+			Hapx[i] = d_sublat_stag[sublatsites]*gauss2;
+			Hapy[i] = d_sublat_stag[sublatsites]*gauss1;
+			Hapz[i] = d_sublat_stag[sublatsites]*0.0;  
+		}
 
 
 	}

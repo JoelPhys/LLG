@@ -19,8 +19,8 @@ namespace cufields {
 	extern __global__ void gaussian_pulse(int, int *, int *, int, double, double, double, double,  double *, double *, double *);
     extern __global__ void multi_cycle_pulse(int, int*, int*, int , double, double, double, double,  double, double *, double *, double *);
     extern __global__ void sine_pulse(int , int *, int *, int, double , double , double , double *, double *, double *);
-	extern __global__ void sine_pulse_circular(int , double , double , double , double , double *, double *, double *);
-	extern __global__ void sine_pulse_linear(int , double , double , double , double , double *, double *, double *);
+	extern __global__ void sine_pulse_circular(int , double , double , double , double , double *, double *, double *, int, int *,int *);
+	extern __global__ void sine_pulse_linear(int , double , double , double , double , double *, double *, double *, int, int *,int *);
 
     void testing(int i);
 }
