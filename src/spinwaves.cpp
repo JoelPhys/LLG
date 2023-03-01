@@ -62,7 +62,7 @@ namespace spinwaves {
 	int int_dt_spinwaves;
 	std::string filepath_sw;
 	bool normalise=false;
-
+	std::string fft_component;
 	double norm;
 
 	int lval, mval, nval;
@@ -111,19 +111,38 @@ namespace spinwaves {
 			std::cout << "Setting to the default value of FALSE." << std::endl;
 		}
 
+		// spin values which are used to calculate the FFT 
+		params::cfgmissing("Spinwaves.fft_component");
+		fft_component = params::cfg.lookup("Spinwaves.fft_component").c_str();
+		std::vector<std::string> fft_accepted = {"sx","sy","sz","sxsx+sysy","sxsx","sysy","szsz"};
+		bool is_accepted = std::find(fft_accepted.begin(), fft_accepted.end(), fft_component) != fft_accepted.end();
+		if (is_accepted == false){
+			std::cout << "User specified spin components for computing spinwave fft is not recognised. " << std::endl;
+			std::cout << "fft_component = " << fft_component << std::endl;
+			std::cout << "Accepted values = [";
+			for (int f = 0; f < fft_accepted.size(); f++){
+				std::cout << fft_accepted[f] << ", ";
+			}
+			std::cout << "] " << std::endl;
+		}
+		exit(0);
+
+		// smoothing k vectors
 		params::cfgmissing("Spinwaves.smoothing");			
 		sg_spinwaves = params::cfg.lookup("Spinwaves.smoothing");
 
-	
+		// output filepath
 		params::cfgmissing("Spinwaves.filepath");        		    
 		filepath_sw = params::cfg.lookup("Spinwaves.filepath").c_str();   
 
+		// check if output directory exists
 		struct stat buffer;
 		if (stat(filepath_sw.c_str(), &buffer) != 0) {
     		std::cout << "ERROR: Spinwaves output directory does not exist!" << std::endl;;
 			exit(0);
 		}	
 
+		// start time of spinwave calculations (in timesteps not absolute time)
 		params::cfgmissing("Spinwaves.StartTime");		
 		start = params::cfg.lookup("Spinwaves.StartTime");
 
@@ -221,9 +240,32 @@ namespace spinwaves {
 						lval = l + params::Isites[q][0];
 						mval = m + params::Isites[q][1];
 						nval = n + params::Isites[q][2];
-						//stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)) + spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval));
-						stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)); 				
-}
+						if (fft_component == "sx"){
+							stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)); 				
+						}
+						else if (fft_component == "sy"){
+							stcf(lval,mval,nval) = spins::sy1d(geom::Scount(lval,mval,nval)); 				
+						}
+						else if (fft_component == "sz"){
+						    stcf(lval,mval,nval) = spins::sz1d(geom::Scount(lval,mval,nval)); 				
+						}
+						else if (fft_component == "sxsx"){
+							stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)); 				
+						}
+						else if (fft_component == "sysy"){
+							stcf(lval,mval,nval) = spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval)); 				
+						}
+						else if (fft_component == "szsz"){
+							stcf(lval,mval,nval) = spins::sz1d(geom::Scount(lval,mval,nval)) * spins::sz1d(geom::Scount(lval,mval,nval)); 				
+						}
+						else if (fft_component == "sxsx+sysy"){
+							stcf(lval,mval,nval) = spins::sx1d(geom::Scount(lval,mval,nval)) * spins::sx1d(geom::Scount(lval,mval,nval)) + spins::sy1d(geom::Scount(lval,mval,nval)) * spins::sy1d(geom::Scount(lval,mval,nval));
+						}
+						else {
+							std::cout << "Incorrect fft_component." << std::endl;
+							exit(0);
+						}
+					}
 				}
 			}
 		}
