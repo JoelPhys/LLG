@@ -124,8 +124,9 @@ namespace spinwaves {
 				std::cout << fft_accepted[f] << ", ";
 			}
 			std::cout << "] " << std::endl;
+			exit(0);
 		}
-		exit(0);
+		INFO_OUT("Calculating spinwaves via FFT of: ", fft_component);
 
 		// smoothing k vectors
 		params::cfgmissing("Spinwaves.smoothing");			
