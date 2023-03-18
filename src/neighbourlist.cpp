@@ -27,11 +27,11 @@
 namespace neigh {
 
     int length;
-    std::vector<unsigned int> adjncy;
+    std::vector<int> adjncy;
     std::vector<double> Jijy_prime;
     std::vector<double> Jijz_prime;
     std::vector<double> Jijx_prime;
-    std::vector<unsigned int> x_adj;
+    std::vector<int> x_adj;
     std::vector<double> Nx;
     std::vector<double> Ny;
     std::vector<double> Nz;
