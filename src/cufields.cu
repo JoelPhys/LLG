@@ -43,7 +43,7 @@ namespace cufields {
 
 		// variables in global memory
 		CUDA_CALL(cudaMalloc((void**)&d_sublat_stag, sizeof(int)*params::Nsublat));
-		CUDA_CALL(cudaMemset(d_sublat_stag, 0.0, sizeof(int)*params::Nsublat));
+		CUDA_CALL(cudaMemset(d_sublat_stag, 0, sizeof(int)*params::Nsublat));
 		CUDA_CALL(cudaMemcpy(d_sublat_stag,  &fields::sublat_stag[0], sizeof(int)*params::Nsublat, cudaMemcpyHostToDevice));
 
 	}
@@ -167,9 +167,9 @@ namespace cufields {
 			double gauss1;
 			double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
 			gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
-			Hapx[i] = d_sublat_stag[sublatsites]*gauss1;
-			Hapy[i] = d_sublat_stag[sublatsites]*0.0;
-			Hapz[i] = d_sublat_stag[sublatsites]*0.0;  
+			Hapx[i] = static_cast<double>(d_sublat_stag[sublatsites])*gauss1;
+			Hapy[i] = static_cast<double>(d_sublat_stag[sublatsites])*0.0;
+			Hapz[i] = static_cast<double>(d_sublat_stag[sublatsites])*0.0;  
 		}
 
 
@@ -202,9 +202,9 @@ namespace cufields {
 			double sitepos = i; //  Nq*((i/(Nq*Lz*Ly)) % Lx)+qlayer;
 			gauss1 = height * sin(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
 			gauss2 = height * cos(kpoint * M_PI * sitepos + 2.0*M_PI*freq*time);
-			Hapx[i] = d_sublat_stag[sublatsites]*gauss1;
-			Hapy[i] = d_sublat_stag[sublatsites]*gauss2;
-			Hapz[i] = d_sublat_stag[sublatsites]*0.0;  
+			Hapx[i] = static_cast<double>(d_sublat_stag[sublatsites])*gauss1;
+			Hapy[i] = static_cast<double>(d_sublat_stag[sublatsites])*gauss2;
+			Hapz[i] = static_cast<double>(d_sublat_stag[sublatsites])*0.0;  
 		}
 
 

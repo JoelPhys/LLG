@@ -83,25 +83,8 @@ namespace cuheun {
 
 			double vec[3];
 
-			int sublatsites = dsublat_sites[i % nsites];
+			int sublatsites = dsublat_sites[i % c_Nq];
 
-			if (sublatsites == 0){
-				// if (( i % c_Nq == 1) || (i % c_Nq == 3)) {
-
-				// vec[0] = dSx1d[i] * cos(c_angle) - dSy1d[i] * sin(c_angle);
-				// vec[1] = dSx1d[i] * sin(c_angle) + dSy1d[i] * cos(c_angle);
-				// vec[2] = dSz1d[i];
-
-				vec[0] =  dSx1d[i] * cos(c_angle) + dSz1d[i] * sin(c_angle);
-				vec[1] =  dSy1d[i]; 
-				vec[2] = -dSx1d[i] * sin(c_angle) + dSz1d[i] * cos(c_angle);
-
-				dSx1d[i] = vec[0];
-				dSy1d[i] = vec[1];
-				dSz1d[i] = vec[2];
-
-			}
-			else if (sublatsites == 1){
 				// if (( i % c_Nq == 1) || (i % c_Nq == 3)) {
 
 				// vec[0] = dSx1d[i] * cos(c_angle) - dSy1d[i] * sin(c_angle);
@@ -177,16 +160,16 @@ namespace cuheun {
 					SxH[0] = dSy1d[a] * Hnew[2] - dSz1d[a] * Hnew[1];
 					SxH[1] = dSz1d[a] * Hnew[0] - dSx1d[a] * Hnew[2];
 					SxH[2] = dSx1d[a] * Hnew[1] - dSy1d[a] * Hnew[0];
-
+					
 					double SxSxH[3];
 					SxSxH[0] = dSy1d[a] * SxH[2] - dSz1d[a] * SxH[1];
 					SxSxH[1] = dSz1d[a] * SxH[0] - dSx1d[a] * SxH[2];
 					SxSxH[2] = dSx1d[a] * SxH[1] - dSy1d[a] * SxH[0];
 
-					DelSx[a] = - 1 * lambdap[siteincell] * (SxH[0] + lambda[siteincell] * SxSxH[0]);
-					DelSy[a] = - 1 * lambdap[siteincell] * (SxH[1] + lambda[siteincell] * SxSxH[1]);
-					DelSz[a] = - 1 * lambdap[siteincell] * (SxH[2] + lambda[siteincell] * SxSxH[2]);
-
+					DelSx[a] = - 1.0 * lambdap[siteincell] * (SxH[0] + lambda[siteincell] * SxSxH[0]);
+					DelSy[a] = - 1.0 * lambdap[siteincell] * (SxH[1] + lambda[siteincell] * SxSxH[1]);
+					DelSz[a] = - 1.0 * lambdap[siteincell] * (SxH[2] + lambda[siteincell] * SxSxH[2]);
+					
 					double Sdash[3];
 					Sdash[0] = dSx1d[a] + (DelSx[a] * c_dtau);
 					Sdash[1] = dSy1d[a] + (DelSy[a] * c_dtau);
@@ -197,6 +180,7 @@ namespace cuheun {
 					Sdashnx[a] = cinvmag * Sdash[0];
 					Sdashny[a] = cinvmag * Sdash[1];
 					Sdashnz[a] = cinvmag * Sdash[2];
+
 				} 
 			}
 
@@ -255,9 +239,9 @@ namespace cuheun {
 					SxSxHd[2] = Sdashnx[a] * SxHd[1] - Sdashny[a] * SxHd[0];
 
 					double DelSd[3];
-					DelSd[0] = -1 * lambdap[siteincell] * (SxHd[0] + lambda[siteincell] * SxSxHd[0]);
-					DelSd[1] = -1 * lambdap[siteincell] * (SxHd[1] + lambda[siteincell] * SxSxHd[1]);
-					DelSd[2] = -1 * lambdap[siteincell] * (SxHd[2] + lambda[siteincell] * SxSxHd[2]);
+					DelSd[0] = -1.0 * lambdap[siteincell] * (SxHd[0] + lambda[siteincell] * SxSxHd[0]);
+					DelSd[1] = -1.0 * lambdap[siteincell] * (SxHd[1] + lambda[siteincell] * SxSxHd[1]);
+					DelSd[2] = -1.0 * lambdap[siteincell] * (SxHd[2] + lambda[siteincell] * SxSxHd[2]);
 
 					double Sn[3];
 					Sn[0] = dSx1d[a] + c_hdtau * (DelSx[a] + DelSd[0]);
@@ -268,7 +252,6 @@ namespace cuheun {
 					dSx1d[a] = cinvmag1 * Sn[0];
 					dSy1d[a] = cinvmag1 * Sn[1];
 					dSz1d[a] = cinvmag1 * Sn[2];
-
 					// if (a == 0){
 					// 	double vec[3];
 					// 	vec[0] = cos(0.00001 * time);

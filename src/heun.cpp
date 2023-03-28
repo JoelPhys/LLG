@@ -89,35 +89,15 @@ namespace heun {
 
             sitesublat = params::sublat_sites[a % params::Nq];
 
-            //if ((sitesublat == 1)){
-                // if (( i % c_Nq == 1) || (i % c_Nq == 3)) {
+			vec[0] =  spins::sx1d[c] * cos(params::angle) + spins::sz1d[c] * sin(params::angle);
+			vec[1] =  spins::sy1d[c]; 
+			vec[2] = -spins::sx1d[c] * sin(params::angle) + spins::sz1d[c] * cos(params::angle);
 
-                vec[0] = spins::sx1d[c] * cos(params::angle) - spins::sy1d[c] * sin(params::angle);
-                vec[1] = spins::sx1d[c] * sin(params::angle) + spins::sy1d[c] * cos(params::angle);
-                vec[2] = spins::sz1d[c];
+            spins::sx1d[c] = vec[0];
+            spins::sy1d[c] = vec[1];
+            spins::sz1d[c] = vec[2];
 
-                spins::sx1d[c] = vec[0];
-                spins::sy1d[c] = vec[1];
-                spins::sz1d[c] = vec[2];
-
-            //}
-            //else if (sitesublat == 0){ 
-            //}
-            //else if (sitesublat == 2){ 
-
-            //    vec[0] = spins::sx1d[c] * cos(params::angle) - spins::sy1d[c] * sin(params::angle);
-            //    vec[1] = spins::sx1d[c] * sin(params::angle) + spins::sy1d[c] * cos(params::angle);
-            //    vec[2] = spins::sz1d[c];
-
-            //    spins::sx1d[c] = vec[0];
-            //    spins::sy1d[c] = vec[1];
-            //    spins::sz1d[c] = vec[2];
-            //}
-            //else {
-            //    std::cout << "UNKOWN SUBLATTICE HEUN ROTATION" << std::endl;
-            //    exit(0);
-            //}
-        }
+           }
     }
 
 
@@ -181,7 +161,6 @@ namespace heun {
                 H_exch[2] += neigh::Jijz[neigh::jind[b]] * (spins::sz1d(neigh::adjncy[b]));
                 // counting++;
             }
-            
 			H_new[0] = H_thermal(a,0) + fields::H_appx(a) + H_uni[0] + H_cub[0] + H_exch[0];
             H_new[1] = H_thermal(a,1) + fields::H_appy(a) + H_uni[1] + H_cub[1] + H_exch[1];
             H_new[2] = H_thermal(a,2) + fields::H_appz(a) + H_uni[2] + H_cub[2] + H_exch[2];
@@ -206,7 +185,6 @@ namespace heun {
 
             CrossP(ScrossP, H_new, CrossP1);
             CrossP(ScrossP, CrossP1, CrossP2);
-			
 
 			// 10.1103/PhysRevE.82.031111 -> Equation (16)
 			st_field[0] = fields::H_appx(a) + H_uni[0] + H_cub[0] + H_exch[0];
@@ -219,12 +197,12 @@ namespace heun {
             Delta_S(a,0) = -params::lambdaPrime[siteincell] * (CrossP1[0] + params::lambda[siteincell]* CrossP2[0]);
             Delta_S(a,1) = -params::lambdaPrime[siteincell] * (CrossP1[1] + params::lambda[siteincell]* CrossP2[1]);
             Delta_S(a,2) = -params::lambdaPrime[siteincell] * (CrossP1[2] + params::lambda[siteincell]* CrossP2[2]);
-
-            S_dash[0] = spins::sx1d(a) + (Delta_S(a,0) * params::dtau);
+            
+			S_dash[0] = spins::sx1d(a) + (Delta_S(a,0) * params::dtau);
             S_dash[1] = spins::sy1d(a) + (Delta_S(a,1) * params::dtau);
             S_dash[2] = spins::sz1d(a) + (Delta_S(a,2) * params::dtau);
-
-            invmag = 1 / sqrt(S_dash[0] * S_dash[0] + S_dash[1] * S_dash[1] + S_dash[2] * S_dash[2]);
+			invmag = 1 / sqrt(S_dash[0] * S_dash[0] + S_dash[1] * S_dash[1] + S_dash[2] * S_dash[2]);
+            
             S_dash_normedx1d(a) = invmag * S_dash[0];
             S_dash_normedy1d(a) = invmag * S_dash[1];
             S_dash_normedz1d(a) = invmag * S_dash[2];   
@@ -282,8 +260,6 @@ namespace heun {
             H_new_dash[1] = H_thermal(a,1) + fields::H_appy(a) + H_uni_dash[1] + H_cub_dash[1] + H_exch_dash[1];
             H_new_dash[2] = H_thermal(a,2) + fields::H_appz(a) + H_uni_dash[2] + H_cub_dash[2] + H_exch_dash[2];
 
-            // Calculate Corrector and Normalise
-
             ScrossP[0] = S_dash_normedx1d(a);
             ScrossP[1] = S_dash_normedy1d(a);
             ScrossP[2] = S_dash_normedz1d(a);
@@ -291,8 +267,6 @@ namespace heun {
             CrossP(ScrossP, H_new_dash, CrossP3);
             CrossP(ScrossP, CrossP3, CrossP4);
 	
-			
-
             Delta_S_dash[0] = -params::lambdaPrime[siteincell] * (CrossP3[0] + params::lambda[siteincell]* CrossP4[0]);
             Delta_S_dash[1] = -params::lambdaPrime[siteincell] * (CrossP3[1] + params::lambda[siteincell]* CrossP4[1]);
             Delta_S_dash[2] = -params::lambdaPrime[siteincell] * (CrossP3[2] + params::lambda[siteincell]* CrossP4[2]); 
