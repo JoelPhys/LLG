@@ -21,9 +21,6 @@ namespace cuheun {
 	__constant__ double c_dzcp;
 	__constant__ double c_dtau; 
 	__constant__ double c_hdtau; 
-	
-
-
 	__constant__ int c_Nq;
 	__constant__ double c_angle;
 	__constant__ int c_nsimspin;
@@ -99,7 +96,6 @@ namespace cuheun {
 				dSy1d[i] = vec[1];
 				dSz1d[i] = vec[2];
 
-			}
 		}
 	}
 
@@ -203,7 +199,7 @@ namespace cuheun {
 					Hcub_dash[0] = c_dzcp * Sdashnx[a] * Sdashnx[a] * Sdashnx[a]; 
 					Hcub_dash[1] = c_dzcp * Sdashny[a] * Sdashny[a] * Sdashny[a]; 
 					Hcub_dash[2] = c_dzcp * Sdashnz[a] * Sdashnz[a] * Sdashnz[a]; 
-//if (sitesublat == 1 || sitesublat == 2){
+					//if (sitesublat == 1 || sitesublat == 2){
 					//	Hcub_dash[0] = 2.0 *  0.1787343119 * Sdashnx[a] * Sdashny[a] * Sdashny[a]; // 2 * 0.04  meV / mu_s 
 					//	Hcub_dash[1] = 2.0 *  0.1787343119 * Sdashny[a] * Sdashnx[a] * Sdashnx[a]; // 2 * 0.04  meV / mu_s 
 					//	Hcub_dash[2] = 4.0 * -0.0670253669 * Sdashnz[a] * Sdashnz[a] * Sdashnz[a]; // 4 * 0.015 meV / mu_s
