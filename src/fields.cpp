@@ -32,6 +32,7 @@ namespace fields {
 	double start_time = 0.0;
 	double end_time = 0.0;
 	double height;
+	double heightac;
 	double freq;
 	double gauss;
 	double gauss1;
@@ -135,6 +136,31 @@ namespace fields {
 			INFO_OUT("Start time of pulse = ", start_time << " timesteps");
 			INFO_OUT("End time of pulse = ", end_time << " timesteps");
 			INFO_OUT("Magniture of pulse = ", height << " [T]");
+
+			//////////////////////////////////////////////////////////////////////////////////////////
+			// TODO: create a way that two fields of different types can be simulated at the same time
+			INFO_OUT("Field type = ", type);
+			params::cfgmissing("ExternalField.heightac");
+			heightac = params::cfg.lookup("ExternalField.heightac");
+			freq = params::cfg.lookup("ExternalField.freq");
+			kpoint = params::cfg.lookup("ExternalField.kpoint");
+			INFO_OUT("Magniture of pulse:", height << " [T]");
+			INFO_OUT("Frequency of pulse:", freq << " [Hz]");
+			INFO_OUT("kpoint of pulse:", kpoint << " [pi]");
+	
+			// check if pumping upto a certain atom
+			if (params::cfg.exists("ExternalField.layer")){
+				npump = params::cfg.lookup("ExternalField.layer");
+			}			
+			else {
+				npump = params::Nspins;
+			}
+
+			// Print npump
+			INFO_OUT("pumping spins up to:", "N = " << npump);
+			//////////////////////////////////////////////////////////////////////////////////////////
+
+
 		}
 		else if (type == "Gaussian_Pulse"){
 			INFO_OUT("Field type = ", type);
@@ -251,9 +277,8 @@ namespace fields {
 		for (int i = 0; i < params::Nspins; i++){
 		
             sublatsites = params::sublat_sites[i % params::Nq];
-			gauss = height * sin(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
-            gauss2 = height * cos(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
-			
+			gauss  = heightac * sin(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
+            gauss2 = heightac * cos(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
 			//gauss1 = 0.0;
 			//gauss2 = 0.0;	   
 			//
@@ -263,9 +288,9 @@ namespace fields {
 			//	gauss2 += sublat_stag[sublatsites] * cos( kstep * M_PI * i + 2.0*M_PI*freq*time);
 			//}
 
-			H_appx[i] = sublat_stag[sublatsites] * gauss;
-            H_appy[i] = sublat_stag[sublatsites] * gauss2;
-            H_appz[i] = sublat_stag[sublatsites] * 0.0; 	
+			H_appx[i] += sublat_stag[sublatsites] * gauss;
+            H_appy[i] += sublat_stag[sublatsites] * gauss2;
+            H_appz[i] += sublat_stag[sublatsites] * 0.0; 	
 			
 			//H_appx[i] = height * gauss;
             //H_appy[i] = height * gauss2;
@@ -295,6 +320,12 @@ namespace fields {
 	void calculate(double time){
 		if (type == "Square_Pulse"){
 			square_pulse(time);
+			
+			//////////////////////////////////////////////////////////////////////////////////////////
+			// TODO: create a way that two fields of different types can be simulated at the same time
+			sine_pulse_circular(time);	
+			//////////////////////////////////////////////////////////////////////////////////////////
+			
 		}
 		else if (type == "Gaussian_Pulse"){
 			gaussian_pulse(time);
