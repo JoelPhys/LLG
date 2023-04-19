@@ -323,7 +323,9 @@ namespace fields {
 			
 			//////////////////////////////////////////////////////////////////////////////////////////
 			// TODO: create a way that two fields of different types can be simulated at the same time
-			sine_pulse_circular(time);	
+			if ((time < start_time) || (time >= end_time)){
+				sine_pulse_circular(time);	
+			}
 			//////////////////////////////////////////////////////////////////////////////////////////
 			
 		}
