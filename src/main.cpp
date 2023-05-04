@@ -29,6 +29,12 @@
 #include "../inc/mathfuncs.h"
 #include "../inc/neighbourlist.h"
 
+//openMP Header Files
+#ifdef MP
+#include <omp.h>
+#include "../inc/mpheun.h"
+#endif
+
 //Cuda Header files
 #ifdef CUDA
 #include <cuda.h>
@@ -55,9 +61,13 @@ int main(int argc, char* argv[]){
 	geom::CountDistinct();
 	geom::CreateIntLattice();
 	defects::init();
-	heun::init();
 	util::init();
-
+	#ifdef MP
+		mpheun::init();
+	#else
+		heun::init();
+	#endif
+	
 	if (params::simtype == "Spinwaves"){
 		spinwaves::init();
 	}
@@ -105,8 +115,12 @@ int main(int argc, char* argv[]){
 
 	neigh::ReadFile();
 	neigh::InteractionMatrix();
-	heun::init();
-
+	#ifdef MP
+		std::cout << "MMMMMMMMMMMMPPPPPPPPPPPPPPP" << std::endl;
+		mpheun::init();
+	#else
+		heun::init();
+	#endif
 
 	#ifdef CUDA
 	std::cout << "CUDA Simulation" << std::endl;
@@ -152,9 +166,12 @@ int main(int argc, char* argv[]){
             std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
         #ifdef CUDA
             cufuncs::cuRotation();
-        #endif
+        #elif MP
+			mpheun::rotation();
+		#else
             heun::rotation();
-        } 
+        #endif
+		} 
 
 
 		//if (i == 5000){
@@ -243,6 +260,8 @@ int main(int argc, char* argv[]){
 			cuthermal::gen_thermal_noise();
 			cufuncs::integration(static_cast<double>(i));
 			// cufields::testing(i);
+		#elif MP
+			mpheun::integration();
 		#else	
 			heun::integration();
 		#endif
@@ -267,6 +286,5 @@ int main(int argc, char* argv[]){
 	if (thermal::temptype == "ttm"){
 		thermal::closettmfile();
 	}
-
 	return 0;
 }

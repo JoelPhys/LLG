@@ -26,33 +26,54 @@ obj/util.o \
 obj/heun.o \
 obj/main.o
 
-OBJNVCC = \
+NVCCOBJ = \
 obj/cumalloc.o \
 obj/cuthermal.o \
 obj/cufields.o \
 obj/cuheun.o \
 obj/cufuncs.o
 
+OBJMP = \
+obj/spins.o \
+obj/neighbourlist.o \
+obj/mathfuncs.o \
+obj/config.o \
+obj/fields.o \
+obj/geom.o \
+obj/defects.o \
+obj/error.o \
+obj/thermal.o \
+obj/spinwaves.o \
+obj/util.o \
+obj/mpheun.o \
+obj/main.o
+
+
 CUDAOBJ=$(OBJECTS:.o=_cuda.o)
+MPOBJ=$(OBJMP:.o=_mp.o)
 
-all: ASDcu ASD
-
-ASDcu: $(CUDAOBJ) $(OBJNVCC)
-	$(NVCC) -DCUDA $(OPT) -o $@ $^ $(CONFIGLIB) $(FFTW3LIB) $(CULIBS)
+all: ASDcu ASD ASDmp
 
 $(CUDAOBJ): obj/%_cuda.o: src/%.cpp
 	$(GCC) $(OPT) -DCUDA -c -o $@ $< $(CONFIGINC) $(FFTW3INC) -DCPUCOMP=$(CPUCOMP) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
 
-obj/%.o: src/%.cu
+$(NVCCOBJ): obj/%.o: src/%.cu
 	$(NVCC) $(OPT) -DCUDA -c -o $@ $< $(CONFIGINC) $(FFTW3INC) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
 
-
-ASD: $(OBJECTS)
-	$(GCC) $(OPT) -o $@ $^ $(CONFIGLIB) $(FFTW3LIB) 
+$(MPOBJ): obj/%_mp.o: src/%.cpp
+	$(GCC) $(OPT) -DMP -c -o $@ $< -fopenmp $(CONFIGINC) $(FFTW3INC) -DCPUCOMP=$(CPUCOMP) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
 
 $(OBJECTS): obj/%.o: src/%.cpp
 	$(GCC) $(OPT) -c -o $@ $< $(CONFIGINC) $(FFTW3INC) -DCPUCOMP=$(CPUCOMP) -DGPUCOMP=$(GPUCOMP) -DHOSTNAME=$(HOSTNAME) -DGIT_SHA1=$(GITINFO) -DGITDIRTY=$(GITDIRTY)
 
+ASDmp: $(MPOBJ)
+	$(GCC) -DMP $(OPT) -o $@ $^ $(CONFIGLIB) $(FFTW3LIB) $(CULIBS) -fopenmp
+
+ASDcu: $(CUDAOBJ) $(NVCCOBJ)
+	$(NVCC) -DCUDA $(OPT) -o $@ $^ $(CONFIGLIB) $(FFTW3LIB) $(CULIBS)
+
+ASD: $(OBJECTS)
+	$(GCC) $(OPT) -o $@ $^ $(CONFIGLIB) $(FFTW3LIB) 
 
 clean:
 	@rm -f obj/*.o	

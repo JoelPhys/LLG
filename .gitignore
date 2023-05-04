@@ -3,6 +3,7 @@ output/spinwaves/*
 output/lattice/*
 ASD
 ASDcu
+ASDmp
 obj/*.o
 lswt/output/*
 .DS_Store
