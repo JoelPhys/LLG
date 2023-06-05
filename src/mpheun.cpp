@@ -106,27 +106,31 @@ namespace mpheun {
 		st_numer = 0.0;
 		st_denom = 0.0;
 		
-		#pragma omp parallel for ordered schedule(static) shared(neigh::simspin, params::Nq, H_thermal, params::dxup, params::dyup, params::dzup,spins::sx1d,spins::sy1d,spins::sz1d,params::dzcp,neigh::x_adj,neigh::adjncy,fields::H_appx,fields::H_appy,fields::H_appz,Delta_S,params::lambdaPrime,params::lambda,params::dtau,S_dash_normedx1d,S_dash_normedy1d,S_dash_normedz1d)
+		#pragma omp parallel for ordered schedule(static) shared(neigh::simspin, params::Nq, H_thermal, thermal::Te, params::thermal_const, geom::zlayer, params::dxup, params::dyup, params::dzup,spins::sx1d,spins::sy1d,spins::sz1d,params::dzcp,neigh::x_adj,neigh::adjncy,fields::H_appx,fields::H_appy,fields::H_appz,Delta_S,params::lambdaPrime,params::lambda,params::dtau,S_dash_normedx1d,S_dash_normedy1d,S_dash_normedz1d,neigh::Jijx, neigh::Jijy, neigh::Jijz, neigh::jind)
         for (int c = 0; c < neigh::simspin.size(); c++){
 			
             a = neigh::simspin[c];
-		
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;		
     		siteincell = a % params::Nq;
 			
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;		
 			for (int k = 0; k < 3; k++){
                 guassian_vals[k] = distribution(generator);
             }
 
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;		
 			H_thermal(a,0) = guassian_vals[0] * params::thermal_const[siteincell] * sqrt(thermal::Te[geom::zlayer[a]]);
             H_thermal(a,1) = guassian_vals[1] * params::thermal_const[siteincell] * sqrt(thermal::Te[geom::zlayer[a]]);
             H_thermal(a,2) = guassian_vals[2] * params::thermal_const[siteincell] * sqrt(thermal::Te[geom::zlayer[a]]);
 		
 			// Uniaxial anisotropy
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;		
             H_uni[0] = params::dxup[siteincell] * spins::sx1d(a);
             H_uni[1] = params::dyup[siteincell] * spins::sy1d(a);
             H_uni[2] = params::dzup[siteincell] * spins::sz1d(a);
 
             // Cubic Anisotropy
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;		
             H_cub[0] = params::dzcp * spins::sx1d(a) * spins::sx1d(a) * spins::sx1d(a);
             H_cub[1] = params::dzcp * spins::sy1d(a) * spins::sy1d(a) * spins::sy1d(a);
             H_cub[2] = params::dzcp * spins::sz1d(a) * spins::sz1d(a) * spins::sz1d(a);
@@ -151,7 +155,9 @@ namespace mpheun {
 
             // counting = neigh::x_adj[a];
 
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;
             for (int b = neigh::x_adj[c]; b < neigh::x_adj[c+1]; b++){
+		
 
                 // H_exch[0] += neigh::Jijx_prime[counting] * (spins::sx1d(neigh::adjncy[b]));
                 // H_exch[1] += neigh::Jijy_prime[counting] * (spins::sy1d(neigh::adjncy[b]));
@@ -161,10 +167,12 @@ namespace mpheun {
                 H_exch[2] += neigh::Jijz[neigh::jind[b]] * (spins::sz1d(neigh::adjncy[b]));
                 // counting++;
             }
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;
 			H_new[0] = H_thermal(a,0) + fields::H_appx(a) + H_uni[0] + H_cub[0] + H_exch[0];
             H_new[1] = H_thermal(a,1) + fields::H_appy(a) + H_uni[1] + H_cub[1] + H_exch[1];
             H_new[2] = H_thermal(a,2) + fields::H_appz(a) + H_uni[2] + H_cub[2] + H_exch[2];
 
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;
 	
 			//if (a==8){
 			//	if (count % 1000 == 0){
@@ -179,25 +187,34 @@ namespace mpheun {
 			//}
 
 
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;
             ScrossP[0] = spins::sx1d(a);
             ScrossP[1] = spins::sy1d(a);
             ScrossP[2] = spins::sz1d(a);
 
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;
             CrossP(ScrossP, H_new, CrossP1);
             CrossP(ScrossP, CrossP1, CrossP2);
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;
 
 			// 10.1103/PhysRevE.82.031111 -> Equation (16)
 			st_field[0] = fields::H_appx(a) + H_uni[0] + H_cub[0] + H_exch[0];
 			st_field[1] = fields::H_appy(a) + H_uni[1] + H_cub[1] + H_exch[1];
 			st_field[2] = fields::H_appz(a) + H_uni[2] + H_cub[2] + H_exch[2];
 			CrossP(ScrossP,st_field,st_cross);
-			st_numer += st_cross[0] * st_cross[0] +  st_cross[1] * st_cross[1] + st_cross[2] * st_cross[2];
-			st_denom += spins::sx1d(a)*st_field[0] + spins::sy1d(a)*st_field[1] + spins::sz1d(a)*st_field[2];
+			//st_numer += st_cross[0] * st_cross[0] +  st_cross[1] * st_cross[1] + st_cross[2] * st_cross[2];
+			//st_denom += spins::sx1d(a)*st_field[0] + spins::sy1d(a)*st_field[1] + spins::sz1d(a)*st_field[2];
 
-            Delta_S(a,0) = -params::lambdaPrime[siteincell] * (CrossP1[0] + params::lambda[siteincell]* CrossP2[0]);
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;
+   			st_numer =1.0;
+			st_denom =1.0;
+
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;
+         Delta_S(a,0) = -params::lambdaPrime[siteincell] * (CrossP1[0] + params::lambda[siteincell]* CrossP2[0]);
             Delta_S(a,1) = -params::lambdaPrime[siteincell] * (CrossP1[1] + params::lambda[siteincell]* CrossP2[1]);
             Delta_S(a,2) = -params::lambdaPrime[siteincell] * (CrossP1[2] + params::lambda[siteincell]* CrossP2[2]);
             
+			DEBUGGER; std::cout << omp_get_wtime() << std::endl;;
 			S_dash[0] = spins::sx1d(a) + (Delta_S(a,0) * params::dtau);
             S_dash[1] = spins::sy1d(a) + (Delta_S(a,1) * params::dtau);
             S_dash[2] = spins::sz1d(a) + (Delta_S(a,2) * params::dtau);
@@ -211,7 +228,7 @@ namespace mpheun {
 		// 10.1103/PhysRevE.82.031111 -> Equation (16)
 		spin_temp = st_numer/st_denom;	
 		
-		#pragma omp parallel for
+		#pragma omp parallel for ordered schedule(static) shared(neigh::simspin, params::Nq, H_thermal, thermal::Te, geom::zlayer, params::dxup, params::dyup, params::dzup,spins::sx1d,spins::sy1d,spins::sz1d,params::dzcp,neigh::x_adj,neigh::adjncy,fields::H_appx,fields::H_appy,fields::H_appz,Delta_S,params::lambdaPrime,params::lambda,params::dtau,S_dash_normedx1d,S_dash_normedy1d,S_dash_normedz1d,neigh::Jijx, neigh::Jijy, neigh::Jijz, neigh::jind)
         for (int c = 0; c < neigh::simspin.size(); c++){
 
             a = neigh::simspin[c];
