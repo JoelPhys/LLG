@@ -39,6 +39,9 @@ namespace cufuncs {
 	void cuFields(std::string type, double time, double start_time, double end_time, double height){
 		if (type == "Uniform"){
 			cufields::uniform<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag, params::Nspins, fields::cuniform[0], fields::cuniform[1], fields::cuniform[2], cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
+			
+			// TODO: create a way that two fields of different types can be simulated at the same time
+			cufields::sine_pulse_circular<<<cuglob::bpg,cuglob::tpb>>>(params::Nspins, time, fields::heightac, fields::freq, fields::kpoint, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz, params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag);
 		}
 		else if (type == "Square_Pulse"){
 			cufields::square_pulse<<<cuglob::bpg,cuglob::tpb>>>(params::Nq, cuglob::dsublat_sites, cufields::d_sublat_stag, params::Nspins, time, start_time, end_time, height, cuglob::Hapx, cuglob::Hapy, cuglob::Hapz);
