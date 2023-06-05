@@ -17,23 +17,36 @@ namespace util {
     void init();
     void ResetMag();
     void MagLength();
+
+	// outputs to files and terminal
     void OutputMagToFile(int i);
     void OutputFldToFile(int i);
     void OutputDWtoFile(int i);
     void OutputMagToTerm(int i);
-    void InitMagFile(double temp);
+    void OutputSpinToFile(int i);
+    
+	// initialise files
+	void InitMagFile(double temp);
     void InitFldFile(double temp);
     void InitDWFile(double temp);
-    void CloseMagFile();
+    void InitSpinFile(double temp);
+    
+	void CloseMagFile();
     void SumMag(int i);
     void OutputSumMag();
-    void OutputLatticetoFile(double temp);
+	
+	// outputting lattice
+	void OutputLatticetoFile(double temp);
     void OutputLatticeAverageOverX();
     void OutputLatticeAverageOverY();
     void OutputLatticeAverageOverZ();
     void OutputLatticeAverageOverQ();
-    void startclock();
+    
+	// clock
+	void startclock();
     void endclock();
+
+	// read initial spin config from a file
     void readexternalspins(std::string);
 }
 

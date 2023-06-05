@@ -41,6 +41,7 @@ namespace util {
 	clock_t begin, end;
 
 	std::ofstream magfile;
+	std::ofstream spinfile;
 	std::ofstream dwfile;
 	std::ofstream fldfile;
 	std::ofstream latfile;
@@ -80,6 +81,13 @@ namespace util {
 		sstr << params::filepath << "field_" << std::setw(4) << std::setfill('0') << temp << ".out";
 		fldfile.open(sstr.str());
 	}
+	
+	void InitSpinFile(double temp){
+		std::stringstream sstr;
+		sstr << params::filepath << "spins_" << std::setw(4) << std::setfill('0') << temp << ".out";
+		spinfile.open(sstr.str());
+	}
+
 
 	void ResetMag(){
 
@@ -352,8 +360,7 @@ namespace util {
 		// for (int m = 0; m < 3; m++){
 		// 	magfile << (M(0,m) / params::NmomentsSubLat) + (M(1,m) / params::NmomentsSubLat) << "\t";
 		// }
-
-		// output Total magnetisation
+		
 		if (params::afmflag != "N"){
 			magfile << Mt(0)  / params::Nspins << "\t" << Mt(1)  / params::Nspins<< "\t" << Mt(2) / params::Nspins;
 		}
@@ -362,6 +369,15 @@ namespace util {
 		magfile << "\t" << E;
 		
 		magfile << "\n";
+	}
+
+	void OutputSpinToFile(int i){
+
+		spinfile << i * params::dt << " ";
+		for (int s = 0; s < params::Nspins; s++){
+			spinfile << spins::sx1d(s) << " " << spins::sy1d(s) << " " << spins::sz1d(s) << " ";
+		}
+		spinfile << "\n";
 	}
 
 	void CloseMagFile(){

@@ -78,6 +78,7 @@
 
         // Output Lattice
         extern bool OutputLattice;		
+		extern bool OutputSpin;
         extern int OutputLatticeStep;
         extern int OutputLatticeStart;	
         extern std::string OutputLatticeFilepath;		

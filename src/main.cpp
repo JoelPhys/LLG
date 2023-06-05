@@ -139,9 +139,14 @@ int main(int argc, char* argv[]){
 	util::InitMagFile(Temp);
 	util::InitFldFile(Temp);
 
-	if (params::simtype == "DW"){		
-	util::InitDWFile(Temp);
+	if (params::OutputSpin == true){
+		util::InitSpinFile(Temp);
 	}
+	
+	if (params::simtype == "DW"){		
+		util::InitDWFile(Temp);
+	}
+
 	TITLE("SIMULATION STARTING");
 	util::startclock();
 
@@ -197,6 +202,11 @@ int main(int argc, char* argv[]){
 			// If using two-temperature model - output temperature profile to file
 			if (thermal::temptype == "ttm"){
 				thermal::ttmtofile(static_cast<double>(i) * params::dt);
+			}
+			
+			// output spin values
+			if (params::OutputSpin == true){
+				util::OutputSpinToFile(i);
 			}
 		}
 
