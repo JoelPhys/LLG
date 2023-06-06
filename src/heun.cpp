@@ -58,14 +58,14 @@ namespace heun {
 
     // Random number generation for stochastic noise
     std::normal_distribution<double> distribution(0.0,1.0);
-    std::mt19937 generator(params::seed);
+    std::mt19937 generator;
 
     // ============================================================================= //
 
     void init(){
       
         
-        
+		generator.seed(params::seed);
         Delta_S.resize(params::Nspins, 3);
         H_thermal.resize(params::Nspins, 3);
 		Delta_S.IFill(0);
