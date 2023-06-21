@@ -320,14 +320,7 @@ namespace fields {
 	void calculate(double time){
 		if (type == "Square_Pulse"){
 			square_pulse(time);
-			
-			//////////////////////////////////////////////////////////////////////////////////////////
-			// TODO: create a way that two fields of different types can be simulated at the same time
-			if ((time < start_time) || (time >= end_time)){
-				sine_pulse_circular(time);	
-			}
-			//////////////////////////////////////////////////////////////////////////////////////////
-			
+			sine_pulse_circular(time);	
 		}
 		else if (type == "Gaussian_Pulse"){
 			gaussian_pulse(time);
