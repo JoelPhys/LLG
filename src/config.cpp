@@ -441,7 +441,9 @@ namespace params {
 				sstr << "Site" << s;
 				std::string str = sstr.str();
 
+				cfgmissing("Sites")
 				libconfig::Setting& setting = cfg.lookup("Sites");  
+				cfgmissing("Sites." + str);
 				sites[s][0] = setting[str.c_str()][0];
 				sites[s][1] = setting[str.c_str()][1];
 				sites[s][2] = setting[str.c_str()][2];
