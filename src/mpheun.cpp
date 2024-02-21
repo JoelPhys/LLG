@@ -82,7 +82,7 @@ namespace mpheun {
 
     void integration(){
 
-		#pragma omp parallel for ordered schedule(static) shared(neigh::simspin, params::Nq, H_thermal, thermal::Te, params::thermal_const, geom::zlayer, params::dxup, params::dyup, params::dzup,spins::sx1d,spins::sy1d,spins::sz1d,params::dzcp,neigh::x_adj,neigh::adjncy,fields::H_appx,fields::H_appy,fields::H_appz,Delta_S,params::lambdaPrime,params::lambda,params::dtau,S_dash_normedx1d,S_dash_normedy1d,S_dash_normedz1d,neigh::Jijx, neigh::Jijy, neigh::Jijz, neigh::jind)
+		#pragma omp parallel for shared(neigh::simspin, params::Nq, H_thermal, thermal::Te, params::thermal_const, geom::zlayer, params::dxup, params::dyup, params::dzup,spins::sx1d,spins::sy1d,spins::sz1d,params::dzcp,neigh::x_adj,neigh::adjncy,fields::H_appx,fields::H_appy,fields::H_appz,Delta_S,params::lambdaPrime,params::lambda,params::dtau,S_dash_normedx1d,S_dash_normedy1d,S_dash_normedz1d,neigh::Jijx, neigh::Jijy, neigh::Jijz, neigh::jind)
         for (int c = 0; c < neigh::simspin.size(); c++){
 			
             int a = neigh::simspin[c];
@@ -197,7 +197,7 @@ namespace mpheun {
             S_dash_normedz1d(a) = invmag * S_dash[2];   
         }
 		
-		#pragma omp parallel for ordered schedule(static) shared(neigh::simspin, params::Nq, H_thermal, thermal::Te, geom::zlayer, params::dxup, params::dyup, params::dzup,spins::sx1d,spins::sy1d,spins::sz1d,params::dzcp,neigh::x_adj,neigh::adjncy,fields::H_appx,fields::H_appy,fields::H_appz,Delta_S,params::lambdaPrime,params::lambda,params::dtau,S_dash_normedx1d,S_dash_normedy1d,S_dash_normedz1d,neigh::Jijx, neigh::Jijy, neigh::Jijz, neigh::jind)
+		#pragma omp parallel for shared(neigh::simspin, params::Nq, H_thermal, thermal::Te, geom::zlayer, params::dxup, params::dyup, params::dzup,spins::sx1d,spins::sy1d,spins::sz1d,params::dzcp,neigh::x_adj,neigh::adjncy,fields::H_appx,fields::H_appy,fields::H_appz,Delta_S,params::lambdaPrime,params::lambda,params::dtau,S_dash_normedx1d,S_dash_normedy1d,S_dash_normedz1d,neigh::Jijx, neigh::Jijy, neigh::Jijz, neigh::jind)
         for (int c = 0; c < neigh::simspin.size(); c++){
 
             int a = neigh::simspin[c];

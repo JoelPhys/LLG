@@ -283,6 +283,7 @@ namespace neigh {
 				std::cout << "Vectors: " << vecX << " " << vecY << " " << vecZ << std::endl;
 				std::cout << "Jij unit cell position: " << NxP[i] << " " << NyP[i] << " " << NzP[i] << std::endl;
                 std::cout << "Jij values: " << Jijx[i] << " " << Jijy[i] << " " << Jijz[i] << std::endl;
+				std::cout << "close_to_int: " << close_to_int[0] << " " << close_to_int[1] << " " << close_to_int[2] << std::endl;
                 std::cout << "Exiting. ";
                 std::cout << std::endl;
                 exit(0);

@@ -277,8 +277,8 @@ namespace fields {
 		for (int i = 0; i < params::Nspins; i++){
 		
             sublatsites = params::sublat_sites[i % params::Nq];
-			gauss  = heightac * sin(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
-            gauss2 = heightac * cos(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
+			gauss  = height * sin(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
+            gauss2 = height * cos(kpoint * M_PI * static_cast<double>(i) + 2.0*M_PI*freq*time);
 			//gauss1 = 0.0;
 			//gauss2 = 0.0;	   
 			//
@@ -288,9 +288,9 @@ namespace fields {
 			//	gauss2 += sublat_stag[sublatsites] * cos( kstep * M_PI * i + 2.0*M_PI*freq*time);
 			//}
 
-			H_appx[i] += sublat_stag[sublatsites] * gauss;
-            H_appy[i] += sublat_stag[sublatsites] * gauss2;
-            H_appz[i] += sublat_stag[sublatsites] * 0.0; 	
+			H_appx[i] = sublat_stag[sublatsites] * gauss;
+            H_appy[i] = sublat_stag[sublatsites] * gauss2;
+            H_appz[i] = sublat_stag[sublatsites] * 0.0; 	
 			
 			//H_appx[i] = height * gauss;
             //H_appy[i] = height * gauss2;
@@ -320,7 +320,6 @@ namespace fields {
 	void calculate(double time){
 		if (type == "Square_Pulse"){
 			square_pulse(time);
-			sine_pulse_circular(time);	
 		}
 		else if (type == "Gaussian_Pulse"){
 			gaussian_pulse(time);
