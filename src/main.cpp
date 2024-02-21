@@ -167,7 +167,7 @@ int main(int argc, char* argv[]){
 	// ========== LOOP THROUGH TIMESTEPS ================================================================ //
 	for (int i = 0; i < params::Nt; i++){
 
-        if (i == 0) {
+        if (i == params::rotation_time) {
             std::cout << "Rotation matrix applied with angle " << params::angle << " (rad) at time t = " << std::scientific << i * params::dt << " (s)" << std::endl;
         #ifdef CUDA
             cufuncs::cuRotation();

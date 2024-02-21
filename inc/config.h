@@ -41,8 +41,9 @@
 		// Array for finding first instance of sublat within unit clel
 		extern std::vector<int> uniquesublat;
 
-        //Rotation angle
+        //Rotation angle and time
         extern double angle;	
+        extern int rotation_time;
         
         // Specifies how the sublattices will be sorted in output
         extern std::string afmflag;

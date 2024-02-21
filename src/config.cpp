@@ -49,6 +49,7 @@ namespace params {
 	int Idx, Idy, Idz; // For integer lattice
 	double a1, b1, c1, NsitesINV_S, xdim, ydim, zdim, NsitesINV;
 	double angle;
+	int rotation_time;
 	std::vector<int> sublat_sites;
 	std::vector<int> NmomentsSubLat;
 
@@ -232,9 +233,12 @@ namespace params {
 		ay = 2;
 		az = 2;
 
-		// Angle of sublattice rotation
-		angle = cfg.lookup("angle");
+		// Angle and time of sublattice rotation
+		cfgmissing("Rotation.angle");
+		angle = cfg.lookup("Rotation.angle");
 		angle *= M_PI / 180.0;
+		cfgmissing("Rotation.time");
+		rotation_time = cfg.lookup("Rotation.time");
 
 		// System geometry
 		Nspins = Nq*Lx*Ly*Lz;
@@ -441,7 +445,7 @@ namespace params {
 				sstr << "Site" << s;
 				std::string str = sstr.str();
 
-				cfgmissing("Sites")
+				cfgmissing("Sites");
 				libconfig::Setting& setting = cfg.lookup("Sites");  
 				cfgmissing("Sites." + str);
 				sites[s][0] = setting[str.c_str()][0];
